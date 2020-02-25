@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Mr. Driver</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="bearing">Bearing: %f°</string>
+
+    <string name="speed">Speed: %s km/h</string>
+    <string name="rpm">RPM: %s</string>
+    <string name="oilTemp">Oil Temp: %s</string>
+    <string name="fuelLevel">Fuel: %s</string>
+    <string name="consumption">Consumption: %s</string>
+    <string name="time">%s</string>
+
+    <string name="command_feedback">"'%1$s' command successful!"</string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
+    <string name="song">Song Title</string>
+
+</resources>

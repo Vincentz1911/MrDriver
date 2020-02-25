@@ -21,15 +21,16 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
-        View view = li.inflate(R.layout.fragment_map, vg, false);
+        View view = li.inflate(R.layout.fragment_camera, vg, false);
 
         recorder = new MediaRecorder();
         initRecorder();
-        getActivity().setContentView(R.layout.activity_main);
+        //getActivity().setContentView(R.layout.activity_main);
 
         SurfaceView cameraView = view.findViewById(R.id.sv_camera);
         holder = cameraView.getHolder();
         holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         cameraView.setClickable(true);
         cameraView.setOnClickListener(this);

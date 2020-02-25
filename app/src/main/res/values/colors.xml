@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="bg_launcher_background">#DDDDDD</color>
+    <color name="faded">#99000000</color>
 </resources>

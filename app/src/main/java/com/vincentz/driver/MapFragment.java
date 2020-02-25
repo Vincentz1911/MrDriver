@@ -35,10 +35,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_map, vg, false);
 
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) mapFragment.getMapAsync(this);
+        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
+                .getMapAsync(this);;
 
+        txt_Bearing = view.findViewById(R.id.txt_bearing);
+        txt_Speed = view.findViewById(R.id.txt_speed);
         return view;
     }
 
@@ -61,7 +62,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Tools.checkPermissions(getActivity());
         } else haveLocationPermission = true;
 
-        while (!haveLocationPermission) Tools.checkPermissions(getActivity());
+        do { Tools.checkPermissions(getActivity());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (!haveLocationPermission);
 
         map.setMyLocationEnabled(true);
         mUiSettings.setMyLocationButtonEnabled(true);
@@ -85,7 +92,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         public void onLocationChanged(Location location) {
             if (location == null) return;
             LatLng oldPos = pos;
-            float speed= location.getSpeed();
+            float speed = location.getSpeed();
             pos = new LatLng(location.getLatitude(), location.getLongitude());
             bearing = location.getBearing() != 0.0 ? location.getBearing() : bearing;
 
@@ -113,15 +120,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
+        public void onStatusChanged(String provider, int status, Bundle extras) { }
         @Override
-        public void onProviderEnabled(String provider) {
-        }
-
+        public void onProviderEnabled(String provider) { }
         @Override
-        public void onProviderDisabled(String provider) {
-        }
+        public void onProviderDisabled(String provider) { }
     };
 }

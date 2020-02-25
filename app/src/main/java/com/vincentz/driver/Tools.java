@@ -11,16 +11,14 @@ import androidx.core.app.ActivityCompat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-
 class Tools {
+    static SimpleDateFormat dateFormat = new SimpleDateFormat(
+            "HH:mm:ss ddd dd/MM/yyyy ", Locale.getDefault());
 
     static void msg(final Context context, final String text) {
-        Activity activity = (Activity) context;
-        activity.runOnUiThread(() -> Toast.makeText(context, text, Toast.LENGTH_LONG).show());
+        ((Activity) context).runOnUiThread(() ->
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show());
     }
-
-    static SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "HH:mm:ss dd/MM/yyyy ", Locale.getDefault());
 
     static void checkPermissions(Activity activity) {
         int PERMISSION_ALL = 1;
@@ -31,7 +29,8 @@ class Tools {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.CAMERA,
-                Manifest.permission.SYSTEM_ALERT_WINDOW
+                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.RECORD_AUDIO,
         };
 
         if (!hasPermissions(activity, PERMISSIONS)) {

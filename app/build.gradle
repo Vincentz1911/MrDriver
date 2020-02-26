@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            storeFile file('D:\\Dev\\release_keystore.jks')
+            storeFile file('F:\\keystore\\keystore_release.jks')
             storePassword 'Pegasus76!'
-            keyAlias = 'driver'
+            keyAlias = 'driverkey'
             keyPassword 'Pegasus76!'
         }
     }

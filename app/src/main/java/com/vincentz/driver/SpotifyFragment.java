@@ -25,13 +25,9 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.ErrorCallback;
 import com.spotify.protocol.client.Subscription;
 import com.spotify.protocol.types.Image;
-import com.spotify.protocol.types.ListItem;
 import com.spotify.protocol.types.PlayerContext;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
-
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -268,9 +264,9 @@ public class SpotifyFragment extends Fragment {
 
                         // Invalidate play / pause
                         if (playerState.isPaused) {
-                            mPlayPauseButton.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+                            mPlayPauseButton.setImageResource(R.drawable.ic_play_48dp);
                         } else {
-                            mPlayPauseButton.setImageResource(R.drawable.ic_pause_black_24dp);
+                            mPlayPauseButton.setImageResource(R.drawable.ic_pause_48dp);
                         }
 
 

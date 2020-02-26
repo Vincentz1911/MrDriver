@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Mr. Driver</string>
     <string name="title_activity_maps">Map</string>
-    <string name="bearing">Bearing: %d°</string>
 
+    <string name="bearing">%d°</string>
     <string name="mapspeed">%d</string>
     <string name="speed">Speed: %s km/h</string>
     <string name="rpm">RPM: %s</string>
@@ -18,5 +18,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="spotify">Spotify</string>
+    <string name="dashcam">Dashcam</string>
+    <string name="maps">Maps</string>
+    <string name="obd2">OBD2</string>
+    <string name="infoscreen">Infoscreen</string>
+    <string name="remove">Remove</string>
+    <string name="compass">Compass</string>
 
 </resources>

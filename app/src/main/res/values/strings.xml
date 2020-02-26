@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Mr. Driver</string>
     <string name="title_activity_maps">Map</string>
-    <string name="bearing">Bearing: %f°</string>
+    <string name="bearing">Bearing: %d°</string>
 
+    <string name="mapspeed">%d</string>
     <string name="speed">Speed: %s km/h</string>
     <string name="rpm">RPM: %s</string>
     <string name="oilTemp">Oil Temp: %s</string>

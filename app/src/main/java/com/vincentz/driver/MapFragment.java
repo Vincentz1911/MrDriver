@@ -36,7 +36,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         View view = li.inflate(R.layout.fragment_map, vg, false);
 
         ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
-                .getMapAsync(this);;
+                .getMapAsync(this);
+        ;
 
         txt_Bearing = view.findViewById(R.id.txt_bearing);
         txt_Speed = view.findViewById(R.id.txt_speed);
@@ -62,7 +63,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Tools.checkPermissions(getActivity());
         } else haveLocationPermission = true;
 
-        do { Tools.checkPermissions(getActivity());
+        do {
+            Tools.checkPermissions(getActivity());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -84,7 +86,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000, 1, GPSlistener);
+                1000, 3, GPSlistener);
     }
 
     private LocationListener GPSlistener = new LocationListener() {
@@ -94,10 +96,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             LatLng oldPos = pos;
             float speed = location.getSpeed();
             pos = new LatLng(location.getLatitude(), location.getLongitude());
-            bearing = location.getBearing() != 0.0 ? location.getBearing() : bearing;
+            bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
 
-            txt_Speed.setText(getString(R.string.speed, String.valueOf(speed)));
-            txt_Bearing.setText(getString(R.string.bearing, bearing));
+            txt_Speed.setText(getString(R.string.mapspeed, (int)(speed * 3.6)));
+            txt_Bearing.setText(getString(R.string.bearing, (int)bearing));
 
             LatLng camPos;
             if (oldPos == null) camPos = pos;
@@ -120,10 +122,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) { }
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
         @Override
-        public void onProviderEnabled(String provider) { }
+        public void onProviderEnabled(String provider) {
+        }
+
         @Override
-        public void onProviderDisabled(String provider) { }
+        public void onProviderDisabled(String provider) {
+        }
     };
 }

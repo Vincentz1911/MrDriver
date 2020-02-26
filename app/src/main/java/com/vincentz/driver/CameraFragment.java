@@ -30,7 +30,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
         SurfaceView cameraView = view.findViewById(R.id.sv_camera);
         holder = cameraView.getHolder();
         holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+//        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         cameraView.setClickable(true);
         cameraView.setOnClickListener(this);
@@ -45,8 +45,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
         CamcorderProfile cpHigh = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
         recorder.setProfile(cpHigh);
         recorder.setOutputFile("/sdcard/videocapture_example.mp4");
-        recorder.setMaxDuration(1000 * 60 * 60); // 60 minutes
-        recorder.setMaxFileSize(1024 * 1024 * 1024); // Approximately 1 GB
+        recorder.setMaxDuration(1000 * 60 ); // 60 seconds
+        recorder.setMaxFileSize(1024 * 1024 * 20); // Approximately 20 MB
     }
 
     private void prepareRecorder() {
@@ -56,7 +56,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recorder.prepare();
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
-            //getActivity().finish();
+            getActivity().finish();
         }
     }
 
@@ -84,6 +84,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recording = false;
         }
         recorder.release();
-        //getActivity().finish();
+        getActivity().finish();
     }
 }

@@ -16,23 +16,38 @@ public class MainActivity extends FragmentActivity {
 
         Tools.checkPermissions(this);
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_left_bottom, new InfoFragment(), "").commit();
-//
-//        (findViewById(R.id.btn_left_top)).setOnClickListener(v ->
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fl_left_top, new SpotifyFragment(), "").commit());
-//
-//        (findViewById(R.id.btn_big)).setOnClickListener(v ->
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fl_big, new MapFragment(), "").commit());
-//
-//        (findViewById(R.id.btn_right_top)).setOnClickListener(v ->
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fl_right_top, new OBD2Fragment(), "").commit());
-//
-//        (findViewById(R.id.btn_right_bottom)).setOnClickListener(v ->
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fl_right_bottom, new CameraFragment(), "").commit());
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.fl_left_bottom, new InfoFragment(), "").commit();
+
+
+        findViewById(R.id.fl_left_top).setOnLongClickListener(v -> {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
+            return false;
+        });
+
+        findViewById(R.id.fl_left_bottom).setOnLongClickListener(v -> {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
+            return false;
+        });
+
+        findViewById(R.id.fl_right_top).setOnLongClickListener(v -> {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
+            return false;
+        });
+
+        findViewById(R.id.fl_right_bottom).setOnLongClickListener(v -> {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_right_bottom, new SelectorFragment(), "").commit();
+            return false;
+        });
+
+        findViewById(R.id.fl_big).setOnLongClickListener(v -> {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_big, new SelectorFragment(), "").commit();
+            return false;
+        });
     }
 }

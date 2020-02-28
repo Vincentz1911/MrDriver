@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <TableRow
         android:layout_width="match_parent"
@@ -11,17 +10,12 @@
 
         <ImageView
             android:id="@+id/btn_spotify"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/spotify"
-            android:padding="25dp"
-            android:src="@drawable/ic_spotify_200dp" />
+            android:src="@drawable/ic_spotify_logo_200dp" />
 
         <ImageView
             android:id="@+id/btn_recorder"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/dashcam"
             android:src="@drawable/ic_videocam_200dp" />
@@ -34,16 +28,12 @@
 
         <ImageView
             android:id="@+id/btn_maps"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/maps"
             android:src="@drawable/ic_maps_200dp" />
 
         <ImageView
             android:id="@+id/btn_obd2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/obd2"
             android:src="@drawable/ic_obd2_200dp" />
@@ -56,19 +46,14 @@
 
         <ImageView
             android:id="@+id/btn_info"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/infoscreen"
             android:src="@drawable/ic_info_200dp" />
 
         <ImageView
             android:id="@+id/btn_remove"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/remove"
             android:src="@drawable/ic_delete_200dp" />
     </TableRow>
-
-</LinearLayout>
+</TableLayout>

@@ -6,24 +6,23 @@
     android:baselineAligned="false"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/left_side"
+    <TableLayout
+        android:id="@+id/left"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/gradient"
-        android:orientation="vertical">
+        android:background="@drawable/gradient">
+
         <FrameLayout
             android:id="@+id/fl_left_top"
-            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
         <FrameLayout
             android:id="@+id/fl_left_bottom"
-            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
-    </LinearLayout>
+    </TableLayout>
 
     <FrameLayout
         android:id="@+id/fl_big"
@@ -31,24 +30,21 @@
         android:layout_height="match_parent"
         android:layout_weight="2" />
 
-    <LinearLayout
+    <TableLayout
         android:id="@+id/right_side"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/gradient"
-        android:orientation="vertical">
+        android:background="@drawable/gradient">
+
         <FrameLayout
             android:id="@+id/fl_right_top"
-            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
         <FrameLayout
             android:id="@+id/fl_right_bottom"
-            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
-    </LinearLayout>
-
-
+    </TableLayout>
 </LinearLayout>

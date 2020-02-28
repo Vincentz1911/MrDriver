@@ -8,29 +8,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Objects;
+
 public class SelectorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_selector, vg, false);
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-
+        FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         view.findViewById(R.id.btn_spotify).setOnClickListener(v -> fm.beginTransaction()
                 .replace(this.getId(), new SpotifyFragment(), "").commit());
-
         view.findViewById(R.id.btn_maps).setOnClickListener(v -> fm.beginTransaction()
                 .replace(this.getId(), new MapFragment(), "").commit());
-
         view.findViewById(R.id.btn_obd2).setOnClickListener(v -> fm.beginTransaction()
                 .replace(this.getId(), new OBD2Fragment(), "").commit());
-
         view.findViewById(R.id.btn_recorder).setOnClickListener(v -> fm.beginTransaction()
                 .replace(this.getId(), new CameraFragment(), "").commit());
-
         view.findViewById(R.id.btn_info).setOnClickListener(v -> fm.beginTransaction()
                 .replace(this.getId(), new InfoFragment(), "").commit());
-
         view.findViewById(R.id.btn_remove).setOnClickListener(v -> fm.beginTransaction()
                 .remove(this).commit());
 

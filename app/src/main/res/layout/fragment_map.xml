@@ -11,71 +11,83 @@
         android:layout_height="match_parent"
         tools:context=".MapFragment" />
 
-    <TextView
-        android:id="@+id/txt_speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="30dp"
-        android:background="@drawable/speedsign"
-        android:gravity="center"
-        android:text="0"
-        android:textColor="@android:color/black"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp">
-
-        <ImageView
-            android:id="@+id/img_compass"
+        <!--COMPASS-->
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/compass"
-            android:src="@drawable/ic_compass_200dp" />
+            android:layout_margin="30dp">
 
+            <ImageView
+                android:id="@+id/img_compass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/compass"
+                android:src="@drawable/ic_compass_200dp" />
+
+            <TextView
+                android:id="@+id/txt_bearing1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/img_compass"
+                android:layout_alignTop="@id/img_compass"
+                android:layout_alignEnd="@id/img_compass"
+                android:layout_alignBottom="@id/img_compass"
+                android:gravity="center"
+                android:text="N"
+                android:textColor="@android:color/black"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_bearing2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_compass"
+                android:layout_centerHorizontal="true"
+                android:text="360°"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <!--SPEEDOMETER-->
         <TextView
-            android:id="@+id/txt_bearing1"
+            android:id="@+id/txt_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@id/img_compass"
-            android:layout_alignTop="@id/img_compass"
-            android:layout_alignEnd="@id/img_compass"
-            android:layout_alignBottom="@id/img_compass"
+            android:layout_margin="30dp"
+            android:background="@drawable/speedsign"
             android:gravity="center"
-            android:text="N"
+            android:text="0"
             android:textColor="@android:color/black"
             android:textSize="40sp"
             android:textStyle="bold" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_bearing2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/img_compass"
-            android:layout_centerHorizontal="true"
-            android:text="360°"
-            android:textColor="@android:color/black"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
 
-    <SeekBar
-        android:id="@+id/slider_zoom"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:thumb="@drawable/ic_zoom_48dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginEnd="-120dp"
-        android:rotation="270"/>
+    <!--    <SeekBar-->
+    <!--        android:id="@+id/slider_zoom"-->
+    <!--        android:layout_width="300dp"-->
+    <!--        android:layout_height="300dp"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_alignParentEnd="true"-->
+    <!--        android:thumb="@drawable/ic_zoom_48dp"-->
+    <!--        android:layout_marginBottom="30dp"-->
+    <!--        android:layout_marginEnd="-120dp"-->
+    <!--        android:rotation="270" />-->
     <TextView
+        android:id="@+id/txt_zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_zoom"
-        android:textSize="30sp"/>
+        android:textSize="30sp" />
 
 </RelativeLayout>

@@ -37,12 +37,7 @@ public class OBD2Fragment extends Fragment {
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_obd2, vg, false);
 
-        ((Button)view.findViewById(R.id.btn_ison)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isOn=true;
-            }
-        });
+        (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> isOn=true);
 
         OBDDataThread = new Thread(new Runnable() {
             @Override
@@ -67,14 +62,7 @@ public class OBD2Fragment extends Fragment {
             }
         });
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                initBT();
-            }
-        }).start();
-
-        //initBT();
+        new Thread(() -> initBT()).start();
 
         Timer timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {public void run() {
@@ -86,7 +74,7 @@ public class OBD2Fragment extends Fragment {
     private void initBT() {
         //Gets list of paired devices
         if (BluetoothAdapter.getDefaultAdapter() == null) {
-            Tools.msg(getContext(), "Couldn't find Bluetooth");
+            Tools.msg(getContext(), "No Bluetooth device detected");
             return;
         }
 
@@ -106,14 +94,6 @@ public class OBD2Fragment extends Fragment {
                 return;
             }
         }
-        //If no applicable devices have been found, open list of paired devices
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                selectBT(paired);
-//            }
-//        });
-
         selectBT(paired);
     }
 

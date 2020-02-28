@@ -1,11 +1,7 @@
 package com.vincentz.driver;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,44 +73,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map.setBuildingsEnabled(true);
         map.setTrafficEnabled(true);
 
-        if (Objects.requireNonNull(getActivity()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            Tools.checkPermissions(getActivity());
-            return;
-        }
-
         UiSettings mUiSettings = map.getUiSettings();
         mUiSettings.setZoomControlsEnabled(true);
         mUiSettings.setCompassEnabled(false);
         mUiSettings.setMyLocationButtonEnabled(true);
         map.setMyLocationEnabled(true);
 
-        //Checks if GPS is on, sets a Listener and if there is a last position move camera
-        LocationManager lm = (LocationManager) getActivity()
-                .getSystemService(Context.LOCATION_SERVICE);
-        if (lm != null) {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    2000, 5, GPSlistener);
-            Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastLocation != null) {
-                lastPos = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPos, 15));
-            } else Tools.msg(getContext(), "No Last Known Location");
-        }
+        if (Tools.lastLocation != null) {
+            lastPos = new LatLng(Tools.lastLocation.getLatitude(), Tools.lastLocation.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPos, 15));
+        } else Tools.msg(getContext(), "No Last Known Location");
 
-        new Timer("Timer").scheduleAtFixedRate(new TimerTask() {
+        new Timer("UpdateCamera").scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run() {updateCamera();}}, 1000, 1000);
+            public void run() {
+                updateCamera();
+            }
+        }, 1000, 1000);
     }
 
 
     private void updateCamera() {
         // 10 kmt (18 - 3 /6 = 16.5
         // 110 kmt (18 - 30 /6 = 12
-        if (pos == null) return;
+        if (Tools.location == null) return;
 
+        lastPos = pos;
         if (lastPos == null) camPos = pos;
         else {
             camPos = new LatLng(
@@ -122,7 +106,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     (pos.longitude + (pos.longitude - lastPos.longitude) * speed));
         }
 
+
+        pos = new LatLng(Tools.location.getLatitude(), Tools.location.getLongitude());
+        speed = Tools.location.getSpeed();
+        bearing = Tools.location.getBearing();
+        //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
+
         getActivity().runOnUiThread(() -> {
+            txt_Speed.setText(getString(R.string.mapspeed, (int) (speed * 3.6)));
+            txt_Bearing1.setText(getDirection(bearing));
+            txt_Bearing2.setText(getString(R.string.bearing, (int) bearing));
+            img_compass.setRotation(bearing);
+
+            ((TextView) getView().findViewById(R.id.txt_zoom)).setText("zoom : " + zoom);
+            
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(camPos)
                     .zoom(zoom - speed / 20)

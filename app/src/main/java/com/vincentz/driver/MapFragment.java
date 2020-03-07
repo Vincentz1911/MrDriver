@@ -1,7 +1,5 @@
 package com.vincentz.driver;
 
-import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -29,13 +28,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap map;
     private LatLng pos, lastPos, camPos;
-    private float bearing = 0;
+    private float speed = 0, bearing = 0;
     private int zoom = 18;
     private TextView txt_Speed, txt_Bearing1, txt_Bearing2;
     private ImageView img_compass;
     private SeekBar slider_zoom;
-    private float speed;
 
+    void msg(final String text) { getActivity().runOnUiThread(() ->
+            Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show());
+    }
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_map, vg, false);
@@ -44,7 +45,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 findFragmentById(R.id.map))).getMapAsync(this);
 
         initUI(view);
-        new Thread(this::updateCamera);
         return view;
     }
 
@@ -76,41 +76,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         UiSettings mUiSettings = map.getUiSettings();
         mUiSettings.setZoomControlsEnabled(true);
         mUiSettings.setCompassEnabled(false);
+
+        //new Thread(this::updateCamera);
         mUiSettings.setMyLocationButtonEnabled(true);
         map.setMyLocationEnabled(true);
 
-        if (Tools.lastLocation != null) {
-            lastPos = new LatLng(Tools.lastLocation.getLatitude(), Tools.lastLocation.getLongitude());
+        if (MainActivity.lastLocation != null) {
+            lastPos = new LatLng(
+                    MainActivity.lastLocation.getLatitude(),
+                    MainActivity.lastLocation.getLongitude());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPos, 15));
-        } else Tools.msg(getContext(), "No Last Known Location");
+        } else msg("No Last Known Location");
 
         new Timer("UpdateCamera").scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run() {
-                updateCamera();
-            }
-        }, 1000, 1000);
+            public void run() { updateCamera(); }}, 1000, 1000);
     }
-
 
     private void updateCamera() {
         // 10 kmt (18 - 3 /6 = 16.5
         // 110 kmt (18 - 30 /6 = 12
-        if (Tools.location == null) return;
+        if (MainActivity.location == null) return;
 
         lastPos = pos;
+        pos = new LatLng(MainActivity.location.getLatitude(), MainActivity.location.getLongitude());
+        speed = MainActivity.location.getSpeed();
+        bearing = MainActivity.location.getBearing();
+        //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
+
         if (lastPos == null) camPos = pos;
-        else {
-            camPos = new LatLng(
+        else { camPos = new LatLng(
                     (pos.latitude + (pos.latitude - lastPos.latitude) * speed),
                     (pos.longitude + (pos.longitude - lastPos.longitude) * speed));
         }
-
-
-        pos = new LatLng(Tools.location.getLatitude(), Tools.location.getLongitude());
-        speed = Tools.location.getSpeed();
-        bearing = Tools.location.getBearing();
-        //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
 
         getActivity().runOnUiThread(() -> {
             txt_Speed.setText(getString(R.string.mapspeed, (int) (speed * 3.6)));
@@ -118,11 +116,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             txt_Bearing2.setText(getString(R.string.bearing, (int) bearing));
             img_compass.setRotation(bearing);
 
-            ((TextView) getView().findViewById(R.id.txt_zoom)).setText("zoom : " + zoom);
-            
+            float speedzoom = zoom - speed / 20;
+
+            ((TextView) getView().findViewById(R.id.txt_zoom)).setText("zoom : " + zoom + "/" + speedzoom);
+
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(camPos)
-                    .zoom(zoom - speed / 20)
+                    .zoom(speedzoom)
                     .bearing(bearing)
                     .tilt(45)
                     .build();
@@ -130,37 +130,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    private LocationListener GPSlistener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            if (location == null) return;
-            lastPos = pos;
-
-            speed = location.getSpeed();
-            pos = new LatLng(location.getLatitude(), location.getLongitude());
-            bearing = location.getBearing();
-            //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
-
-            txt_Speed.setText(getString(R.string.mapspeed, (int) (speed * 3.6)));
-            txt_Bearing1.setText(getDirection(bearing));
-            txt_Bearing2.setText(getString(R.string.bearing, (int) bearing));
-            img_compass.setRotation(bearing);
-
-            ((TextView) getView().findViewById(R.id.txt_zoom)).setText("zoom : " + zoom);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-    };
+//    private LocationListener GPSlistener = new LocationListener() {
+//        @Override
+//        public void onLocationChanged(Location location) {
+//            if (location == null) return;
+//            lastPos = pos;
+//
+//            speed = location.getSpeed();
+//            pos = new LatLng(location.getLatitude(), location.getLongitude());
+//            bearing = location.getBearing();
+//            //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
+//
+//            txt_Speed.setText(getString(R.string.mapspeed, (int) (speed * 3.6)));
+//            txt_Bearing1.setText(getDirection(bearing));
+//            txt_Bearing2.setText(getString(R.string.bearing, (int) bearing));
+//            img_compass.setRotation(bearing);
+//
+//            ((TextView) getView().findViewById(R.id.txt_zoom)).setText("zoom : " + zoom);
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//        }
+//    };
 
     private String getDirection(float b) {
         b -= 22.5;

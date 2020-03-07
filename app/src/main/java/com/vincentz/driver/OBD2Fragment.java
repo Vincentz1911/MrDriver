@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,9 @@ public class OBD2Fragment extends Fragment {
     private BluetoothSocket socket = null;
     private boolean isOn;
 
+    void msg(final String text) { getActivity().runOnUiThread(() ->
+            Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show());
+    }
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_obd2, vg, false);
@@ -74,20 +78,20 @@ public class OBD2Fragment extends Fragment {
     private void initBT() {
         //Gets list of paired devices
         if (BluetoothAdapter.getDefaultAdapter() == null) {
-            Tools.msg(getContext(), "No Bluetooth device detected");
+            msg("No Bluetooth device detected");
             return;
         }
 
         final ArrayList<BluetoothDevice> paired =
                 new ArrayList<>(BluetoothAdapter.getDefaultAdapter().getBondedDevices());
         if (paired.size() == 0) {
-            Tools.msg(getContext(), "No paired devices found");
+            msg("No paired devices found");
             return;
         }
         //Checks if device is named OBDII and connects
         for (BluetoothDevice device : paired) {
             if (device.getName().toUpperCase().equals("OBDII")) {
-                Tools.msg(getContext(), "Bluetooth OBDII device found: " + device.getName());
+                msg("Bluetooth OBDII device found: " + device.getName());
                 getActivity().getPreferences(Context.MODE_PRIVATE).edit()
                         .putString("btaddress", device.getAddress()).apply();
                 connectBT(device.getAddress());
@@ -131,7 +135,7 @@ public class OBD2Fragment extends Fragment {
             socket.connect();
             //getODBdata(socket);
         } catch (IOException e) {
-            Tools.msg(getActivity(), "Couldn't connect to ELM327 Bluetooth ODBII adapter");
+            msg("Couldn't connect to ELM327 Bluetooth ODBII adapter");
             e.printStackTrace();
         }
 
@@ -142,8 +146,8 @@ public class OBD2Fragment extends Fragment {
 
     private void updateView() {
 
-        ((TextView) getView().findViewById(R.id.txt_time))
-                .setText(getString(R.string.time, Tools.dateFormat.format(new Date())));
+//        ((TextView) getView().findViewById(R.id.txt_time))
+//                .setText(getString(R.string.time, Tools.dateFormat.format(new Date())));
         ((TextView) getView().findViewById(R.id.txt_speed))
                 .setText(getString(R.string.speed, speed));
         ((TextView) getView().findViewById(R.id.txt_rpm))

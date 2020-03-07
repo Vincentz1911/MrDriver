@@ -9,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 
@@ -29,9 +31,6 @@ import com.spotify.protocol.types.PlayerContext;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class SpotifyFragment extends Fragment {
 
     private static final String CLIENT_ID = "4f791920ae734cd5b5bc91257acc3993";
@@ -42,28 +41,33 @@ public class SpotifyFragment extends Fragment {
     String TAG = "Spotify";
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    TrackProgressBar mTrackProgressBar;
-    ImageView mCoverArtImageView;
+    private TrackProgressBar mTrackProgressBar;
+    private ImageView mCoverArtImageView;
     Subscription<PlayerState> mPlayerStateSubscription;
     Subscription<PlayerContext> mPlayerContextSubscription;
 
-    AppCompatTextView txt_artist, txt_song, txt_album;
-    private SeekBar mSeekBar;
+    private AppCompatTextView txt_artist, txt_song, txt_album;
     private AppCompatImageButton mPlayPauseButton, mSkipNextButton, mSkipPrevButton;
-
-    public SpotifyFragment() {
-        // Required empty public constructor
-    }
-
+    private AppCompatImageView mPlayPauseButtonSmall;
+    private LinearLayout lay_controls;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
-        View view = li.inflate(R.layout.fragment_spotify, vg, false);
+        View root = li.inflate(R.layout.fragment_spotify, vg, false);
+        initUI(root);
+        initOnClick(root);
 
-        initUI(view);
-        initOnClick(view);
         //SubscribedToPlayerState();
         // Inflate the layout for this fragment
+
+        root.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
+            final View[] viewsToHide = {txt_artist, txt_album, lay_controls};
+            if (MainActivity.centerLayout.getHeight() > view.getHeight()) {
+                for (View v : viewsToHide) v.setVisibility(View.INVISIBLE);
+            } else for (View v : viewsToHide) v.setVisibility(View.VISIBLE);
+
+            Log.d(TAG, "onLayoutChange: ");
+        });
 
         ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI).showAuthView(true).build();
@@ -71,24 +75,30 @@ public class SpotifyFragment extends Fragment {
         SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
-                Log.d("MainActivity", "Connected! Yay!");
-                Tools.msg(getContext(), "CONNECTED!");
+                Tools.msg(getActivity(), "Connected to Spotify");
                 connected();
             }
 
             public void onFailure(Throwable throwable) {
                 Log.e("MyActivity", throwable.getMessage(), throwable);
-                Tools.msg(getContext(), "DIDNT CONNECT");
+                Tools.msg(getActivity(), "DIDNT CONNECT");
                 // Something went wrong when attempting to connect! Handle errors here
             }
         });
 
 
-        return view;
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private void initUI(View view) {
         mPlayPauseButton = view.findViewById(R.id.play_pause_button);
+        mPlayPauseButtonSmall = view.findViewById(R.id.play_pause_button_small);
         mSkipPrevButton = view.findViewById(R.id.skip_prev_button);
         mSkipNextButton = view.findViewById(R.id.skip_next_button);
 
@@ -96,42 +106,21 @@ public class SpotifyFragment extends Fragment {
         txt_album = view.findViewById(R.id.txt_album);
         txt_song = view.findViewById(R.id.txt_song);
         txt_artist = view.findViewById(R.id.txt_artist);
-
-        mSeekBar = view.findViewById(R.id.seek_to);
+        lay_controls = view.findViewById(R.id.lay_controls);
+        SeekBar mSeekBar = view.findViewById(R.id.seek_to);
         mSeekBar.setEnabled(false);
         mSeekBar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         mSeekBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         mTrackProgressBar = new TrackProgressBar(mSeekBar);
+
+
     }
 
     void initOnClick(View view) {
 
-        (view.findViewById(R.id.play_pause_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
-                    if (playerState.isPaused) {
-                        mSpotifyAppRemote.getPlayerApi().resume().setResultCallback(empty ->
-                                logMessage(getString(R.string.command_feedback, "play")))
-                                .setErrorCallback(mErrorCallback);
+        mPlayPauseButton.setOnClickListener(v -> playPause());
+        mPlayPauseButtonSmall.setOnClickListener(v -> playPause());
 
-//                        // Get image from track
-//                        mSpotifyAppRemote
-//                                .getImagesApi()
-//                                .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
-//                                .setResultCallback(
-//                                        bitmap -> {
-//                                            mCoverArtImageView.setImageBitmap(bitmap);
-//
-//                                        });
-                    } else {
-                        mSpotifyAppRemote.getPlayerApi().pause().setResultCallback(empty ->
-                                logMessage(getString(R.string.command_feedback, "pause")))
-                                .setErrorCallback(mErrorCallback);
-                    }
-                });
-            }
-        });
     }
 
 
@@ -219,6 +208,30 @@ public class SpotifyFragment extends Fragment {
 //        }
 //    }
 
+    void playPause(){
+        mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+            if (playerState.isPaused) {
+                mSpotifyAppRemote.getPlayerApi().resume().setResultCallback(empty ->
+                        logMessage(getString(R.string.command_feedback, "play")))
+                        .setErrorCallback(mErrorCallback);
+
+//                        // Get image from track
+//                        mSpotifyAppRemote
+//                                .getImagesApi()
+//                                .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
+//                                .setResultCallback(
+//                                        bitmap -> {
+//                                            mCoverArtImageView.setImageBitmap(bitmap);
+//
+//                                        });
+            } else {
+                mSpotifyAppRemote.getPlayerApi().pause().setResultCallback(empty ->
+                        logMessage(getString(R.string.command_feedback, "pause")))
+                        .setErrorCallback(mErrorCallback);
+            }
+        });
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -265,8 +278,12 @@ public class SpotifyFragment extends Fragment {
                         // Invalidate play / pause
                         if (playerState.isPaused) {
                             mPlayPauseButton.setImageResource(R.drawable.ic_play_48dp);
+                            mPlayPauseButtonSmall.setImageResource(R.drawable.ic_play_stroke_128dp);
+
                         } else {
                             mPlayPauseButton.setImageResource(R.drawable.ic_pause_48dp);
+                            mPlayPauseButtonSmall.setImageResource(R.drawable.ic_pause_stroke_128dp);
+
                         }
 
 

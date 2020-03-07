@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,8 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,7 +37,15 @@ import static androidx.loader.app.LoaderManager.getInstance;
 
 public class InfoFragment extends Fragment {
 
-    JSONArray jsonWeather;
+    JSONObject jsonWeather;
+    SimpleDateFormat dateFormat = new SimpleDateFormat(
+            "EEEE dd/M-yy - w", Locale.getDefault());
+    SimpleDateFormat timeFormat = new SimpleDateFormat(
+            "HH:mm:ss", Locale.getDefault());
+
+    void msg(final String text) { getActivity().runOnUiThread(() ->
+            Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show());
+    }
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -53,8 +64,8 @@ public class InfoFragment extends Fragment {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 getActivity().runOnUiThread(() -> {
-                            time.setText(Tools.timeFormat.format(new Date()));
-                            date.setText(Tools.dateFormat.format(new Date()));
+                            time.setText(timeFormat.format(new Date()));
+                            date.setText(dateFormat.format(new Date()));
                             weather.setText("Response: " + jsonWeather);
                         }
                 );
@@ -62,12 +73,10 @@ public class InfoFragment extends Fragment {
         }, 1000, 1000);
 
         Timer weatherTimer = new Timer("WeatherTimer");
-//        TimerTask tt = new TimerTask() {
-//            @Override
-//            public void run() {updateWeather();}};
         weatherTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {updateWeather();}}, 1000, 1000);
+
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
         (view.findViewById(R.id.btn_left_top)).setOnClickListener(v ->
@@ -117,16 +126,16 @@ public class InfoFragment extends Fragment {
     }
 
     private void updateWeather() {
-        if (Tools.location == null) return;
+        if (MainActivity.location == null) return;
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "api.openweathermap.org/data/2.5/weather?lat=" + Tools.location.getLatitude()
-                + "&lon=" + Tools.location.getLongitude() + "&appid=366be396325d10cf0b15b97a1e8dde63";
+        String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + MainActivity.location.getLatitude()
+                + "&lon=" + MainActivity.location.getLongitude() + "&appid=366be396325d10cf0b15b97a1e8dde63";
         //http://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=b6907d289e10d714a6e88b30761fae22
 
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,
                 null, response -> jsonWeather = response,
-                error -> Tools.msg(getContext(), "Error in JSON Response"));
+                error -> msg("Error in JSON Response"));
         queue.add(jsonObjectRequest);
     }
 }

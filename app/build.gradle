@@ -3,11 +3,13 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            storeFile file('F:\\keystore\\keystore_release.jks')
+            storeFile file('D:\\Dev\\release_keystore.jks')
             storePassword 'Pegasus76!'
-            keyAlias = 'driverkey'
+            keyAlias = 'driverreleasekey'
             keyPassword 'Pegasus76!'
         }
+
+        //Your configuration here
     }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -19,12 +21,14 @@ android {
         versionName "2.0"
         archivesBaseName = "$applicationId-v$versionCode($versionName)"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -40,6 +44,7 @@ dependencies {
     implementation project(':spotify-app-remote-release-0.7.0')
     implementation "com.google.code.gson:gson:2.8.6"
     implementation 'com.android.volley:volley:1.1.1'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+   implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'org.jetbrains:annotations:15.0'
 
 }

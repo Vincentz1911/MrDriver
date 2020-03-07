@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="bg_launcher_background">#DDDDDD</color>
     <color name="faded">#99000000</color>
+    <color name="ic_launcher_background">#EEEEEE</color>
 </resources>

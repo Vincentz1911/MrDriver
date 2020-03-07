@@ -8,86 +8,102 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_corners"
-        android:padding="10dp"
-        android:text="@string/artist"
-        android:textSize="20sp" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/play_pause_button_small"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="30dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_artist"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_corners"
-        android:padding="10dp"
-        android:text="@string/album"
-        android:textSize="20sp" />
 
+        android:src="@drawable/ic_play_stroke_128dp" />
 
     <LinearLayout
-        android:id="@+id/lay_controls"
+        android:id="@+id/lay_big"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:gravity="center">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/skip_prev_button"
-            android:layout_width="0dp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_song"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
             android:background="@drawable/rounded_corners"
-            android:src="@drawable/ic_skip_previous_48dp" />
+            android:paddingStart="6dp"
+            android:paddingBottom="3dp"
+            android:paddingEnd="6dp"
+            android:gravity="center"
+            android:text="@string/song"
+            android:textSize="20sp" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/play_pause_button"
-            android:layout_width="0dp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_artist"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="2"
             android:background="@drawable/rounded_corners"
+            android:padding="5dp"
+            android:text="@string/artist"
+            android:textSize="20sp" />
 
-            android:src="@drawable/ic_play_48dp" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/skip_next_button"
-            android:layout_width="0dp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_album"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
             android:background="@drawable/rounded_corners"
-            android:src="@drawable/ic_skip_next_48dp" />
+            android:padding="5dp"
+            android:text="@string/album"
+            android:textSize="20sp" />
+
+
+
+        <LinearLayout
+            android:id="@+id/lay_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/skip_prev_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corners"
+                android:src="@drawable/ic_skip_previous_48dp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/play_pause_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="2"
+                android:background="@drawable/rounded_corners"
+                android:src="@drawable/ic_play_48dp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/skip_next_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corners"
+                android:src="@drawable/ic_skip_next_48dp" />
+        </LinearLayout>
+
     </LinearLayout>
-
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/seek_to"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/lay_controls"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:background="@drawable/rounded_corners"
         android:padding="5dp"
         android:progressTint="@android:color/white"
-        android:thumbTint="@android:color/white" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_song"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/seek_to"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_corners"
-        android:padding="10dp"
-        android:text="@string/song"
-        android:textSize="20sp" />
-
+        android:thumbTint="@android:color/white"
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

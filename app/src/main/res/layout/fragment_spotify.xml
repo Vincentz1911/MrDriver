@@ -15,11 +15,8 @@
         android:id="@+id/play_pause_button_small"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:layout_margin="10dp"
         android:background="@android:color/transparent"
-        android:scaleType="fitXY"
-
-
         android:src="@drawable/ic_play_stroke_128dp" />
 
     <LinearLayout

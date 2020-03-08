@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 
@@ -49,6 +50,7 @@ public class SpotifyFragment extends Fragment {
     private AppCompatTextView txt_artist, txt_song, txt_album;
     private AppCompatImageButton mPlayPauseButton, mSkipNextButton, mSkipPrevButton;
     private AppCompatImageView mPlayPauseButtonSmall;
+    private AppCompatSeekBar mSeekBar;
     private LinearLayout lay_controls;
 
     @Override
@@ -69,6 +71,16 @@ public class SpotifyFragment extends Fragment {
             Log.d(TAG, "onLayoutChange: ");
         });
 
+
+
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI).showAuthView(true).build();
 
@@ -85,15 +97,6 @@ public class SpotifyFragment extends Fragment {
                 // Something went wrong when attempting to connect! Handle errors here
             }
         });
-
-
-        return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
     }
 
     private void initUI(View view) {
@@ -107,10 +110,10 @@ public class SpotifyFragment extends Fragment {
         txt_song = view.findViewById(R.id.txt_song);
         txt_artist = view.findViewById(R.id.txt_artist);
         lay_controls = view.findViewById(R.id.lay_controls);
-        SeekBar mSeekBar = view.findViewById(R.id.seek_to);
+        mSeekBar = view.findViewById(R.id.seek_to);
         mSeekBar.setEnabled(false);
-        mSeekBar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        mSeekBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+//        mSeekBar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+//        mSeekBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         mTrackProgressBar = new TrackProgressBar(mSeekBar);
 
 
@@ -120,134 +123,45 @@ public class SpotifyFragment extends Fragment {
 
         mPlayPauseButton.setOnClickListener(v -> playPause());
         mPlayPauseButtonSmall.setOnClickListener(v -> playPause());
+        mPlayPauseButtonSmall.setOnLongClickListener(v -> {
+            onSkipNextButtonClicked(view);
+            return true;
+        });
+
+
+        mSkipNextButton.setOnClickListener(v -> onSkipNextButtonClicked(view));
 
     }
 
 
-//    public void SubscribedToPlayerState() {
-//
-//        if (mPlayerStateSubscription != null && !mPlayerStateSubscription.isCanceled()) {
-//            mPlayerStateSubscription.cancel();
-//            mPlayerStateSubscription = null;
-//        }
-//
-//        //mPlayerStateButton.setVisibility(View.VISIBLE);
-//        //mSubscribeToPlayerStateButton.setVisibility(View.INVISIBLE);
-//
-//        mPlayerStateSubscription = (Subscription<PlayerState>) mSpotifyAppRemote
-//                .getPlayerApi()
-//                .subscribeToPlayerState()
-//                .setEventCallback(mPlayerStateEventCallback)
-//                .setLifecycleCallback(
-//                        new Subscription.LifecycleCallback() {
-//                            @Override
-//                            public void onStart() {
-//                                logMessage("Event: start");
-//                            }
-//
-//                            @Override
-//                            public void onStop() {
-//                                logMessage("Event: end");
-//                            }
-//                        })
-//                .setErrorCallback(
-//                        throwable -> {
-////                            mPlayerStateButton.setVisibility(View.INVISIBLE);
-////                            mSubscribeToPlayerStateButton.setVisibility(View.VISIBLE);
-//                            logError(throwable);
-//                        });
-//    }
-//
-//    private final Subscription.EventCallback<PlayerState> mPlayerStateEventCallback =
-//            new Subscription.EventCallback<PlayerState>() {
-//                @Override
-//                public void onEvent(PlayerState playerState) {
-//
-//                    // Get image from track
-//                    mSpotifyAppRemote.getImagesApi()
-//                            .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
-//                            .setResultCallback(bitmap -> {
-//                                mCoverArtImageView.setImageBitmap(bitmap);
-//                            });
-//                }
-//            };
+    public void onSkipNextButtonClicked(View view) {
+        mSpotifyAppRemote
+                .getPlayerApi()
+                .skipNext()
+                .setResultCallback(data -> logMessage(getString(R.string.command_feedback, "skip next")))
+                .setErrorCallback(mErrorCallback);
+    }
 
-//    public void onGetFitnessRecommendedContentItemsClicked(View view) {
-//        mSpotifyAppRemote
-//                .getContentApi()
-//                .getRecommendedContentItems(ContentApi.ContentType.FITNESS)
-//                .setResultCallback(
-//                        listItems -> {
-//                            final CountDownLatch latch = new CountDownLatch(listItems.items.length);
-//                            final List<ListItem> combined = new ArrayList<>(50);
-//                            for (int j = 0; j < listItems.items.length; j++) {
-//                                if (listItems.items[j].playable) {
-//                                    combined.add(listItems.items[j]);
-//                                    handleLatch(latch, combined);
-//                                } else {
-//                                    mSpotifyAppRemote
-//                                            .getContentApi()
-//                                            .getChildrenOfItem(listItems.items[j], 3, 0)
-//                                            .setResultCallback(
-//                                                    childListItems -> {
-//                                                        combined.addAll(Arrays.asList(childListItems.items));
-//                                                        handleLatch(latch, combined);
-//                                                    })
-//                                            .setErrorCallback(mErrorCallback);
-//                                }
-//                            }
-//                        })
-//                .setErrorCallback(mErrorCallback);
-//    }
+    public void onSkipPreviousButtonClicked(View view) {
+        mSpotifyAppRemote
+                .getPlayerApi()
+                .skipPrevious()
+                .setResultCallback(
+                        empty -> logMessage(getString(R.string.command_feedback, "skip previous")))
+                .setErrorCallback(mErrorCallback);
+    }
 
-//    private void handleLatch(CountDownLatch latch, List<ListItem> combined) {
-//        latch.countDown();
-//        if (latch.getCount() == 0) {
-//            showDialog(getString("R.string.command_response", getString(R.string.browse_content)),
-//                    gson.toJson(combined));
-//        }
-//    }
-
-    void playPause(){
+    void playPause() {
         mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
             if (playerState.isPaused) {
                 mSpotifyAppRemote.getPlayerApi().resume().setResultCallback(empty ->
                         logMessage(getString(R.string.command_feedback, "play")))
                         .setErrorCallback(mErrorCallback);
 
-//                        // Get image from track
-//                        mSpotifyAppRemote
-//                                .getImagesApi()
-//                                .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
-//                                .setResultCallback(
-//                                        bitmap -> {
-//                                            mCoverArtImageView.setImageBitmap(bitmap);
-//
-//                                        });
             } else {
                 mSpotifyAppRemote.getPlayerApi().pause().setResultCallback(empty ->
                         logMessage(getString(R.string.command_feedback, "pause")))
                         .setErrorCallback(mErrorCallback);
-            }
-        });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI).showAuthView(true).build();
-
-        SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
-            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                mSpotifyAppRemote = spotifyAppRemote;
-                Log.d("MainActivity", "Connected! Yay!");
-                connected();
-            }
-
-            public void onFailure(Throwable throwable) {
-                Log.e("MyActivity", throwable.getMessage(), throwable);
-                // Something went wrong when attempting to connect! Handle errors here
             }
         });
     }
@@ -283,9 +197,7 @@ public class SpotifyFragment extends Fragment {
                         } else {
                             mPlayPauseButton.setImageResource(R.drawable.ic_pause_48dp);
                             mPlayPauseButtonSmall.setImageResource(R.drawable.ic_pause_stroke_128dp);
-
                         }
-
 
                         // Get image from track
                         mSpotifyAppRemote.getImagesApi()
@@ -297,7 +209,14 @@ public class SpotifyFragment extends Fragment {
                         txt_artist.setText(track.artist.name);
                         txt_album.setText(track.album.name);
                         txt_song.setText(track.name);// + "(" + track.duration + ")"
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
+                        Log.d(TAG, track.name + " by " + track.artist.name);
+
+                        // Invalidate seekbar length and position
+                        mSeekBar.setMax((int) playerState.track.duration);
+                        mTrackProgressBar.setDuration(playerState.track.duration);
+                        mTrackProgressBar.update(playerState.playbackPosition);
+
+                        mSeekBar.setEnabled(true);
                     }
                 });
     }

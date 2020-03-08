@@ -4,30 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/txt_time"
-            android:gravity="center"
-            android:text="HH:mm:ss"
-            android:textSize="28sp" />
-
-        <TextView
-            android:id="@+id/txt_date"
-            android:gravity="center"
-            android:text="EEEE dd/M-yy - w"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/txt_weather"
-            android:gravity="center"
-            android:text="Weather JSON"
-            android:textSize="12sp" />
-    </TableLayout>
-
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -78,4 +54,29 @@
                 android:background="@drawable/rounded_corners" />
         </TableLayout>
     </TableRow>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:gravity="center"
+            android:text="HH:mm:ss"
+            android:textSize="@dimen/large_text" />
+
+        <TextView
+            android:id="@+id/txt_date"
+            android:gravity="center"
+            android:text="EEEE dd/M-yy"
+            android:textSize="@dimen/medium_text" />
+
+        <TextView
+            android:id="@+id/txt_week"
+            android:gravity="center"
+            android:text="Week w - yyyy"
+            android:textSize="@dimen/medium_text" />
+    </TableLayout>
+
 </LinearLayout>

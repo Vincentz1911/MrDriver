@@ -27,8 +27,8 @@ public class SelectorFragment extends Fragment {
                 .replace(this.getId(), new CameraFragment(), "").commit());
         view.findViewById(R.id.btn_info).setOnClickListener(v -> fm.beginTransaction()
                 .replace(this.getId(), new InfoFragment(), "").commit());
-        view.findViewById(R.id.btn_remove).setOnClickListener(v -> fm.beginTransaction()
-                .remove(this).commit());
+        view.findViewById(R.id.btn_weather).setOnClickListener(v -> fm.beginTransaction()
+                .replace(this.getId(), new WeatherFragment(), "").commit());
 
         return view;
     }

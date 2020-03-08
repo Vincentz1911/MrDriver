@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    tools:context=".WeatherFragment">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+        <TableLayout
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_temp"
+                android:gravity="center"
+                android:text="32°"
+                android:textSize="@dimen/huge_text" />
+
+            <TextView
+                android:id="@+id/txt_feels"
+                android:gravity="center"
+                android:text="Feels 36°"
+                android:textSize="@dimen/small_text" />
+        </TableLayout>
+
+        <ImageView
+            android:id="@+id/img_weather"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:contentDescription="@string/current_weather"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_weather_200dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:drawableStart="@drawable/w_ic_windflag_48dp"
+
+            android:layout_weight="1"
+            android:text="20ms\nNE"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:drawableStart="@drawable/w_ic_humiditypressure_40dp"
+
+            android:layout_weight="1"
+            android:text="1008\n60%"
+            android:textSize="@dimen/small_text" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:drawableStart="@drawable/w_ic_tempminmax_64dp"
+            android:layout_weight="1"
+            android:text="36°\n24°"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:drawableStart="@drawable/w_ic_sunrise_dawn_40dp"
+            android:layout_weight="1"
+            android:text="07:58\n16:47"
+            android:textSize="@dimen/small_text" />
+    </TableRow>
+</LinearLayout>

@@ -9,7 +9,7 @@
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+        android:scaleType="fitStart" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/play_pause_button_small"
@@ -40,7 +40,7 @@
             android:paddingEnd="6dp"
             android:gravity="center"
             android:text="@string/song"
-            android:textSize="20sp" />
+            android:textSize="@dimen/small_text" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_artist"
@@ -49,7 +49,7 @@
             android:background="@drawable/rounded_corners"
             android:padding="5dp"
             android:text="@string/artist"
-            android:textSize="20sp" />
+            android:textSize="@dimen/small_text" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_album"
@@ -58,9 +58,7 @@
             android:background="@drawable/rounded_corners"
             android:padding="5dp"
             android:text="@string/album"
-            android:textSize="20sp" />
-
-
+            android:textSize="@dimen/small_text" />
 
         <LinearLayout
             android:id="@+id/lay_controls"

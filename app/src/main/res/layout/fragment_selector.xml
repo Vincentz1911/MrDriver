@@ -51,9 +51,9 @@
             android:src="@drawable/ic_info_200dp" />
 
         <ImageView
-            android:id="@+id/btn_remove"
+            android:id="@+id/btn_weather"
             android:layout_weight="1"
-            android:contentDescription="@string/remove"
-            android:src="@drawable/ic_delete_200dp" />
+            android:contentDescription="@string/weather"
+            android:src="@drawable/ic_weather_200dp" />
     </TableRow>
 </TableLayout>

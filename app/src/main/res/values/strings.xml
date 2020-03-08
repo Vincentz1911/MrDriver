@@ -25,9 +25,9 @@
     <string name="infoscreen">Infoscreen</string>
     <string name="remove">Remove</string>
     <string name="compass">Compass</string>
-
-
-
+    <string name="weather">Weather</string>
+    <string name="current_weather">Current Weather</string>
+    <string name="week">Week %s</string>
 
 
 </resources>

@@ -1,27 +1,19 @@
 package com.vincentz.driver;
 
-import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.Display;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -41,24 +33,11 @@ public class MainActivity extends FragmentActivity {
         centerLayout = findViewById(R.id.fl_big_center);
 
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_left_bottom, new WeatherFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_right_bottom, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_big_center, new SelectorFragment(), "").commit();
-    }
-
-    void msg(final String text) {
-        runOnUiThread(() -> Toast.makeText(this, text, Toast.LENGTH_LONG).show());
-    }
-
-    void showDialogOK(Context context, String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(context)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", okListener)
-                .create()
-                .show();
+        fm.beginTransaction().replace(R.id.fl_right_bottom, new SpotifyFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_big_center, new MapFragment(), "").commit();
     }
 
     //region PERMISSIONS
@@ -96,7 +75,7 @@ public class MainActivity extends FragmentActivity {
             if (grantResults.length > 0 && grantResults[p] == PackageManager.PERMISSION_GRANTED)
                 HAVE_PERMISSIONS[p] = true;
     }
-//endregion
+    //endregion
 
     //region LOCATION
     void getLocation() {
@@ -118,11 +97,10 @@ public class MainActivity extends FragmentActivity {
         criteria.setSpeedRequired(true);
         criteria.setBearingRequired(true);
         //criteria.setPowerRequirement(Criteria.ACCURACY_HIGH);
-        String provider = lm.getBestProvider(criteria, true);
-
+        String provider = lm.getBestProvider(criteria, false);
         lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (provider == null) return;
         lm.requestLocationUpdates(provider, 0, 0, GPSlistener);
-
     }
 
     public LocationListener GPSlistener = new LocationListener() {

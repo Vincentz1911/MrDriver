@@ -19,21 +19,21 @@
             <TextView
                 android:id="@+id/txt_temp"
                 android:gravity="center"
-                android:text="32°"
+                android:text="xx°"
                 android:textSize="@dimen/huge_text" />
 
             <TextView
                 android:id="@+id/txt_feels"
                 android:gravity="center"
-                android:text="Feels 36°"
+                android:text="Feels xx°"
                 android:textSize="@dimen/small_text" />
         </TableLayout>
 
         <ImageView
             android:id="@+id/img_weather"
             android:layout_weight="1"
-            android:padding="5dp"
             android:contentDescription="@string/current_weather"
+            android:padding="5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_weather_200dp" />
     </TableRow>
@@ -44,17 +44,17 @@
         android:layout_weight="1">
 
         <TextView
-            android:drawableStart="@drawable/w_ic_windflag_48dp"
-
+            android:id="@+id/txt_wind"
             android:layout_weight="1"
-            android:text="20ms\nNE"
+            android:drawableStart="@drawable/w_ic_windflag_48dp"
+            android:text="xxms\nxx"
             android:textSize="@dimen/small_text" />
 
         <TextView
-            android:drawableStart="@drawable/w_ic_humiditypressure_40dp"
-
+            android:id="@+id/txt_pressure_humidity"
             android:layout_weight="1"
-            android:text="1008\n60%"
+            android:drawableStart="@drawable/w_ic_humiditypressure_40dp"
+            android:text="xxxx\nxx%"
             android:textSize="@dimen/small_text" />
     </TableRow>
 
@@ -64,15 +64,17 @@
         android:layout_weight="1">
 
         <TextView
-            android:drawableStart="@drawable/w_ic_tempminmax_64dp"
+            android:id="@+id/txt_low_high_temp"
             android:layout_weight="1"
-            android:text="36°\n24°"
+            android:drawableStart="@drawable/w_ic_tempminmax_64dp"
+            android:text="xx°\nxx°"
             android:textSize="@dimen/small_text" />
 
         <TextView
-            android:drawableStart="@drawable/w_ic_sunrise_dawn_40dp"
+            android:id="@+id/txt_sunrise_sunset"
             android:layout_weight="1"
-            android:text="07:58\n16:47"
+            android:drawableStart="@drawable/w_ic_sunrise_dawn_40dp"
+            android:text="xx:xx\nxx:xx"
             android:textSize="@dimen/small_text" />
     </TableRow>
 </LinearLayout>

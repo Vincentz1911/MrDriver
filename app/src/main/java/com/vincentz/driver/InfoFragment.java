@@ -22,6 +22,7 @@ public class InfoFragment extends Fragment {
     private Activity activity;
     private FragmentManager fm;
     private ImageView centerbig;
+    Timer timer;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class InfoFragment extends Fragment {
         TextView time = root.findViewById(R.id.txt_time);
         TextView date = root.findViewById(R.id.txt_date);
         TextView week = root.findViewById(R.id.txt_week);
-        Timer timer = new Timer("Timer");
+        timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 activity.runOnUiThread(() -> {
@@ -70,6 +71,13 @@ public class InfoFragment extends Fragment {
         //endregion
 
         return root;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer.purge();
     }
 
     private boolean removeFragment(int fragment, ImageView button) {

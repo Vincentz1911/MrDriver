@@ -13,24 +13,20 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.FrameLayout;
-
-import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
     public static boolean[] HAVE_PERMISSIONS;
     static Location location, lastLocation;
-    private static int countGPS;
-    static FrameLayout centerLayout;
+    static int countGPS, centerLayoutHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        checkPermissions();
         setContentView(R.layout.activity_main);
-        centerLayout = findViewById(R.id.fl_big_center);
+        //centerLayoutHeight = findViewById(R.id.fl_big_center).getHeight();
+        checkPermissions();
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
@@ -70,7 +66,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         for (int p = 0; p < permissions.length; p++)
             if (grantResults.length > 0 && grantResults[p] == PackageManager.PERMISSION_GRANTED)
                 HAVE_PERMISSIONS[p] = true;
@@ -89,21 +86,20 @@ public class MainActivity extends FragmentActivity {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (lm == null) return;
 
-        List<String> listLM = lm.getAllProviders();
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setBearingAccuracy(Criteria.ACCURACY_HIGH);
         criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
         criteria.setSpeedRequired(true);
         criteria.setBearingRequired(true);
-        //criteria.setPowerRequirement(Criteria.ACCURACY_HIGH);
-        String provider = lm.getBestProvider(criteria, false);
-        lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        String provider = lm.getBestProvider(criteria, true);
+
         if (provider == null) return;
-        lm.requestLocationUpdates(provider, 0, 0, GPSlistener);
+        lastLocation = lm.getLastKnownLocation(provider);
+        lm.requestLocationUpdates(provider, 0, 0, LocationListener);
     }
 
-    public LocationListener GPSlistener = new LocationListener() {
+    public LocationListener LocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location onChanged) {
             location = onChanged;

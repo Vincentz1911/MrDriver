@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,9 +63,14 @@ public class SpotifyFragment extends Fragment {
         //SubscribedToPlayerState();
         // Inflate the layout for this fragment
 
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+
         root.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
             final View[] viewsToHide = {txt_artist, txt_album, lay_controls};
-            if (MainActivity.centerLayout.getHeight() > view.getHeight()) {
+            if (height/2 > view.getHeight()) {
                 for (View v : viewsToHide) v.setVisibility(View.INVISIBLE);
             } else for (View v : viewsToHide) v.setVisibility(View.VISIBLE);
 

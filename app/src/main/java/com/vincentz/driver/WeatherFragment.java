@@ -1,12 +1,9 @@
 package com.vincentz.driver;
 
-import android.icu.util.Calendar;
-import android.os.Build;
-import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,35 +18,37 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class WeatherFragment extends Fragment {
 
-    JSONObject JSONResponse, weather, main, wind, sys;
-    TextView txt_temp, txt_feels_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_set;
-    Timer weatherTimer;
+    private Activity activity;
+    private JSONObject JSONResponse, weather, main, wind, sys;
+    private TextView txt_location, txt_temp, txt_feels, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_set;
+    private Timer weatherTimer;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_weather, vg, false);
-
+        activity = getActivity();
+        //region INIT UI
+        txt_location = view.findViewById(R.id.txt_location);
         txt_temp = view.findViewById(R.id.txt_temp);
-        txt_feels_temp = view.findViewById(R.id.txt_feels);
+        txt_feels = view.findViewById(R.id.txt_feels);
         txt_wind = view.findViewById(R.id.txt_wind);
         txt_minmax = view.findViewById(R.id.txt_low_high_temp);
         txt_press_humid = view.findViewById(R.id.txt_pressure_humidity);
         txt_sunrise_set = view.findViewById(R.id.txt_sunrise_sunset);
-
+        //endregion
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 updateWeather();
             }
-        }, 2000, 10000);
-
+        }, 3000, 10000);
         return view;
     }
 
@@ -58,7 +57,6 @@ public class WeatherFragment extends Fragment {
         super.onDestroy();
         weatherTimer.cancel();
         weatherTimer.purge();
-
     }
 
     private void updateWeather() {
@@ -76,10 +74,11 @@ public class WeatherFragment extends Fragment {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET, url, null, response -> JSONResponse = response,
-                    error -> Tools.msg(getActivity(), "Error in JSON Response"));
-            Volley.newRequestQueue(getActivity()).add(jsonObjectRequest);
+                    error -> Tools.msg(activity, "Error in JSON Response"));
+            Volley.newRequestQueue(activity).add(jsonObjectRequest);
 
             //JSONArray weatherArray = (JSONResponse.getJSONArray("weather"));
+
             weather = (JSONObject) JSONResponse.getJSONArray("weather").get(0);
             main = JSONResponse.getJSONObject("main");
             wind = JSONResponse.getJSONObject("wind");
@@ -89,14 +88,12 @@ public class WeatherFragment extends Fragment {
             e.printStackTrace();
         }
 
-        if (main != null) getActivity().runOnUiThread(() -> updateUI());
-
+        if (main != null) activity.runOnUiThread(this::updateUI);
     }
 
-
     private void updateUI() {
-
         try {
+            String location = JSONResponse.getString("name").split(" ")[0];
             int temp = (int) main.getDouble("temp") - 273;
             double feelstemp = main.getDouble("feels_like") - 273.15;
             double windspeed = wind.getDouble("speed");
@@ -107,19 +104,18 @@ public class WeatherFragment extends Fragment {
             int humidity = (int) main.getDouble("humidity");
             Date sunrise = new Date(sys.getInt("sunrise") * 1000L);
             Date sunset = new Date(sys.getInt("sunset") * 1000L);
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+            txt_location.setText(location);
             txt_temp.setText(getString(R.string.temperature, temp));
-            txt_feels_temp.setText(getString(R.string.feels_temp, feelstemp));
+            txt_feels.setText(getString(R.string.feels_temp, feelstemp));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));
             txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
             txt_sunrise_set.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 }
 

@@ -1,5 +1,6 @@
 package com.vincentz.driver;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -35,12 +36,13 @@ import com.spotify.protocol.types.Track;
 
 public class SpotifyFragment extends Fragment {
 
+    private Activity activity;
     private static final String CLIENT_ID = "4f791920ae734cd5b5bc91257acc3993";
     private static final String REDIRECT_URI = "com.vincentz.driver://callback";
     private SpotifyAppRemote mSpotifyAppRemote;
 
     private final ErrorCallback mErrorCallback = this::logError;
-    String TAG = "Spotify";
+    private String TAG = "Spotify";
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private TrackProgressBar mTrackProgressBar;
@@ -57,16 +59,16 @@ public class SpotifyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View root = li.inflate(R.layout.fragment_spotify, vg, false);
+        activity = getActivity();
         initUI(root);
-        initOnClick(root);
+        initOnClick();
 
         //SubscribedToPlayerState();
         // Inflate the layout for this fragment
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
-        int width = displaymetrics.widthPixels;
 
         root.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
             final View[] viewsToHide = {txt_artist, txt_album, lay_controls};
@@ -76,9 +78,6 @@ public class SpotifyFragment extends Fragment {
 
             Log.d(TAG, "onLayoutChange: ");
         });
-
-
-
 
         return root;
     }
@@ -93,13 +92,13 @@ public class SpotifyFragment extends Fragment {
         SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
-                Tools.msg(getActivity(), "Connected to Spotify");
+                Tools.msg(activity, "Connected to Spotify");
                 connected();
             }
 
             public void onFailure(Throwable throwable) {
                 Log.e("MyActivity", throwable.getMessage(), throwable);
-                Tools.msg(getActivity(), "DIDNT CONNECT");
+                Tools.msg(activity, "DIDNT CONNECT");
                 // Something went wrong when attempting to connect! Handle errors here
             }
         });
@@ -122,25 +121,20 @@ public class SpotifyFragment extends Fragment {
 //        mSeekBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         mTrackProgressBar = new TrackProgressBar(mSeekBar);
 
-
     }
 
-    void initOnClick(View view) {
-
+    private void initOnClick() {
         mPlayPauseButton.setOnClickListener(v -> playPause());
         mPlayPauseButtonSmall.setOnClickListener(v -> playPause());
         mPlayPauseButtonSmall.setOnLongClickListener(v -> {
-            onSkipNextButtonClicked(view);
+            onSkipNextButtonClicked();
             return true;
         });
 
-
-        mSkipNextButton.setOnClickListener(v -> onSkipNextButtonClicked(view));
-
+        mSkipNextButton.setOnClickListener(v -> onSkipNextButtonClicked());
     }
 
-
-    public void onSkipNextButtonClicked(View view) {
+    private void onSkipNextButtonClicked() {
         mSpotifyAppRemote
                 .getPlayerApi()
                 .skipNext()
@@ -157,7 +151,7 @@ public class SpotifyFragment extends Fragment {
                 .setErrorCallback(mErrorCallback);
     }
 
-    void playPause() {
+    private void playPause() {
         mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
             if (playerState.isPaused) {
                 mSpotifyAppRemote.getPlayerApi().resume().setResultCallback(empty ->
@@ -243,33 +237,13 @@ public class SpotifyFragment extends Fragment {
     }
 
     private void showDialog(String title, String message) {
-        new AlertDialog.Builder(getContext()).setTitle(title).setMessage(message).create().show();
+        new AlertDialog.Builder(activity).setTitle(title).setMessage(message).create().show();
     }
 
     private class TrackProgressBar {
-
         private static final int LOOP_DURATION = 500;
         private final SeekBar mSeekBar;
         private final Handler mHandler;
-
-        private final SeekBar.OnSeekBarChangeListener mSeekBarChangeListener =
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        mSpotifyAppRemote
-                                .getPlayerApi()
-                                .seekTo(seekBar.getProgress())
-                                .setErrorCallback(mErrorCallback);
-                    }
-                };
 
         private final Runnable mSeekRunnable =
                 new Runnable() {
@@ -283,6 +257,23 @@ public class SpotifyFragment extends Fragment {
 
         private TrackProgressBar(SeekBar seekBar) {
             mSeekBar = seekBar;
+            SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    mSpotifyAppRemote
+                            .getPlayerApi()
+                            .seekTo(seekBar.getProgress())
+                            .setErrorCallback(mErrorCallback);
+                }
+            };
             mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
             mHandler = new Handler();
         }

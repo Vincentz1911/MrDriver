@@ -16,17 +16,16 @@ import android.os.Bundle;
 
 public class MainActivity extends FragmentActivity {
 
-    public static boolean[] HAVE_PERMISSIONS;
+    static boolean[] HAVE_PERMISSIONS;
     static Location location, lastLocation;
-    static int countGPS, centerLayoutHeight;
+    static int countGPS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        //centerLayoutHeight = findViewById(R.id.fl_big_center).getHeight();
         checkPermissions();
+        setContentView(R.layout.activity_main);
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();

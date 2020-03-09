@@ -3,6 +3,7 @@ package com.vincentz.driver;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -44,8 +45,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
 
         CamcorderProfile cpHigh = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
         recorder.setProfile(cpHigh);
-        recorder.setOutputFile("/sdcard/videocapture_example.mp4");
-        recorder.setMaxDuration(1000 * 60 ); // 60 seconds
+        recorder.setOutputFile(Environment.getExternalStorageDirectory().getPath()
+                + "/Videocapture.mp4");
+        recorder.setMaxDuration(1000 * 60); // 60 seconds
         recorder.setMaxFileSize(1024 * 1024 * 20); // Approximately 20 MB
     }
 
@@ -74,9 +76,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
         }
     }
 
-    public void surfaceCreated(SurfaceHolder holder) { prepareRecorder(); }
+    public void surfaceCreated(SurfaceHolder holder) {
+        prepareRecorder();
+    }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) { }
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (recording) {

@@ -38,7 +38,6 @@
                 android:layout_alignEnd="@id/img_compass"
                 android:layout_alignBottom="@id/img_compass"
                 android:gravity="center"
-                android:text="N"
                 android:textColor="@android:color/black"
                 android:textSize="40sp"
                 android:textStyle="bold" />
@@ -49,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_compass"
                 android:layout_centerHorizontal="true"
-                android:text="360°"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -67,7 +65,6 @@
             android:layout_margin="30dp"
             android:background="@drawable/speedsign"
             android:gravity="center"
-            android:text="0"
             android:textColor="@android:color/black"
             android:textSize="40sp"
             android:textStyle="bold" />

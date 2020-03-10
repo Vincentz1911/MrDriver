@@ -31,25 +31,22 @@ public class WeatherFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
-        View view = li.inflate(R.layout.fragment_weather, vg, false);
-        activity = getActivity();
         //region INIT UI
-        txt_location = view.findViewById(R.id.txt_location);
-        txt_temp = view.findViewById(R.id.txt_temp);
-        txt_feels = view.findViewById(R.id.txt_feels);
-        txt_wind = view.findViewById(R.id.txt_wind);
-        txt_minmax = view.findViewById(R.id.txt_low_high_temp);
-        txt_press_humid = view.findViewById(R.id.txt_pressure_humidity);
-        txt_sunrise_set = view.findViewById(R.id.txt_sunrise_sunset);
+        View root = li.inflate(R.layout.fragment_weather, vg, false);
+        txt_location = root.findViewById(R.id.txt_location);
+        txt_temp = root.findViewById(R.id.txt_temp);
+        txt_feels = root.findViewById(R.id.txt_feels);
+        txt_wind = root.findViewById(R.id.txt_wind);
+        txt_minmax = root.findViewById(R.id.txt_low_high_temp);
+        txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
+        txt_sunrise_set = root.findViewById(R.id.txt_sunrise_sunset);
         //endregion
+        activity = getActivity();
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run() {
-                updateWeather();
-            }
-        }, 3000, 10000);
-        return view;
+            public void run() { updateWeather(); }}, 1000, 2000);
+        return root;
     }
 
     @Override
@@ -61,12 +58,12 @@ public class WeatherFragment extends Fragment {
 
     private void updateWeather() {
         double lat, lon;
-        if (MainActivity.location != null) {
-            lat = MainActivity.location.getLatitude();
-            lon = MainActivity.location.getLongitude();
-        } else if (MainActivity.lastLocation != null) {
-            lat = MainActivity.lastLocation.getLatitude();
-            lon = MainActivity.lastLocation.getLongitude();
+        if (MainActivity.LOCATION != null) {
+            lat = MainActivity.LOCATION.getLatitude();
+            lon = MainActivity.LOCATION.getLongitude();
+        } else if (MainActivity.LASTLOCATION != null) {
+            lat = MainActivity.LASTLOCATION.getLatitude();
+            lon = MainActivity.LASTLOCATION.getLongitude();
         } else return;
 
         String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon
@@ -78,16 +75,13 @@ public class WeatherFragment extends Fragment {
             Volley.newRequestQueue(activity).add(jsonObjectRequest);
 
             //JSONArray weatherArray = (JSONResponse.getJSONArray("weather"));
-
             weather = (JSONObject) JSONResponse.getJSONArray("weather").get(0);
             main = JSONResponse.getJSONObject("main");
             wind = JSONResponse.getJSONObject("wind");
             sys = JSONResponse.getJSONObject("sys");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         if (main != null) activity.runOnUiThread(this::updateUI);
     }
 

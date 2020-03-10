@@ -22,7 +22,7 @@ public class InfoFragment extends Fragment {
     private Activity activity;
     private FragmentManager fm;
     private ImageView centerbig;
-    Timer timer;
+    private Timer timer;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {

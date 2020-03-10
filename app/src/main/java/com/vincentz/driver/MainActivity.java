@@ -16,18 +16,37 @@ import android.os.Bundle;
 
 public class MainActivity extends FragmentActivity {
 
-    static boolean[] HAVE_PERMISSIONS;
-    static Location location, lastLocation;
-    static int countGPS;
+    static boolean[] PERMISSIONS;
+    static Location LOCATION, LASTLOCATION;
+    FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        checkPermissions();
         setContentView(R.layout.activity_main);
+        checkPermissions();
+        fm = getSupportFragmentManager();
 
-        FragmentManager fm = getSupportFragmentManager();
+        boolean alreadyRun = false;
+        alreadyRun = getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", alreadyRun);
+        if (!alreadyRun) getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
+        else setupView();
+    }
+
+    void firstRun() {
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        getPreferences(Context.MODE_PRIVATE).edit().putBoolean("HaveRun", true).apply();
+        fm.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_right_bottom, new SelectorFragment(), "").commit();
+        fm.beginTransaction().replace(R.id.fl_big_center, new SelectorFragment(), "").commit();
+    }
+
+    private void setupView() {
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
         fm.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_left_bottom, new WeatherFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
@@ -37,7 +56,7 @@ public class MainActivity extends FragmentActivity {
 
     //region PERMISSIONS
     void checkPermissions() {
-        String[] PERMISSIONS = {
+        String[] REQUEST_PERMISSIONS = {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.INTERNET,
@@ -47,10 +66,9 @@ public class MainActivity extends FragmentActivity {
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
         };
-        HAVE_PERMISSIONS = new boolean[PERMISSIONS.length];
-        if (!hasPermissions(PERMISSIONS))
-            ActivityCompat.requestPermissions(this, PERMISSIONS, 100);
-        if (HAVE_PERMISSIONS[0] || HAVE_PERMISSIONS[1]) getLocation();
+        PERMISSIONS = new boolean[REQUEST_PERMISSIONS.length];
+        if (!hasPermissions(REQUEST_PERMISSIONS))
+            ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, 100);
     }
 
     private boolean hasPermissions(String... permissions) {
@@ -58,7 +76,7 @@ public class MainActivity extends FragmentActivity {
             for (int p = 0; p < permissions.length; p++) {
                 if (ActivityCompat.checkSelfPermission(this, permissions[p])
                         != PackageManager.PERMISSION_GRANTED) return false;
-                else HAVE_PERMISSIONS[p] = true;
+                else PERMISSIONS[p] = true;
             }
         }
         return true;
@@ -69,7 +87,7 @@ public class MainActivity extends FragmentActivity {
             int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         for (int p = 0; p < permissions.length; p++)
             if (grantResults.length > 0 && grantResults[p] == PackageManager.PERMISSION_GRANTED)
-                HAVE_PERMISSIONS[p] = true;
+                PERMISSIONS[p] = true;
     }
     //endregion
 
@@ -94,15 +112,14 @@ public class MainActivity extends FragmentActivity {
         String provider = lm.getBestProvider(criteria, true);
 
         if (provider == null) return;
-        lastLocation = lm.getLastKnownLocation(provider);
-        lm.requestLocationUpdates(provider, 0, 0, LocationListener);
+        LASTLOCATION = lm.getLastKnownLocation(provider);
+        lm.requestLocationUpdates(provider, 1000, 3, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location onChanged) {
-            location = onChanged;
-            countGPS++;
+            LOCATION = onChanged;
         }
 
         @Override

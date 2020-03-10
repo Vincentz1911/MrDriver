@@ -110,6 +110,8 @@ public class SpotifyFragment extends Fragment {
         mSkipPrevButton = view.findViewById(R.id.skip_prev_button);
         mSkipNextButton = view.findViewById(R.id.skip_next_button);
 
+
+
         mCoverArtImageView = view.findViewById(R.id.image);
         txt_album = view.findViewById(R.id.txt_album);
         txt_song = view.findViewById(R.id.txt_song);
@@ -193,10 +195,14 @@ public class SpotifyFragment extends Fragment {
                         if (playerState.isPaused) {
                             mPlayPauseButton.setImageResource(R.drawable.ic_play_48dp);
                             mPlayPauseButtonSmall.setImageResource(R.drawable.ic_play_stroke_128dp);
-
+                            mSeekBar.setThumb(getResources()
+                                    .getDrawable(R.drawable.ic_pause_button, null));
                         } else {
                             mPlayPauseButton.setImageResource(R.drawable.ic_pause_48dp);
                             mPlayPauseButtonSmall.setImageResource(R.drawable.ic_pause_stroke_128dp);
+                            mSeekBar.setThumb(getResources()
+                                    .getDrawable(R.drawable.ic_play_button, null));
+
                         }
 
                         // Get image from track
@@ -219,6 +225,14 @@ public class SpotifyFragment extends Fragment {
                         mSeekBar.setEnabled(true);
                     }
                 });
+    }
+
+    private void playUri(String uri) {
+        mSpotifyAppRemote
+                .getPlayerApi()
+                .play(uri)
+                .setResultCallback(empty -> logMessage(getString(R.string.command_feedback, "play")))
+                .setErrorCallback(mErrorCallback);
     }
 
 

@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
@@ -16,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -31,10 +31,10 @@ import java.util.TimerTask;
 public class WeatherFragment extends Fragment {
 
     private Activity activity;
-    private JSONObject JSONResponse, weather, main, wind, sys;
-    private TextView txt_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
-    private ImageView weather_icon;
+    private RequestQueue requestQueue;
     private Timer weatherTimer;
+    private ImageView weather_icon;
+    private TextView txt_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -47,7 +47,8 @@ public class WeatherFragment extends Fragment {
         txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
         txt_sunrise_sunset = root.findViewById(R.id.txt_sunrise_sunset);
         //endregion
-        activity = getActivity();
+        if (getActivity() != null) activity = getActivity();
+        requestQueue = Volley.newRequestQueue(activity);
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.schedule(new TimerTask() {
             @Override
@@ -77,40 +78,34 @@ public class WeatherFragment extends Fragment {
 
         String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
-        Volley.newRequestQueue(activity).add(new JsonObjectRequest(
-                Request.Method.GET, url, null, response -> JSONResponse = response,
-                error -> Tools.msg(activity, "Error in JSON Response")));
 
-        try {
-            //JSONArray weatherArray = (JSONResponse.getJSONArray("weather"));
-            weather = (JSONObject) JSONResponse.getJSONArray("weather").get(0);
-            main = JSONResponse.getJSONObject("main");
-            wind = JSONResponse.getJSONObject("wind");
-            sys = JSONResponse.getJSONObject("sys");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //if (main != null) activity.runOnUiThread(this::updateUI);
+        requestQueue.add(new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> activity.runOnUiThread(() -> updateUI(response)),
+                error -> Tools.msg(activity, "Volley Error")));
     }
 
-    private void updateUI() {
+    private void updateUI(JSONObject response) {
         try {
-            String location = JSONResponse.getString("name").split(" ")[0];
-            String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
-            String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
+            JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
+            JSONObject main = response.getJSONObject("main");
+            JSONObject wind = response.getJSONObject("wind");
+            JSONObject sys = response.getJSONObject("sys");
 
+            String location = response.getString("name").split(" ")[0];
             SpannableString span1 = new SpannableString(location);
-            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)),
-                    0, location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            SpannableString span2 = new SpannableString(temp);
-            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)),
-                    0, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            SpannableString span3 = new SpannableString(feels);
-            span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)),
-                    0, feels.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
 
+            String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
+            SpannableString span2 = new SpannableString(temp);
+            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, temp.length(), 0);
+
+            String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
+            SpannableString span3 = new SpannableString(feels);
+            span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, feels.length(), 0);
+
+            String dir = "NA";
+            if (wind.has("deg")) dir = Tools.getDirection((float) wind.getDouble("deg"));
             double windspeed = wind.getDouble("speed");
-            String dir = Tools.getDirection((float) wind.getDouble("deg"));
             double maxTemp = main.getDouble("temp_max") - 273.15;
             double minTemp = main.getDouble("temp_min") - 273.15;
             int pressure = (int) main.getDouble("pressure");
@@ -126,7 +121,7 @@ public class WeatherFragment extends Fragment {
             txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
             txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Tools.msg(activity, "JSON Error!");
         }
     }
 
@@ -174,49 +169,16 @@ public class WeatherFragment extends Fragment {
     }
 }
 
-/*
-{
-    "coord": {
-        "lon": -0.13,
-        "lat": 51.51
-    },
-    "weather": [
-        {
-            "id": 500,
-            "main": "Rain",
-            "description": "light rain",
-            "icon": "10n"
-        }
-    ],
-    "base": "cmc stations",
-    "main": {
-        "temp": 286.164,
-        "pressure": 1017.58,
-        "humidity": 96,
-        "temp_min": 286.164,
-        "temp_max": 286.164,
-        "sea_level": 1027.69,
-        "grnd_level": 1017.58
-    },
-    "wind": {
-        "speed": 3.61,
-        "deg": 165.001
-    },
-    "rain": {
-        "3h": 0.185
-    },
-    "clouds": {
-        "all": 80
-    },
-    "dt": 1446583128,
-    "sys": {
-        "message": 0.003,
-        "country": "GB",
-        "sunrise": 1446533902,
-        "sunset": 1446568141
-    },
-    "id": 2643743,
-    "name": "London",
-    "cod": 200
-}
- */
+//{"coord":{"lon":12.48,"lat":55.68},
+// "weather":[{"id":500,"main":"Rain","description":"light rain","icon":"10n"}],
+// "base":"stations",
+// "main":{"temp":280.81,"feels_like":277.04,"temp_min":280.15,"temp_max":281.15,"pressure":991,"humidity":100},
+// "visibility":9000,
+// "wind":{"speed":4.6,"deg":240,"gust":11.3},
+// "clouds":{"all":100},
+// "dt":1583863378,
+// "sys":{"type":1,"id":9710,"country":"DK","sunrise":1583818656,"sunset":1583859790},
+// "timezone":3600,
+// "id":2614600,
+// "name":"Rødovre Municipality",
+// "cod":200}

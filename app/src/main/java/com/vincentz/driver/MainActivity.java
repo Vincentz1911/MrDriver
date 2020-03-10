@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity {
 
         if (provider == null) return;
         LASTLOCATION = lm.getLastKnownLocation(provider);
-        lm.requestLocationUpdates(provider, 1000, 3, LocationListener);
+        lm.requestLocationUpdates(provider, 2000, 5, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {

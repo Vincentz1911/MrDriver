@@ -10,34 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2">
-
-        <TableLayout
+        <TextView
+            android:id="@+id/txt_temp"
+            android:gravity="center"
+            android:lineSpacingMultiplier="0.9"
             android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txt_location"
-                android:gravity="center"
-                android:textSize="@dimen/small_text" />
-
-            <TextView
-                android:id="@+id/txt_temp"
-                android:gravity="center"
-                android:textSize="@dimen/huge_text" />
-
-            <TextView
-                android:id="@+id/txt_feels"
-                android:gravity="center"
-                android:textSize="@dimen/small_text" />
-        </TableLayout>
-
+            android:lines="3"/>
         <ImageView
             android:id="@+id/img_weather"
-            android:layout_weight="1"
             android:contentDescription="@string/weather_icon"
-            android:padding="5dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_weather_200dp" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -48,14 +31,16 @@
         <TextView
             android:id="@+id/txt_wind"
             android:layout_weight="1"
+            android:gravity="center_horizontal"
             android:drawableStart="@drawable/w_ic_windflag_48dp"
-            android:textSize="@dimen/small_text" />
+            android:textSize="@dimen/h5" />
 
         <TextView
             android:id="@+id/txt_pressure_humidity"
             android:layout_weight="1"
+            android:gravity="center_horizontal"
             android:drawableStart="@drawable/w_ic_humiditypressure_40dp"
-            android:textSize="@dimen/small_text" />
+            android:textSize="@dimen/h5" />
     </TableRow>
 
     <TableRow
@@ -66,13 +51,15 @@
         <TextView
             android:id="@+id/txt_low_high_temp"
             android:layout_weight="1"
+            android:gravity="center_horizontal"
             android:drawableStart="@drawable/w_ic_tempminmax_64dp"
-            android:textSize="@dimen/small_text" />
+            android:textSize="@dimen/h5" />
 
         <TextView
             android:id="@+id/txt_sunrise_sunset"
             android:layout_weight="1"
+            android:gravity="center_horizontal"
             android:drawableStart="@drawable/w_ic_sunrise_dawn_40dp"
-            android:textSize="@dimen/small_text" />
+            android:textSize="@dimen/h5" />
     </TableRow>
 </LinearLayout>

@@ -68,17 +68,17 @@
         <TextView
             android:id="@+id/txt_time"
             android:gravity="center"
-            android:textSize="@dimen/large_text" />
+            android:textSize="@dimen/h2" />
 
         <TextView
             android:id="@+id/txt_date"
             android:gravity="center"
-            android:textSize="@dimen/medium_text" />
+            android:textSize="@dimen/h4" />
 
         <TextView
             android:id="@+id/txt_week"
             android:gravity="center"
-            android:textSize="@dimen/medium_text" />
+            android:textSize="@dimen/h4" />
     </TableLayout>
 
 </LinearLayout>

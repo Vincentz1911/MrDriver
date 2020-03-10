@@ -3,10 +3,16 @@ package com.vincentz.driver;
 import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -26,26 +32,29 @@ public class WeatherFragment extends Fragment {
 
     private Activity activity;
     private JSONObject JSONResponse, weather, main, wind, sys;
-    private TextView txt_location, txt_temp, txt_feels, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_set;
+    private TextView txt_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
+    private ImageView weather_icon;
     private Timer weatherTimer;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         //region INIT UI
         View root = li.inflate(R.layout.fragment_weather, vg, false);
-        txt_location = root.findViewById(R.id.txt_location);
+        weather_icon = root.findViewById(R.id.img_weather);
         txt_temp = root.findViewById(R.id.txt_temp);
-        txt_feels = root.findViewById(R.id.txt_feels);
         txt_wind = root.findViewById(R.id.txt_wind);
         txt_minmax = root.findViewById(R.id.txt_low_high_temp);
         txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
-        txt_sunrise_set = root.findViewById(R.id.txt_sunrise_sunset);
+        txt_sunrise_sunset = root.findViewById(R.id.txt_sunrise_sunset);
         //endregion
         activity = getActivity();
         weatherTimer = new Timer("WeatherTimer");
-        weatherTimer.scheduleAtFixedRate(new TimerTask() {
+        weatherTimer.schedule(new TimerTask() {
             @Override
-            public void run() { updateWeather(); }}, 1000, 2000);
+            public void run() {
+                updateWeather();
+            }
+        }, 0, 10000);
         return root;
     }
 
@@ -68,12 +77,11 @@ public class WeatherFragment extends Fragment {
 
         String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
-        try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.GET, url, null, response -> JSONResponse = response,
-                    error -> Tools.msg(activity, "Error in JSON Response"));
-            Volley.newRequestQueue(activity).add(jsonObjectRequest);
+        Volley.newRequestQueue(activity).add(new JsonObjectRequest(
+                Request.Method.GET, url, null, response -> JSONResponse = response,
+                error -> Tools.msg(activity, "Error in JSON Response")));
 
+        try {
             //JSONArray weatherArray = (JSONResponse.getJSONArray("weather"));
             weather = (JSONObject) JSONResponse.getJSONArray("weather").get(0);
             main = JSONResponse.getJSONObject("main");
@@ -82,14 +90,25 @@ public class WeatherFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (main != null) activity.runOnUiThread(this::updateUI);
+        //if (main != null) activity.runOnUiThread(this::updateUI);
     }
 
     private void updateUI() {
         try {
             String location = JSONResponse.getString("name").split(" ")[0];
-            int temp = (int) main.getDouble("temp") - 273;
-            double feelstemp = main.getDouble("feels_like") - 273.15;
+            String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
+            String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
+
+            SpannableString span1 = new SpannableString(location);
+            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)),
+                    0, location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            SpannableString span2 = new SpannableString(temp);
+            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)),
+                    0, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            SpannableString span3 = new SpannableString(feels);
+            span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)),
+                    0, feels.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
             double windspeed = wind.getDouble("speed");
             String dir = Tools.getDirection((float) wind.getDouble("deg"));
             double maxTemp = main.getDouble("temp_max") - 273.15;
@@ -100,15 +119,57 @@ public class WeatherFragment extends Fragment {
             Date sunset = new Date(sys.getInt("sunset") * 1000L);
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-            txt_location.setText(location);
-            txt_temp.setText(getString(R.string.temperature, temp));
-            txt_feels.setText(getString(R.string.feels_temp, feelstemp));
+            weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
+            txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));
             txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
-            txt_sunrise_set.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
+            txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private Drawable getWeatherIcon(String icon) {
+        switch (icon) {
+            case "01d":
+                return getResources().getDrawable(R.drawable.ic_w01d_day_clear, null);
+            case "01n":
+                return getResources().getDrawable(R.drawable.ic_w01n_night_clear, null);
+            case "02d":
+                return getResources().getDrawable(R.drawable.ic_w02d_day_partial_cloud, null);
+            case "02n":
+                return getResources().getDrawable(R.drawable.ic_w02n_night_partial_cloud, null);
+            case "03d":
+                return getResources().getDrawable(R.drawable.ic_w03_cloudy, null);
+            case "03n":
+                return getResources().getDrawable(R.drawable.ic_w03_cloudy, null);
+            case "04d":
+                return getResources().getDrawable(R.drawable.ic_w04_angry_clouds, null);
+            case "04n":
+                return getResources().getDrawable(R.drawable.ic_w04_angry_clouds, null);
+            case "09d":
+                return getResources().getDrawable(R.drawable.ic_w09_rain, null);
+            case "09n":
+                return getResources().getDrawable(R.drawable.ic_w09_rain, null);
+            case "10d":
+                return getResources().getDrawable(R.drawable.ic_w10d_day_rain, null);
+            case "10n":
+                return getResources().getDrawable(R.drawable.ic_w10n_night_rain, null);
+            case "11d":
+                return getResources().getDrawable(R.drawable.ic_w11d_rain_thunder, null);
+            case "11n":
+                return getResources().getDrawable(R.drawable.ic_w11d_rain_thunder, null);
+            case "13d":
+                return getResources().getDrawable(R.drawable.ic_w13_snow, null);
+            case "13n":
+                return getResources().getDrawable(R.drawable.ic_w13_snow, null);
+            case "50d":
+                return getResources().getDrawable(R.drawable.ic_w50_fog, null);
+            case "50n":
+                return getResources().getDrawable(R.drawable.ic_w50_fog, null);
+            default:
+                return getResources().getDrawable(R.drawable.ic_w11d_day_rain_thunder, null);
         }
     }
 }

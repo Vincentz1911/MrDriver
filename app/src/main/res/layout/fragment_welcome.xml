@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome \nMr. Driver"
-        android:textSize="@dimen/medium_text"
+        android:textSize="@dimen/h4"
         android:padding="20dp"/>
 
 </FrameLayout>

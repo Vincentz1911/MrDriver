@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="small_text">12sp</dimen>
-    <dimen name="medium_text">16sp</dimen>
-    <dimen name="large_text">32sp</dimen>
-    <dimen name="huge_text">40sp</dimen>
+    <dimen name="h5">12sp</dimen>
+    <dimen name="h4">18sp</dimen>
+    <dimen name="h3">24sp</dimen>
+    <dimen name="h2">36sp</dimen>
+    <dimen name="h1">48sp</dimen>
     <dimen name="padding">3dp</dimen>
 
 </resources>

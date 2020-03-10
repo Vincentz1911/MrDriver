@@ -53,7 +53,7 @@ public class WeatherFragment extends Fragment {
         weatherTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                updateWeather();
+                requestWeather();
             }
         }, 0, 10000);
         return root;
@@ -66,7 +66,7 @@ public class WeatherFragment extends Fragment {
         weatherTimer.purge();
     }
 
-    private void updateWeather() {
+    private void requestWeather() {
         double lat, lon;
         if (MainActivity.LOCATION != null) {
             lat = MainActivity.LOCATION.getLatitude();

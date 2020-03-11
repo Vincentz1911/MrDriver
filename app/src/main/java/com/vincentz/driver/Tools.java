@@ -2,8 +2,10 @@ package com.vincentz.driver;
 
 import android.app.Activity;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-class Tools {
+class Tools extends Activity{
     static void msg(Activity activity, final String text) {
         activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
     }
@@ -28,4 +30,5 @@ class Tools {
         else if (b <= 337.5) return "NNW";
         else return "";
     }
+
 }

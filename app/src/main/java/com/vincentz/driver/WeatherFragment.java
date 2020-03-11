@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -25,16 +26,19 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class WeatherFragment extends Fragment {
+public class WeatherFragment extends Fragment implements Observer {
 
-    private Activity activity;
+    private MainActivity activity;
     private RequestQueue requestQueue;
     private Timer weatherTimer;
     private ImageView weather_icon;
     private TextView txt_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
+    private boolean startup;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -47,38 +51,40 @@ public class WeatherFragment extends Fragment {
         txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
         txt_sunrise_sunset = root.findViewById(R.id.txt_sunrise_sunset);
         //endregion
-        if (getActivity() != null) activity = getActivity();
-        requestQueue = Volley.newRequestQueue(activity);
-        weatherTimer = new Timer("WeatherTimer");
-        weatherTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                requestWeather();
-            }
-        }, 0, 10000);
+        if (getActivity() != null) activity = (MainActivity) getActivity();
+        activity.loc.addObserver(this); //Add Observer on LocationModel in MainActivity
+        requestQueue = Volley.newRequestQueue(activity); //Starts a http queue for Volley
         return root;
+    }
+
+    public void update(Observable locModel, Object loc) {
+        //Listener for LocationModel Observable.
+        if (loc != null && !startup) {
+            startup = true;
+            weatherTimer = new Timer("WeatherTimer");
+            weatherTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    requestWeather("https://api.openweathermap.org/data/2.5/weather?lat="
+                                    + ((Location) loc).getLatitude() + "&lon="
+                                    + ((Location) loc).getLongitude()
+                                    + "&appid=366be396325d10cf0b15b97a1e8dde63"
+                    );
+                }
+            }, 0, 10000);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        activity.loc.deleteObserver(this);
         weatherTimer.cancel();
         weatherTimer.purge();
     }
 
-    private void requestWeather() {
-        double lat, lon;
-        if (MainActivity.LOCATION != null) {
-            lat = MainActivity.LOCATION.getLatitude();
-            lon = MainActivity.LOCATION.getLongitude();
-        } else if (MainActivity.LASTLOCATION != null) {
-            lat = MainActivity.LASTLOCATION.getLatitude();
-            lon = MainActivity.LASTLOCATION.getLongitude();
-        } else return;
-
-        String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon
-                + "&appid=366be396325d10cf0b15b97a1e8dde63";
-
+    private void requestWeather(String url) {
+        //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         requestQueue.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> activity.runOnUiThread(() -> updateUI(response)),
                 error -> Tools.msg(activity, "Volley Error")));
@@ -86,23 +92,24 @@ public class WeatherFragment extends Fragment {
 
     private void updateUI(JSONObject response) {
         try {
+            //SPLITS JSONRESPONSE INTO JSONOBJECTS
             JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
             JSONObject main = response.getJSONObject("main");
             JSONObject wind = response.getJSONObject("wind");
             JSONObject sys = response.getJSONObject("sys");
 
+            //CREATES A SPANNABLE STRING FOR LOC, TEMP AND FEELS
             String location = response.getString("name").split(" ")[0];
-            SpannableString span1 = new SpannableString(location);
-            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
-
             String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
-            SpannableString span2 = new SpannableString(temp);
-            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, temp.length(), 0);
-
             String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
+            SpannableString span1 = new SpannableString(location);
+            SpannableString span2 = new SpannableString(temp);
             SpannableString span3 = new SpannableString(feels);
+            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
+            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, temp.length(), 0);
             span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, feels.length(), 0);
 
+            //SETS DATA FROM JSON OBJECTS
             String dir = "NA";
             if (wind.has("deg")) dir = Tools.getDirection((float) wind.getDouble("deg"));
             double windspeed = wind.getDouble("speed");
@@ -114,6 +121,7 @@ public class WeatherFragment extends Fragment {
             Date sunset = new Date(sys.getInt("sunset") * 1000L);
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+            //UPDATES VIEW WITH DATA
             weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
             txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
@@ -126,6 +134,7 @@ public class WeatherFragment extends Fragment {
     }
 
     private Drawable getWeatherIcon(String icon) {
+        //PICKS ICON DEPENDING ON ICON CODE IN JSONRESPONSE
         switch (icon) {
             case "01d":
                 return getResources().getDrawable(R.drawable.ic_w01d_day_clear, null);
@@ -169,6 +178,7 @@ public class WeatherFragment extends Fragment {
     }
 }
 
+//WEATHER NOW
 //{"coord":{"lon":12.48,"lat":55.68},
 // "weather":[{"id":500,"main":"Rain","description":"light rain","icon":"10n"}],
 // "base":"stations",
@@ -182,3 +192,4 @@ public class WeatherFragment extends Fragment {
 // "id":2614600,
 // "name":"Rødovre Municipality",
 // "cod":200}
+

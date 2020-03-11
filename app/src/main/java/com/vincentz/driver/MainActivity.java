@@ -17,8 +17,9 @@ import android.os.Bundle;
 public class MainActivity extends FragmentActivity {
 
     static boolean[] PERMISSIONS;
-    static Location LOCATION, LASTLOCATION;
-    FragmentManager fm;
+    //static Location LOCATION, LASTLOCATION;
+    final private FragmentManager fm = getSupportFragmentManager();
+    LocationModel loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +27,10 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkPermissions();
-        fm = getSupportFragmentManager();
+        loc = new LocationModel();
 
-        boolean alreadyRun = false;
-        alreadyRun = getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", alreadyRun);
-        if (!alreadyRun) getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
+        if (getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", false))
+            fm.beginTransaction().replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
         else setupView();
     }
 
@@ -102,7 +101,6 @@ public class MainActivity extends FragmentActivity {
         //Checks if GPS is on, sets a Listener and if there is a last position
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (lm == null) return;
-
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setBearingAccuracy(Criteria.ACCURACY_HIGH);
@@ -112,27 +110,19 @@ public class MainActivity extends FragmentActivity {
         String provider = lm.getBestProvider(criteria, true);
 
         if (provider == null) return;
-        LASTLOCATION = lm.getLastKnownLocation(provider);
+        loc.setLast(lm.getLastKnownLocation(provider));
         lm.requestLocationUpdates(provider, 2000, 5, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {
         @Override
-        public void onLocationChanged(Location onChanged) {
-            LOCATION = onChanged;
-        }
-
+        public void onLocationChanged(Location location) { loc.setNow(location); }
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
+        public void onStatusChanged(String provider, int status, Bundle extras) { }
         @Override
-        public void onProviderEnabled(String provider) {
-        }
-
+        public void onProviderEnabled(String provider) { }
         @Override
-        public void onProviderDisabled(String provider) {
-        }
+        public void onProviderDisabled(String provider) { }
     };
     //endregion
 }

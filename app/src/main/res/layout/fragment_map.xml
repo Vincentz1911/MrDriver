@@ -39,7 +39,7 @@
                 android:layout_alignBottom="@id/img_compass"
                 android:gravity="center"
                 android:textColor="@android:color/black"
-                android:textSize="40sp"
+                android:textSize="@dimen/h3"
                 android:textStyle="bold" />
 
             <TextView
@@ -49,14 +49,14 @@
                 android:layout_below="@id/img_compass"
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/black"
-                android:textSize="30sp"
+                android:textSize="@dimen/h3"
                 android:textStyle="bold" />
         </RelativeLayout>
 
-<!--        <Space-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_weight="1" />-->
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
         <!--SPEEDOMETER-->
         <TextView
             android:id="@+id/txt_speed"
@@ -66,7 +66,7 @@
             android:background="@drawable/speedsign"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="40sp"
+            android:textSize="@dimen/h3"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -85,6 +85,6 @@
         android:id="@+id/txt_zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp" />
+        android:textSize="@dimen/h3" />
 
 </RelativeLayout>

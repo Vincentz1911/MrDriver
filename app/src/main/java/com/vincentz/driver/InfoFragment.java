@@ -1,6 +1,7 @@
 package com.vincentz.driver;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
@@ -27,9 +28,9 @@ public class InfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View root = li.inflate(R.layout.fragment_info, vg, false);
+        if (getActivity() == null) return root;
         activity = getActivity();
-        if (activity == null) return null;
-        fm = getActivity().getSupportFragmentManager();
+        fm = ((FragmentActivity) activity).getSupportFragmentManager();
         // SharedPreferences pref = activity.getSharedPreferences("12", Context.MODE_PRIVATE);
 
         //region TIME AND DATE

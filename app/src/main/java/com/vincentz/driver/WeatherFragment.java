@@ -78,9 +78,11 @@ public class WeatherFragment extends Fragment implements Observer {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        activity.loc.deleteObserver(this);
-        weatherTimer.cancel();
-        weatherTimer.purge();
+        //activity.loc.deleteObserver(this);
+        if (weatherTimer != null){
+            weatherTimer.cancel();
+            weatherTimer.purge();
+        }
     }
 
     private void requestWeather(String url) {

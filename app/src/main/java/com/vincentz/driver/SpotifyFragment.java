@@ -97,9 +97,8 @@ public class SpotifyFragment extends Fragment {
             }
 
             public void onFailure(Throwable throwable) {
-                Log.e("MyActivity", throwable.getMessage(), throwable);
-                Tools.msg(activity, "DIDNT CONNECT");
-                // Something went wrong when attempting to connect! Handle errors here
+                Log.e(TAG, throwable.getMessage(), throwable);
+                Tools.msg(activity, "Cannot Connect to Spotify");
             }
         });
     }
@@ -109,8 +108,6 @@ public class SpotifyFragment extends Fragment {
         mPlayPauseButtonSmall = view.findViewById(R.id.play_pause_button_small);
         mSkipPrevButton = view.findViewById(R.id.skip_prev_button);
         mSkipNextButton = view.findViewById(R.id.skip_next_button);
-
-
 
         mCoverArtImageView = view.findViewById(R.id.image);
         txt_album = view.findViewById(R.id.txt_album);

@@ -37,7 +37,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private TextView txt_Speed, txt_Bearing1, txt_Bearing2;
     private ImageView img_compass;
     private SeekBar slider_zoom;
-    private boolean startup;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -59,16 +58,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     public void update(Observable locModel, Object loc) {
         location = ((LocationModel)locModel).getNow();
         lastLocation = ((LocationModel)locModel).getLast();
-        if (loc != null && !startup) {
-            startup = true;
-            lastPos = new LatLng(((Location)loc).getLatitude(), ((Location)loc).getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPos, 15));
-            new Timer("UpdateCamera").scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() { updateCamera(); }}, 0, 3000);
-
-        } //else Tools.msg(main, "No Last Known Location");
-
     }
 //    private void initUI(View view) {
 //
@@ -97,22 +86,25 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         mUiSettings.setZoomControlsEnabled(true);
         mUiSettings.setCompassEnabled(false);
         mUiSettings.setMyLocationButtonEnabled(true);
+
+        if (location != null)
+            pos = new LatLng(location.getLatitude(), location.getLongitude());
+        else if (lastLocation != null)
+            pos = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+
+        new Timer("Cam").scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() { updateCamera(); }}, 2000, 200);
     }
 
-    // 10 kmt (18 - 3 /6 = 16.5
-    // 110 kmt (18 - 30 /6 = 12
     private void updateCamera() {
-        if (location == null) return;
-        lastPos = pos;
-        pos = new LatLng(location.getLatitude(), location.getLongitude());
-
-        //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
-
+        if (pos != null) lastPos = pos;
         if (lastPos == null) camPos = pos;
-        else { camPos = new LatLng(
-                    (pos.latitude + (pos.latitude - lastPos.latitude) * location.getSpeed()/10),
-                    (pos.longitude + (pos.longitude - lastPos.longitude) * location.getSpeed()/10));
-        }
+        else camPos = new LatLng(
+                    (pos.latitude + (pos.latitude - lastPos.latitude)) ,
+                    (pos.longitude + (pos.longitude - lastPos.longitude) ));
+
 
         main.runOnUiThread(() -> {
             txt_Speed.setText(getString(R.string.mapspeed, (int) (location.getSpeed() * 3.6)));
@@ -120,17 +112,34 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             txt_Bearing2.setText(getString(R.string.bearing, (int) location.getBearing()));
             img_compass.setRotation(location.getBearing());
 
+            // 10 kmt (18 - 3 /6 = 16.5 * (1 + location.getSpeed()/100))
+            // 110 kmt (18 - 30 /6 = 12 * (1 + location.getSpeed()/100)
+            //bearing = (location.getBearing() != 0.0 && speed > 1) ? location.getBearing() : bearing;
+
             float speedzoom = zoom - location.getSpeed() / 20;
 
             ((TextView) getView().findViewById(R.id.txt_zoom)).setText("zoom : " + zoom + "/" + speedzoom);
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(pos)
-                    .zoom(speedzoom)
+                    .target(camPos)
+                    .zoom(20)
                     .bearing(location.getBearing())
-                    .tilt(45)
+                    .tilt(50 + location.getSpeed()/2)
                     .build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         });
     }
 }
+//        double d = 0;//location.getSpeed()/1000;
+//        double tc = location.getBearing();
+//        double lat1=location.getLatitude();
+//        double lon1=location.getLongitude();
+//
+//        double lat= Math.asin(Math.sin(lat1) * Math.cos(d) + Math.cos(lat1) * Math.sin(d) *  Math.cos(tc));
+//        double dlon = Math.atan2(Math.sin(tc) * Math.sin(d) * Math.cos(lat1), Math.cos(d) - Math.sin(lat1) * Math.sin(lat));
+//        double lon = Math.floorMod((long) (lon1 - dlon + Math.PI), (long) (2 *Math.PI)) - Math.PI;
+//        camPos = new LatLng(lat1, lon1);
+
+//        lat =asin( sin(lat1)*cos(d) + cos(lat1)*sin(d)*cos(tc))
+//        dlon=atan2(sin(tc)*sin(d)*cos(lat1),cos(d)-sin(lat1)*sin(lat))
+//        lon=mod( lon1-dlon +pi,2*pi )-pi

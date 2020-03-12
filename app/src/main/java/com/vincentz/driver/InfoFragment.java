@@ -30,7 +30,7 @@ public class InfoFragment extends Fragment {
         View root = li.inflate(R.layout.fragment_info, vg, false);
         if (getActivity() == null) return root;
         activity = getActivity();
-        fm = ((FragmentActivity) activity).getSupportFragmentManager();
+        fm = getActivity().getSupportFragmentManager();
         // SharedPreferences pref = activity.getSharedPreferences("12", Context.MODE_PRIVATE);
 
         //region TIME AND DATE

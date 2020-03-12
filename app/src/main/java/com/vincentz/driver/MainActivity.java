@@ -1,6 +1,5 @@
 package com.vincentz.driver;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -13,13 +12,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.Objects;
 
 public class MainActivity extends FragmentActivity {
 
     static boolean[] PERMISSIONS;
-    //static Location LOCATION, LASTLOCATION;
-    final private FragmentManager fm = getSupportFragmentManager();
     LocationModel loc;
+    private int gpsCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +30,15 @@ public class MainActivity extends FragmentActivity {
         checkPermissions();
         loc = new LocationModel();
 
-        if (getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", false))
-            fm.beginTransaction().replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
-        else setupView();
+        if (getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", false)) setupView();
+        else getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
     }
 
     void firstRun() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
         getPreferences(Context.MODE_PRIVATE).edit().putBoolean("HaveRun", true).apply();
+        FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
@@ -45,7 +47,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setupView() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
+        FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_left_bottom, new WeatherFragment(), "").commit();
         fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
@@ -82,10 +85,9 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int rc, String[] permissions, int[] results) {
         for (int p = 0; p < permissions.length; p++)
-            if (grantResults.length > 0 && grantResults[p] == PackageManager.PERMISSION_GRANTED)
+            if (results.length > 0 && results[p] == PackageManager.PERMISSION_GRANTED)
                 PERMISSIONS[p] = true;
     }
     //endregion
@@ -96,33 +98,46 @@ public class MainActivity extends FragmentActivity {
                 != PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
-            return;
+            checkPermissions();
 
         //Checks if GPS is on, sets a Listener and if there is a last position
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (lm == null) return;
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setBearingAccuracy(Criteria.ACCURACY_HIGH);
         criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
         criteria.setSpeedRequired(true);
         criteria.setBearingRequired(true);
-        String provider = lm.getBestProvider(criteria, true);
 
-        if (provider == null) return;
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
+
+        if (provider != null) Tools.msg(this, "Found Location Provider:" + provider);
+        else {Tools.msg(this, "No Location provider found"); return; }
+
         loc.setLast(lm.getLastKnownLocation(provider));
-        lm.requestLocationUpdates(provider, 2000, 5, LocationListener);
+        lm.requestLocationUpdates(provider, 500, 0, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {
         @Override
-        public void onLocationChanged(Location location) { loc.setNow(location); }
+        public void onLocationChanged(Location location) {
+            loc.setLast(loc.getNow());
+            loc.setNow(location);
+            //gpsCount++;
+            //Log.d("GPS", "onLocationChanged: " + gpsCount);
+        }
+
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) { }
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
         @Override
-        public void onProviderEnabled(String provider) { }
+        public void onProviderEnabled(String provider) {
+        }
+
         @Override
-        public void onProviderDisabled(String provider) { }
+        public void onProviderDisabled(String provider) {
+        }
     };
     //endregion
 }

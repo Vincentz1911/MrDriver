@@ -1,8 +1,5 @@
 package com.vincentz.driver;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -120,7 +117,7 @@ public class SpotifyFragment extends Fragment {
 
         btn_album = view.findViewById(R.id.img_album);
         btn_artist = view.findViewById(R.id.img_artist);
-        btn_playlist = view.findViewById(R.id.img_playlist);
+       // btn_playlist = view.findViewById(R.id.img_playlist);
         btn_category = view.findViewById(R.id.img_category);
 
         mCoverArtImageView = view.findViewById(R.id.image);
@@ -152,7 +149,7 @@ public class SpotifyFragment extends Fragment {
             msg(ACT, "Playing Artist: " + track.artist.name);
         });
 
-        btn_playlist.setOnClickListener(this::onSubscribedToPlayerContextButtonClicked);
+//        btn_playlist.setOnClickListener(this::onSubscribedToPlayerContextButtonClicked);
 
         btn_category.setOnClickListener(view -> mSpotifyAppRemote
                 .getContentApi()
@@ -160,19 +157,19 @@ public class SpotifyFragment extends Fragment {
                 .setResultCallback(this::recommendedContentCallBack)
                 .setErrorCallback(mErrorCallback));
 
-        btn_playlist.setOnLongClickListener(view -> {
-            ClipboardManager clipboardManager = (ClipboardManager) ACT.getSystemService(Context.CLIPBOARD_SERVICE);
-
-            ClipData clipData = clipboardManager.getPrimaryClip();
-            try {
-                mSpotifyAppRemote.getPlayerApi().play(clipData.toString());
-                msg(ACT, "Added Playlist");
-            } catch (Exception e) {
-                msg(ACT, "Error playing playlist");
-            }
-
-            return true;
-        });
+//        btn_playlist.setOnLongClickListener(view -> {
+//            ClipboardManager clipboardManager = (ClipboardManager) ACT.getSystemService(Context.CLIPBOARD_SERVICE);
+//
+//            ClipData clipData = clipboardManager.getPrimaryClip();
+//            try {
+//                mSpotifyAppRemote.getPlayerApi().play(clipData.toString());
+//                msg(ACT, "Added Playlist");
+//            } catch (Exception e) {
+//                msg(ACT, "Error playing playlist");
+//            }
+//
+//            return true;
+//        });
 
         mSkipNextButton.setOnClickListener(v -> onSkipNextButtonClicked());
     }
@@ -335,15 +332,15 @@ public class SpotifyFragment extends Fragment {
 
                         // Invalidate play / pause
                         if (playerState.isPaused) {
-                            mPlayPauseButton.setImageResource(R.drawable.ic_play_48dp);
-                            btn_playPauseSmall.setImageResource(R.drawable.ic_play_stroke_128dp);
+                            mPlayPauseButton.setImageResource(R.drawable.sic_play_48dp);
+                            btn_playPauseSmall.setImageResource(R.drawable.sic_play_stroke_128dp);
                             mSeekBar.setThumb(getResources()
-                                    .getDrawable(R.drawable.ic_pause_button, null));
+                                    .getDrawable(R.drawable.sic_pause_button, null));
                         } else {
-                            mPlayPauseButton.setImageResource(R.drawable.ic_pause_48dp);
-                            btn_playPauseSmall.setImageResource(R.drawable.ic_pause_stroke_128dp);
+                            mPlayPauseButton.setImageResource(R.drawable.sic_pause_48dp);
+                            btn_playPauseSmall.setImageResource(R.drawable.sic_pause_stroke_128dp);
                             mSeekBar.setThumb(getResources()
-                                    .getDrawable(R.drawable.ic_play_button, null));
+                                    .getDrawable(R.drawable.sic_play_button, null));
                         }
 
                         // Get image from track

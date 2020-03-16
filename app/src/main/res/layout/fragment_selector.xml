@@ -12,13 +12,13 @@
             android:id="@+id/btn_spotify"
             android:layout_weight="1"
             android:contentDescription="@string/spotify"
-            android:src="@drawable/ic_spotify_logo_200dp" />
+            android:src="@drawable/fic_spotify_logo_200dp" />
 
         <ImageView
             android:id="@+id/btn_recorder"
             android:layout_weight="1"
             android:contentDescription="@string/dashcam"
-            android:src="@drawable/ic_videocam_200dp" />
+            android:src="@drawable/fic_videocam_200dp" />
     </TableRow>
 
     <TableRow
@@ -30,13 +30,13 @@
             android:id="@+id/btn_maps"
             android:layout_weight="1"
             android:contentDescription="@string/maps"
-            android:src="@drawable/ic_maps_200dp" />
+            android:src="@drawable/fic_maps_200dp" />
 
         <ImageView
             android:id="@+id/btn_obd2"
             android:layout_weight="1"
             android:contentDescription="@string/obd2"
-            android:src="@drawable/ic_obd2_200dp" />
+            android:src="@drawable/fic_obd2_200dp" />
     </TableRow>
 
     <TableRow
@@ -48,12 +48,12 @@
             android:id="@+id/btn_info"
             android:layout_weight="1"
             android:contentDescription="@string/infoscreen"
-            android:src="@drawable/ic_info_200dp" />
+            android:src="@drawable/fic_info_200dp" />
 
         <ImageView
             android:id="@+id/btn_weather"
             android:layout_weight="1"
             android:contentDescription="@string/weather"
-            android:src="@drawable/ic_weather_200dp" />
+            android:src="@drawable/fic_weather_200dp" />
     </TableRow>
 </TableLayout>

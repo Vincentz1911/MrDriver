@@ -16,60 +16,65 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--COMPASS-->
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp">
 
-            <ImageView
-                android:id="@+id/img_compass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/compass"
-                android:src="@drawable/ic_compass_200dp" />
-
-            <TextView
-                android:id="@+id/txt_bearing1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@id/img_compass"
-                android:layout_alignTop="@id/img_compass"
-                android:layout_alignEnd="@id/img_compass"
-                android:layout_alignBottom="@id/img_compass"
-                android:gravity="center"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/h3"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txt_bearing2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/img_compass"
-                android:layout_centerHorizontal="true"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/h3"
-                android:textStyle="bold" />
-        </RelativeLayout>
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1" />
         <!--SPEEDOMETER-->
-        <TextView
-            android:id="@+id/txt_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:background="@drawable/speedsign"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/h3"
-            android:textStyle="bold" />
+
     </LinearLayout>
 
+    <!--COMPASS-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:id="@+id/img_compass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/compass"
+            android:src="@drawable/mic_compass_200dp" />
+
+
+
+        <TextView
+            android:id="@+id/txt_bearing2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/h3"
+            android:text="180"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/txt_bearing1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/h3"
+            android:textStyle="bold"
+            android:layout_below="@id/txt_bearing2"
+            android:layout_centerHorizontal="true"
+            android:text="WNW"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txt_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:background="@drawable/mic_speedsign"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/h3"
+        android:textStyle="bold" />
 
     <!--    <SeekBar-->
     <!--        android:id="@+id/slider_zoom"-->

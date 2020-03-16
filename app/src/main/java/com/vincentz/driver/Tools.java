@@ -1,7 +1,6 @@
 package com.vincentz.driver;
 
 import android.app.Activity;
-import android.location.Location;
 import android.widget.Toast;
 import androidx.fragment.app.FragmentManager;
 import com.android.volley.RequestQueue;

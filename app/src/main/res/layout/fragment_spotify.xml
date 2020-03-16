@@ -15,30 +15,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_playlist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/sic_playlist_play_black_64dp"
+            android:visibility="gone" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_category"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_playlist_play_black_64dp" />
+            android:layout_weight="1"
+            android:src="@drawable/sic_library_music_black_64dp" />
+
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_playlist"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_library_music_black_64dp" />
-         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_album"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_album_black_48dp" />
+            android:layout_weight="1"
+            android:src="@drawable/sic_album_black_48dp" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_artist"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_account_circle_black_48dp" />
+            android:layout_weight="1"
+            android:src="@drawable/sic_account_circle_black_48dp" />
 
     </LinearLayout>
 
@@ -48,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_play_stroke_128dp" />
+        android:src="@drawable/sic_play_stroke_128dp" />
 
     <LinearLayout
         android:id="@+id/lay_big"
@@ -62,7 +67,7 @@
             android:id="@+id/txt_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corners"
+            android:background="@drawable/draw_rounded_corners"
             android:padding="5dp"
             android:text="@string/artist"
             android:textSize="@dimen/h5" />
@@ -71,7 +76,7 @@
             android:id="@+id/txt_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corners"
+            android:background="@drawable/draw_rounded_corners"
             android:padding="5dp"
             android:text="@string/album"
             android:textSize="@dimen/h5" />
@@ -87,8 +92,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/rounded_corners"
-                android:src="@drawable/ic_skip_previous_48dp" />
+                android:background="@drawable/draw_rounded_corners"
+                android:src="@drawable/sic_skip_previous_48dp" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/play_pause_button"
@@ -96,8 +101,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="2"
-                android:background="@drawable/rounded_corners"
-                android:src="@drawable/ic_play_48dp" />
+                android:background="@drawable/draw_rounded_corners"
+                android:src="@drawable/sic_play_48dp" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/skip_next_button"
@@ -105,18 +110,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/rounded_corners"
-                android:src="@drawable/ic_skip_next_48dp" />
+                android:background="@drawable/draw_rounded_corners"
+                android:src="@drawable/sic_skip_next_48dp" />
         </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="bottom"
-        android:orientation="horizontal">
 
     </LinearLayout>
 
@@ -125,16 +121,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:thumb="@drawable/ic_play_button" />
+        android:thumb="@drawable/sic_play_button" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_song"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_corners"
-        android:paddingStart="6dp"
         android:layout_above="@+id/seek_to"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/draw_rounded_corners"
+        android:paddingStart="6dp"
         android:paddingEnd="6dp"
         android:paddingBottom="3dp"
         android:text="@string/song"
@@ -142,11 +138,10 @@
 
     <GridView
         android:id="@+id/gridview"
-        android:numColumns="2"
-        android:stretchMode="columnWidth"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:numColumns="2"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

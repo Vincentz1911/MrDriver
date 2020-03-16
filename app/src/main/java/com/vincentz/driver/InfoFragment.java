@@ -77,7 +77,7 @@ public class InfoFragment extends Fragment {
 
     private boolean removeFragment(int fragment, ImageView button) {
         FM.beginTransaction().replace(fragment, new SelectorFragment(), "").commit();
-        button.setImageResource(R.drawable.ic_delete_200dp);
+        button.setImageResource(R.drawable.fic_delete_200dp);
         return true;
     }
 
@@ -102,19 +102,19 @@ public class InfoFragment extends Fragment {
     private int switchImage(String simpleName) {
         switch (simpleName) {
             case "SpotifyFragment":
-                return R.drawable.ic_spotify_logo_200dp;
+                return R.drawable.fic_spotify_logo_200dp;
             case "MapFragment":
-                return R.drawable.ic_maps_200dp;
+                return R.drawable.fic_maps_200dp;
             case "InfoFragment":
-                return R.drawable.ic_info_200dp;
+                return R.drawable.fic_info_200dp;
             case "WeatherFragment":
-                return R.drawable.ic_weather_200dp;
+                return R.drawable.fic_weather_200dp;
             case "CameraFragment":
-                return R.drawable.ic_videocam_200dp;
+                return R.drawable.fic_videocam_200dp;
             case "OBD2Fragment":
-                return R.drawable.ic_obd2_200dp;
+                return R.drawable.fic_obd2_200dp;
             default:
-                return R.drawable.ic_delete_200dp;
+                return R.drawable.fic_delete_200dp;
 
         }
     }

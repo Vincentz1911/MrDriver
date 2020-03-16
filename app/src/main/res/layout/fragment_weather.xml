@@ -32,14 +32,14 @@
             android:id="@+id/txt_wind"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:drawableStart="@drawable/w_ic_windflag_48dp"
+            android:drawableStart="@drawable/wic_windflag_64dp"
             android:textSize="@dimen/h5" />
 
         <TextView
             android:id="@+id/txt_pressure_humidity"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:drawableStart="@drawable/w_ic_humiditypressure_40dp"
+            android:drawableStart="@drawable/wic_humiditypressure_64dp"
             android:textSize="@dimen/h5" />
     </TableRow>
 
@@ -52,14 +52,14 @@
             android:id="@+id/txt_low_high_temp"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:drawableStart="@drawable/w_ic_tempminmax_64dp"
+            android:drawableStart="@drawable/wic_tempminmax_64dp"
             android:textSize="@dimen/h5" />
 
         <TextView
             android:id="@+id/txt_sunrise_sunset"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:drawableStart="@drawable/w_ic_sunrise_dawn_40dp"
+            android:drawableStart="@drawable/wic_sunrise_dawn_64dp"
             android:textSize="@dimen/h5" />
     </TableRow>
 </LinearLayout>

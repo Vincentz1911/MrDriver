@@ -16,6 +16,8 @@ import android.view.View;
 
 import com.android.volley.toolbox.Volley;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -116,7 +118,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int rc, String[] permissions, int[] results) {
+    public void onRequestPermissionsResult(int rc, String[] permissions, @NotNull int[] results) {
         for (int p = 0; p < permissions.length; p++)
             if (results.length > 0 && results[p] == PackageManager.PERMISSION_GRANTED)
                 PERMISSIONS[p] = true;

@@ -46,12 +46,10 @@ public class OBD2Fragment extends Fragment {
         (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> isOn = true);
 
 
-        OBDDataThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (socket != null && socket.isConnected()) {
-                    if (isOn)
-                        while (!Thread.currentThread().isInterrupted()) {
+        OBDDataThread = new Thread(() -> {
+            if (socket != null && socket.isConnected()) {
+                if (isOn)
+                    while (!Thread.currentThread().isInterrupted()) {
 //                            try {
 //                                Thread.sleep(500);
 //                                RPMCommand engineRpmCommand = new RPMCommand();
@@ -64,12 +62,11 @@ public class OBD2Fragment extends Fragment {
 //                            } catch (IOException | InterruptedException e) {
 //                                e.printStackTrace();
 //                            }
-                        }
-                }
+                    }
             }
         });
 
-        new Thread(() -> initBT()).start();
+        new Thread(this::initBT).start();
 
         Timer timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -117,16 +114,13 @@ public class OBD2Fragment extends Fragment {
         //Creates dialog for choosing bluetooth device
         new AlertDialog.Builder(ACT)
                 .setTitle("Choose Bluetooth device")
-                .setSingleChoiceItems(adp, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        int pos = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                        final String address = paired.get(pos).getAddress();
-                        ACT.getPreferences(Context.MODE_PRIVATE).edit().
-                                putString("btaddress", address).apply();
-                        connectBT(address);
-                    }
+                .setSingleChoiceItems(adp, -1, (dialog, which) -> {
+                    dialog.dismiss();
+                    int pos = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                    final String address = paired.get(pos).getAddress();
+                    ACT.getPreferences(Context.MODE_PRIVATE).edit().
+                            putString("btaddress", address).apply();
+                    connectBT(address);
                 }).show();
     }
 

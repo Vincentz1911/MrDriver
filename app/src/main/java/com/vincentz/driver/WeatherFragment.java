@@ -136,43 +136,37 @@ public class WeatherFragment extends Fragment implements Observer {
         //PICKS ICON DEPENDING ON ICON CODE IN JSONRESPONSE
         switch (icon) {
             case "01d":
-                return getResources().getDrawable(R.drawable.ic_w01d_day_clear, null);
+                return getResources().getDrawable(R.drawable.wic_01d_day_clear, null);
             case "01n":
-                return getResources().getDrawable(R.drawable.ic_w01n_night_clear, null);
+                return getResources().getDrawable(R.drawable.wic_01n_night_clear, null);
             case "02d":
-                return getResources().getDrawable(R.drawable.ic_w02d_day_partial_cloud, null);
+                return getResources().getDrawable(R.drawable.wic_02d_day_partial_cloud, null);
             case "02n":
-                return getResources().getDrawable(R.drawable.ic_w02n_night_partial_cloud, null);
+                return getResources().getDrawable(R.drawable.wic_02n_night_partial_cloud, null);
             case "03d":
-                return getResources().getDrawable(R.drawable.ic_w03_cloudy, null);
             case "03n":
-                return getResources().getDrawable(R.drawable.ic_w03_cloudy, null);
+                return getResources().getDrawable(R.drawable.wic_03_cloudy, null);
             case "04d":
-                return getResources().getDrawable(R.drawable.ic_w04_angry_clouds, null);
             case "04n":
-                return getResources().getDrawable(R.drawable.ic_w04_angry_clouds, null);
+                return getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
             case "09d":
-                return getResources().getDrawable(R.drawable.ic_w09_rain, null);
             case "09n":
-                return getResources().getDrawable(R.drawable.ic_w09_rain, null);
+                return getResources().getDrawable(R.drawable.wic_09_rain, null);
             case "10d":
-                return getResources().getDrawable(R.drawable.ic_w10d_day_rain, null);
+                return getResources().getDrawable(R.drawable.wic_10d_day_rain, null);
             case "10n":
-                return getResources().getDrawable(R.drawable.ic_w10n_night_rain, null);
+                return getResources().getDrawable(R.drawable.wic_10n_night_rain, null);
             case "11d":
-                return getResources().getDrawable(R.drawable.ic_w11d_rain_thunder, null);
             case "11n":
-                return getResources().getDrawable(R.drawable.ic_w11d_rain_thunder, null);
+                return getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
             case "13d":
-                return getResources().getDrawable(R.drawable.ic_w13_snow, null);
             case "13n":
-                return getResources().getDrawable(R.drawable.ic_w13_snow, null);
+                return getResources().getDrawable(R.drawable.wic_13_snow, null);
             case "50d":
-                return getResources().getDrawable(R.drawable.ic_w50_fog, null);
             case "50n":
-                return getResources().getDrawable(R.drawable.ic_w50_fog, null);
+                return getResources().getDrawable(R.drawable.wic_50_fog, null);
             default:
-                return getResources().getDrawable(R.drawable.ic_w11d_day_rain_thunder, null);
+                return getResources().getDrawable(R.drawable.wic_11d_day_rain_thunder, null);
         }
     }
 }

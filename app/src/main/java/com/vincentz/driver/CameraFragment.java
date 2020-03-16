@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
 
+import static com.vincentz.driver.Tools.ACT;
+
 public class CameraFragment extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
 
     private MediaRecorder recorder;
@@ -58,7 +60,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recorder.prepare();
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
-            getActivity().finish();
+            ACT.finish();
         }
     }
 
@@ -89,6 +91,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recording = false;
         }
         recorder.release();
-        getActivity().finish();
+        ACT.finish();
     }
 }

@@ -2,7 +2,6 @@ package com.vincentz.driver;
 
 import androidx.fragment.app.Fragment;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -16,9 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,10 +28,11 @@ import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.vincentz.driver.Tools.*;
+
 public class WeatherFragment extends Fragment implements Observer {
 
-    private MainActivity activity;
-    private RequestQueue requestQueue;
+    //private MainActivity activity;
     private Timer weatherTimer;
     private ImageView weather_icon;
     private TextView txt_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
@@ -51,35 +49,34 @@ public class WeatherFragment extends Fragment implements Observer {
         txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
         txt_sunrise_sunset = root.findViewById(R.id.txt_sunrise_sunset);
         //endregion
-        if (getActivity() != null) activity = (MainActivity) getActivity();
-        activity.loc.addObserver(this); //Add Observer on LocationModel in MainActivity
-        requestQueue = Volley.newRequestQueue(activity); //Starts a http queue for Volley
+//        if (getActivity() != null) activity = (MainActivity) getActivity();
+//        else return root;
+        LOC.addObserver(this); //Add Observer on LocationModel in MainActivity
         return root;
     }
 
     public void update(Observable locModel, Object loc) {
         //Listener for LocationModel Observable.
-        if (loc != null && !startup) {
-            startup = true;
-            weatherTimer = new Timer("WeatherTimer");
-            weatherTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    requestWeather("https://api.openweathermap.org/data/2.5/weather?lat="
-                                    + ((Location) loc).getLatitude() + "&lon="
-                                    + ((Location) loc).getLongitude()
-                                    + "&appid=366be396325d10cf0b15b97a1e8dde63"
-                    );
-                }
-            }, 0, 10000);
-        }
+        if (loc == null || startup) return;
+
+        startup = true;
+        weatherTimer = new Timer("WeatherTimer");
+        weatherTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                requestWeather("https://api.openweathermap.org/data/2.5/weather?lat="
+                        + ((Location) loc).getLatitude() + "&lon="
+                        + ((Location) loc).getLongitude()
+                        + "&appid=366be396325d10cf0b15b97a1e8dde63");
+            }
+        }, 0, 10000);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //activity.loc.deleteObserver(this);
-        if (weatherTimer != null){
+        LOC.deleteObserver(this);
+        if (weatherTimer != null) {
             weatherTimer.cancel();
             weatherTimer.purge();
         }
@@ -87,9 +84,9 @@ public class WeatherFragment extends Fragment implements Observer {
 
     private void requestWeather(String url) {
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
-        requestQueue.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> activity.runOnUiThread(() -> updateUI(response)),
-                error -> Tools.msg(activity, "Volley Error")));
+        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> ACT.runOnUiThread(() -> updateUI(response)),
+                error -> msg(ACT, "Volley Error")));
     }
 
     private void updateUI(JSONObject response) {
@@ -113,7 +110,7 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //SETS DATA FROM JSON OBJECTS
             String dir = "NA";
-            if (wind.has("deg")) dir = Tools.getDirection((float) wind.getDouble("deg"));
+            if (wind.has("deg")) dir = getDirection((float) wind.getDouble("deg"));
             double windspeed = wind.getDouble("speed");
             double maxTemp = main.getDouble("temp_max") - 273.15;
             double minTemp = main.getDouble("temp_min") - 273.15;
@@ -131,7 +128,7 @@ public class WeatherFragment extends Fragment implements Observer {
             txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
             txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
         } catch (JSONException e) {
-            Tools.msg(activity, "JSON Error!");
+            msg(ACT, "JSON Error!");
         }
     }
 

@@ -3,6 +3,11 @@
     <color name="colorPrimary">#0038FF</color>
     <color name="colorPrimaryDark">#003873</color>
     <color name="colorAccent">#00C54F</color>
+
+    <color name="colorPrimaryDay">#95ABF8</color>
+    <color name="colorPrimaryDarkDay">#698EB6</color>
+    <color name="colorAccentDay">#00C54F</color>
+
     <color name="faded">#99000000</color>
-    <color name="ic_launcher_background">#EEEEEE</color>
+    <color name="ic_launcher_background">#000000</color>
 </resources>

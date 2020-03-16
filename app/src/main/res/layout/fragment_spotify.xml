@@ -9,14 +9,44 @@
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitStart"
-        android:src="@drawable/album"/>
+        android:scaleType="fitCenter"
+        android:src="@drawable/album" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_category"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_playlist_play_black_64dp" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_playlist"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_library_music_black_64dp" />
+         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_album"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_album_black_48dp" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_artist"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_account_circle_black_48dp" />
+
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/play_pause_button_small"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_play_stroke_128dp" />
 
@@ -24,9 +54,9 @@
         android:id="@+id/lay_big"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible"
-        android:gravity="center">
+        android:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_artist"
@@ -80,23 +110,43 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/seek_to"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:thumb="@drawable/ic_play_button"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:thumb="@drawable/ic_play_button" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_song"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/rounded_corners"
         android:paddingStart="6dp"
-        android:paddingBottom="3dp"
+        android:layout_above="@+id/seek_to"
         android:paddingEnd="6dp"
-        android:layout_above="@id/seek_to"
-        android:layout_centerHorizontal="true"
+        android:paddingBottom="3dp"
         android:text="@string/song"
         android:textSize="@dimen/h5" />
+
+    <GridView
+        android:id="@+id/gridview"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
+
+
 </RelativeLayout>

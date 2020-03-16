@@ -1,15 +1,29 @@
 package com.vincentz.driver;
 
 import android.app.Activity;
+import android.location.Location;
 import android.widget.Toast;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import com.android.volley.RequestQueue;
 
-class Tools extends Activity{
+class Tools {
+
+    static int gpsUpdate = 1000;
+    static int cameraUpdate = 990;
+    static int timerUpdate = 1000;
+
+    static Activity ACT;
+    static FragmentManager FM;
+    static RequestQueue RQ;
+    static LocationModel LOC;
+    static boolean[] PERMISSIONS;
+
     static void msg(Activity activity, final String text) {
         activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
     }
-
+    static void msg(final String text) {
+        ACT.runOnUiThread(() -> Toast.makeText(ACT, text, Toast.LENGTH_LONG).show());
+    }
     static String getDirection(float b) {
         b -= 11.5;
         if (b <= 0 || b > 337.5) return "N";

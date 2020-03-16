@@ -19,6 +19,8 @@
 
     <!--    SPOTIFY    -->
     <string name="command_feedback">"'%1$s' command successful!"</string>
+    <string name="command_response">"'%1$s' command response"</string>
+    <string name="browse_content">Browse Content</string>
     <string name="artist">Artist</string>
     <string name="album">Album</string>
     <string name="song">Song Title</string>

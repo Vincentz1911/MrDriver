@@ -2,7 +2,6 @@ package com.vincentz.driver;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.content.Context;
@@ -13,47 +12,79 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
+import com.android.volley.toolbox.Volley;
+
+import java.util.Calendar;
 import java.util.Objects;
+
+import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
 
-    static boolean[] PERMISSIONS;
     LocationModel loc;
-    private int gpsCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
+        //SETS THEME BASED ON TIME OF DAY. TODO: REQUEST SUNRISE AND SUNSET FROM HTTP
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        if (hour > 8 && hour < 20) setTheme(R.style.AppTheme_Day);
+        else setTheme(R.style.AppTheme_Night);
+
         super.onCreate(savedInstanceState);
+        //init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+    }
+
+    private void fullscreen() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        //getSupportActionBar().hide();
+    }
+
+    void init() {
+        ACT = this;
+        RQ = Volley.newRequestQueue(this); //Starts a http queue for Volley
+        FM = getSupportFragmentManager();
         setContentView(R.layout.activity_main);
+        fullscreen();
         checkPermissions();
-        loc = new LocationModel();
+        LOC = new LocationModel();
 
         if (getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", false)) setupView();
-        else getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
+        else FM.beginTransaction().replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
     }
 
     void firstRun() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        else checkPermissions();
         getPreferences(Context.MODE_PRIVATE).edit().putBoolean("HaveRun", true).apply();
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_right_bottom, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_big_center, new SelectorFragment(), "").commit();
+
+        FM.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_right_bottom, new SelectorFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_big_center, new SelectorFragment(), "").commit();
     }
 
     private void setupView() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_left_bottom, new WeatherFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_right_bottom, new SpotifyFragment(), "").commit();
-        fm.beginTransaction().replace(R.id.fl_big_center, new MapFragment(), "").commit();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        else checkPermissions();
+        FM.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_left_bottom, new WeatherFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_right_top, new OBD2Fragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_right_bottom, new SpotifyFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_big_center, new MapFragment(), "").commit();
     }
 
     //region PERMISSIONS
@@ -111,20 +142,23 @@ public class MainActivity extends FragmentActivity {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
 
-        if (provider != null) Tools.msg(this, "Found Location Provider:" + provider);
-        else {Tools.msg(this, "No Location provider found"); return; }
+        if (provider != null) msg(this, "Found Location Provider:" + provider);
+        else {
+            msg(this, "No Location provider found");
+            return;
+        }
 
-        loc.setLast(lm.getLastKnownLocation(provider));
-        lm.requestLocationUpdates(provider, 500, 0, LocationListener);
+        LOC.setNow(lm.getLastKnownLocation(provider));
+        lm.requestLocationUpdates(provider, gpsUpdate, 0, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            loc.setLast(loc.getNow());
-            loc.setNow(location);
-            //gpsCount++;
-            //Log.d("GPS", "onLocationChanged: " + gpsCount);
+            //if (location == loc.getNow() || location.getBearing() == 0 || location.getSpeed() == 0) return;
+            LOC.setLast(LOC.getNow());
+            LOC.setNow(location);
+            Log.d("GPS", "onLocationChanged: " + location);
         }
 
         @Override

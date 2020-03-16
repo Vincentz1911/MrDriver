@@ -1,10 +1,7 @@
 package com.vincentz.driver;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,19 +15,16 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.vincentz.driver.Tools.*;
+
 public class InfoFragment extends Fragment {
 
-    private Activity activity;
-    private FragmentManager fm;
     private ImageView centerbig;
     private Timer timer;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View root = li.inflate(R.layout.fragment_info, vg, false);
-        if (getActivity() == null) return root;
-        activity = getActivity();
-        fm = getActivity().getSupportFragmentManager();
         // SharedPreferences pref = activity.getSharedPreferences("12", Context.MODE_PRIVATE);
 
         //region TIME AND DATE
@@ -40,7 +34,7 @@ public class InfoFragment extends Fragment {
         timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                activity.runOnUiThread(() -> {
+                ACT.runOnUiThread(() -> {
                     Date dateNow = new Date();
                     time.setText(new SimpleDateFormat("HH:mm:ss",
                             Locale.getDefault()).format(dateNow));
@@ -82,18 +76,18 @@ public class InfoFragment extends Fragment {
     }
 
     private boolean removeFragment(int fragment, ImageView button) {
-        fm.beginTransaction().replace(fragment, new SelectorFragment(), "").commit();
+        FM.beginTransaction().replace(fragment, new SelectorFragment(), "").commit();
         button.setImageResource(R.drawable.ic_delete_200dp);
         return true;
     }
 
     private void switchViews(int idFrom, ImageView button) {
-        Fragment fragFrom = fm.findFragmentById(idFrom);
+        Fragment fragFrom = FM.findFragmentById(idFrom);
         View vw = fragFrom.getView();
         ViewGroup parent = (ViewGroup) vw.getParent();
         parent.removeView(vw);
 
-        Fragment fragCenter = fm.findFragmentById(R.id.fl_big_center);
+        Fragment fragCenter = FM.findFragmentById(R.id.fl_big_center);
         View centerView = fragCenter.getView();
         ViewGroup parentCenter = (ViewGroup) centerView.getParent();
         parentCenter.removeView(centerView);

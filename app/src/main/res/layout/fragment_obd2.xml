@@ -10,6 +10,45 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/txt_gps"
+        android:textSize="@dimen/h5"/>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/sb_gps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:progress="5"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_cam"
+        android:textSize="@dimen/h5"/>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/sb_cam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:progress="5"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_timer"
+        android:textSize="@dimen/h5"/>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/sb_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:progress="5"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/txt_time"
         android:textSize="32sp"/>
 

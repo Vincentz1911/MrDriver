@@ -10,9 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -22,10 +21,11 @@ import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+
+import static com.vincentz.driver.Tools.*;
 
 public class OBD2Fragment extends Fragment {
 
@@ -34,14 +34,17 @@ public class OBD2Fragment extends Fragment {
     private BluetoothSocket socket = null;
     private boolean isOn;
 
-    void msg(final String text) { getActivity().runOnUiThread(() ->
-            Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show());
-    }
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_obd2, vg, false);
+        //if (getActivity() != null) ACT = (MainActivity) getActivity();
 
-        (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> isOn=true);
+        ((SeekBar) view.findViewById(R.id.sb_gps)).setProgress(gpsUpdate/100);
+        ((SeekBar) view.findViewById(R.id.sb_cam)).setProgress(cameraUpdate/100);
+        ((SeekBar) view.findViewById(R.id.sb_timer)).setProgress(timerUpdate/100);
+
+        (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> isOn = true);
+
 
         OBDDataThread = new Thread(new Runnable() {
             @Override
@@ -69,8 +72,11 @@ public class OBD2Fragment extends Fragment {
         new Thread(() -> initBT()).start();
 
         Timer timer = new Timer("Timer");
-        timer.scheduleAtFixedRate(new TimerTask() {public void run() {
-            getActivity().runOnUiThread(() -> updateView()); }}, 1000, 1000);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+               ACT.runOnUiThread(() -> updateView());
+            }
+        }, 1000, 1000);
 
         return view;
     }
@@ -78,21 +84,21 @@ public class OBD2Fragment extends Fragment {
     private void initBT() {
         //Gets list of paired devices
         if (BluetoothAdapter.getDefaultAdapter() == null) {
-            msg("No Bluetooth device detected");
+            msg(ACT,"No Bluetooth device detected");
             return;
         }
 
         final ArrayList<BluetoothDevice> paired =
                 new ArrayList<>(BluetoothAdapter.getDefaultAdapter().getBondedDevices());
         if (paired.size() == 0) {
-            msg("No paired devices found");
+            msg(ACT,"No paired devices found");
             return;
         }
         //Checks if device is named OBDII and connects
         for (BluetoothDevice device : paired) {
             if (device.getName().toUpperCase().equals("OBDII")) {
-                msg("Bluetooth OBDII device found: " + device.getName());
-                getActivity().getPreferences(Context.MODE_PRIVATE).edit()
+                msg(ACT,"Bluetooth OBDII device found: " + device.getName());
+                ACT.getPreferences(Context.MODE_PRIVATE).edit()
                         .putString("btaddress", device.getAddress()).apply();
                 connectBT(device.getAddress());
                 return;
@@ -105,11 +111,11 @@ public class OBD2Fragment extends Fragment {
         //Creates list for dialog with paired bluetooth devices
         ArrayList<String> list = new ArrayList<>();
         for (BluetoothDevice device : paired) list.add(device.getName());
-        final ArrayAdapter<String> adp = new ArrayAdapter<>(getContext(),
+        final ArrayAdapter<String> adp = new ArrayAdapter<>(ACT,
                 android.R.layout.select_dialog_singlechoice, list);
 
         //Creates dialog for choosing bluetooth device
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(ACT)
                 .setTitle("Choose Bluetooth device")
                 .setSingleChoiceItems(adp, -1, new DialogInterface.OnClickListener() {
                     @Override
@@ -117,7 +123,7 @@ public class OBD2Fragment extends Fragment {
                         dialog.dismiss();
                         int pos = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                         final String address = paired.get(pos).getAddress();
-                        getActivity().getPreferences(Context.MODE_PRIVATE).edit().
+                        ACT.getPreferences(Context.MODE_PRIVATE).edit().
                                 putString("btaddress", address).apply();
                         connectBT(address);
                     }
@@ -135,16 +141,19 @@ public class OBD2Fragment extends Fragment {
             socket.connect();
             //getODBdata(socket);
         } catch (IOException e) {
-            msg("Couldn't connect to ELM327 Bluetooth ODBII adapter");
+            msg(ACT,"Couldn't connect to ELM327 Bluetooth ODBII adapter");
             e.printStackTrace();
         }
-
-
-
         OBDDataThread.start();
     }
 
     private void updateView() {
+        Tools.gpsUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_gps)).getProgress();
+        ((TextView) getView().findViewById(R.id.txt_gps)).setText("gps: " + Tools.gpsUpdate);
+        Tools.cameraUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_cam)).getProgress()+1;
+        ((TextView) getView().findViewById(R.id.txt_cam)).setText("cam: " + Tools.cameraUpdate);
+        Tools.timerUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_timer)).getProgress();
+        ((TextView) getView().findViewById(R.id.txt_timer)).setText("timer: " + Tools.timerUpdate);
 
 //        ((TextView) getView().findViewById(R.id.txt_time))
 //                .setText(getString(R.string.time, Tools.dateFormat.format(new Date())));

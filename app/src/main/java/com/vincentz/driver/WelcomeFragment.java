@@ -1,15 +1,14 @@
 package com.vincentz.driver;
 
-import android.content.Context;
-import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import static com.vincentz.driver.Tools.ACT;
 
 public class WelcomeFragment extends Fragment {
 
@@ -20,7 +19,7 @@ public class WelcomeFragment extends Fragment {
         Button welcomeButton;
         welcomeButton = root.findViewById(R.id.btn_welcome);
 
-        welcomeButton.setOnClickListener(view -> ((MainActivity)getActivity()).firstRun());
+        welcomeButton.setOnClickListener(view -> ((MainActivity) ACT).firstRun());
         return root;
     }
 }

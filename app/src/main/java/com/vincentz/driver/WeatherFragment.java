@@ -3,7 +3,6 @@ package com.vincentz.driver;
 import androidx.fragment.app.Fragment;
 
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -58,31 +57,30 @@ public class WeatherFragment extends Fragment implements Observer {
     public void update(Observable locModel, Object loc) {
         //Listener for LocationModel Observable.
         if (loc == null || startup) return;
-
         startup = true;
+        LOC.deleteObserver(this);
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.schedule(new TimerTask() {
             @Override
-            public void run() {
-                requestWeather("https://api.openweathermap.org/data/2.5/weather?lat="
-                        + ((Location) loc).getLatitude() + "&lon="
-                        + ((Location) loc).getLongitude()
-                        + "&appid=366be396325d10cf0b15b97a1e8dde63");
-            }
-        }, 0, 10000);
+            public void run() { requestWeather(); }}, 0, 10000);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LOC.deleteObserver(this);
+        //LOC.deleteObserver(this);
         if (weatherTimer != null) {
             weatherTimer.cancel();
             weatherTimer.purge();
         }
     }
 
-    private void requestWeather(String url) {
+    private void requestWeather() {
+        String url = "https://api.openweathermap.org/data/2.5/weather?lat="
+                + LOC.getNow().getLatitude() + "&lon="
+                + LOC.getNow().getLongitude()
+                + "&appid=366be396325d10cf0b15b97a1e8dde63";
+
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> ACT.runOnUiThread(() -> updateUI(response)),
@@ -91,6 +89,7 @@ public class WeatherFragment extends Fragment implements Observer {
 
     private void updateUI(JSONObject response) {
         try {
+
             //SPLITS JSONRESPONSE INTO JSONOBJECTS
             JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
             JSONObject main = response.getJSONObject("main");
@@ -127,6 +126,8 @@ public class WeatherFragment extends Fragment implements Observer {
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));
             txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
             txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
+
+            //msg("WeatherPos: " + response.getString("name"));
         } catch (JSONException e) {
             msg(ACT, "JSON Error!");
         }
@@ -144,12 +145,15 @@ public class WeatherFragment extends Fragment implements Observer {
             case "02n":
                 return getResources().getDrawable(R.drawable.wic_02n_night_partial_cloud, null);
             case "03d":
+                return getResources().getDrawable(R.drawable.wic_03_cloudy, null);
             case "03n":
                 return getResources().getDrawable(R.drawable.wic_03_cloudy, null);
             case "04d":
+                return getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
             case "04n":
                 return getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
             case "09d":
+                return getResources().getDrawable(R.drawable.wic_09_rain, null);
             case "09n":
                 return getResources().getDrawable(R.drawable.wic_09_rain, null);
             case "10d":
@@ -157,12 +161,15 @@ public class WeatherFragment extends Fragment implements Observer {
             case "10n":
                 return getResources().getDrawable(R.drawable.wic_10n_night_rain, null);
             case "11d":
+                return getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
             case "11n":
                 return getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
             case "13d":
+                return getResources().getDrawable(R.drawable.wic_13_snow, null);
             case "13n":
                 return getResources().getDrawable(R.drawable.wic_13_snow, null);
             case "50d":
+                return getResources().getDrawable(R.drawable.wic_50_fog, null);
             case "50n":
                 return getResources().getDrawable(R.drawable.wic_50_fog, null);
             default:

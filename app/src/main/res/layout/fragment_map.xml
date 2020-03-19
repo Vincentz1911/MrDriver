@@ -2,37 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MapFragment">
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="800dp"
-        tools:context=".MapFragment" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-        <!--SPEEDOMETER-->
-
-    </LinearLayout>
+        android:layout_height="match_parent"/>
 
     <!--COMPASS-->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true">
+        android:layout_margin="30dp">
 
         <ImageView
             android:id="@+id/img_compass"
@@ -41,55 +26,50 @@
             android:contentDescription="@string/compass"
             android:src="@drawable/mic_compass_200dp" />
 
-
-
-        <TextView
-            android:id="@+id/txt_bearing2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/h3"
-            android:text="180"
-            android:textStyle="bold" />
         <TextView
             android:id="@+id/txt_bearing1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/h3"
-            android:textStyle="bold"
-            android:layout_below="@id/txt_bearing2"
-            android:layout_centerHorizontal="true"
-            android:text="WNW"/>
+            android:textSize="@dimen/h4"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
     <TextView
         android:id="@+id/txt_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_margin="30dp"
         android:background="@drawable/mic_speedsign"
         android:gravity="center"
-        android:layout_alignParentBottom="true"
         android:textColor="@android:color/black"
         android:textSize="@dimen/h3"
         android:textStyle="bold" />
 
-    <!--    <SeekBar-->
-    <!--        android:id="@+id/slider_zoom"-->
-    <!--        android:layout_width="300dp"-->
-    <!--        android:layout_height="300dp"-->
-    <!--        android:layout_alignParentBottom="true"-->
-    <!--        android:layout_alignParentEnd="true"-->
-    <!--        android:thumb="@drawable/ic_zoom_48dp"-->
-    <!--        android:layout_marginBottom="30dp"-->
-    <!--        android:layout_marginEnd="-120dp"-->
-    <!--        android:rotation="270" />-->
     <TextView
         android:id="@+id/txt_zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/h3" />
 
+    <NumberPicker
+        android:id="@+id/np_tilt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/txt_speed"
+        android:layout_centerVertical="true"
+        android:background="@drawable/draw_gradient"
+        android:descendantFocusability="blocksDescendants" />
+
+    <NumberPicker
+        android:id="@+id/np_zoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/txt_speed"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/draw_gradient"
+        android:descendantFocusability="blocksDescendants" />
 </RelativeLayout>

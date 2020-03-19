@@ -8,7 +8,7 @@ import com.android.volley.RequestQueue;
 class Tools {
 
     static int gpsUpdate = 1000;
-    static int cameraUpdate = 990;
+    static int cameraUpdate = 950;
     static int timerUpdate = 1000;
 
     static Activity ACT;

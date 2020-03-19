@@ -28,9 +28,64 @@ public class InfoFragment extends Fragment {
         // SharedPreferences pref = activity.getSharedPreferences("12", Context.MODE_PRIVATE);
 
         //region TIME AND DATE
-        TextView time = root.findViewById(R.id.txt_time);
-        TextView date = root.findViewById(R.id.txt_date);
-        TextView week = root.findViewById(R.id.txt_week);
+//        TextView time = root.findViewById(R.id.txt_time);
+//        TextView date = root.findViewById(R.id.txt_date);
+//        TextView week = root.findViewById(R.id.txt_week);
+//        timer = new Timer("Timer");
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            public void run() {
+//                ACT.runOnUiThread(() -> {
+//                    Date dateNow = new Date();
+//                    time.setText(new SimpleDateFormat("HH:mm:ss",
+//                            Locale.getDefault()).format(dateNow));
+//                    date.setText(new SimpleDateFormat("EEEE d. MMMM",
+//                            Locale.getDefault()).format(dateNow));
+//                    week.setText(getString(R.string.week, new SimpleDateFormat("w - yyyy",
+//                            Locale.getDefault()).format(dateNow)));
+//                });
+//            }
+//        }, 1000, 1000);
+        //endregion
+
+        //region INIT ONCLICK
+        centerbig = root.findViewById(R.id.btn_big);
+        centerbig.setImageResource(R.drawable.fic_maps_200dp);
+
+        ImageView lefttop = root.findViewById(R.id.btn_left_top);
+        lefttop.setImageResource(R.drawable.fic_info_200dp);
+
+        ImageView leftbtm = root.findViewById(R.id.btn_left_bottom);
+        leftbtm.setImageResource(R.drawable.fic_spotify_logo_200dp);
+
+        ImageView righttop = root.findViewById(R.id.btn_right_top);
+        righttop.setImageResource(R.drawable.fic_weather_200dp);
+
+        ImageView rightbtm = root.findViewById(R.id.btn_right_bottom);
+        rightbtm.setImageResource(R.drawable.fic_obd2_200dp);
+
+        centerbig.setOnLongClickListener(v -> removeFragment(R.id.fl_big_center, centerbig));
+
+
+        lefttop.setOnClickListener(v -> switchViews(R.id.fl_left_top, lefttop));
+        lefttop.setOnLongClickListener(v -> removeFragment(R.id.fl_left_top, lefttop));
+        leftbtm.setOnClickListener(v -> switchViews(R.id.fl_left_bottom, leftbtm));
+        leftbtm.setOnLongClickListener(v -> removeFragment(R.id.fl_left_bottom, leftbtm));
+        righttop.setOnClickListener(v -> switchViews(R.id.fl_right_top, righttop));
+        righttop.setOnLongClickListener(v -> removeFragment(R.id.fl_right_top, righttop));
+        rightbtm.setOnClickListener(v -> switchViews(R.id.fl_right_bottom, rightbtm));
+        rightbtm.setOnLongClickListener(v -> removeFragment(R.id.fl_right_bottom, rightbtm));
+        //endregion
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //region TIME AND DATE
+        TextView time = getView().findViewById(R.id.txt_time);
+        TextView date = getView().findViewById(R.id.txt_date);
+        TextView week = getView().findViewById(R.id.txt_week);
         timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
@@ -45,27 +100,6 @@ public class InfoFragment extends Fragment {
                 });
             }
         }, 1000, 1000);
-        //endregion
-
-        //region INIT ONCLICK
-        centerbig = root.findViewById(R.id.btn_big);
-        ImageView lefttop = root.findViewById(R.id.btn_left_top);
-        ImageView leftbtm = root.findViewById(R.id.btn_left_bottom);
-        ImageView righttop = root.findViewById(R.id.btn_right_top);
-        ImageView rightbtm = root.findViewById(R.id.btn_right_bottom);
-
-        centerbig.setOnLongClickListener(v -> removeFragment(R.id.fl_big_center, centerbig));
-        lefttop.setOnClickListener(v -> switchViews(R.id.fl_left_top, lefttop));
-        lefttop.setOnLongClickListener(v -> removeFragment(R.id.fl_left_top, lefttop));
-        leftbtm.setOnClickListener(v -> switchViews(R.id.fl_left_bottom, leftbtm));
-        leftbtm.setOnLongClickListener(v -> removeFragment(R.id.fl_left_bottom, leftbtm));
-        righttop.setOnClickListener(v -> switchViews(R.id.fl_right_top, righttop));
-        righttop.setOnLongClickListener(v -> removeFragment(R.id.fl_right_top, righttop));
-        rightbtm.setOnClickListener(v -> switchViews(R.id.fl_right_bottom, rightbtm));
-        rightbtm.setOnLongClickListener(v -> removeFragment(R.id.fl_right_bottom, rightbtm));
-        //endregion
-
-        return root;
     }
 
     @Override

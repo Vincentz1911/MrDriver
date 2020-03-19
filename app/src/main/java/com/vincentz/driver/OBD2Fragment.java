@@ -144,7 +144,7 @@ public class OBD2Fragment extends Fragment {
     private void updateView() {
         Tools.gpsUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_gps)).getProgress();
         ((TextView) getView().findViewById(R.id.txt_gps)).setText("gps: " + Tools.gpsUpdate);
-        Tools.cameraUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_cam)).getProgress()+1;
+        Tools.cameraUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_cam)).getProgress();
         ((TextView) getView().findViewById(R.id.txt_cam)).setText("cam: " + Tools.cameraUpdate);
         Tools.timerUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_timer)).getProgress();
         ((TextView) getView().findViewById(R.id.txt_timer)).setText("timer: " + Tools.timerUpdate);

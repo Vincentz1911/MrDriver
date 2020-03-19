@@ -11,12 +11,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.android.volley.toolbox.Volley;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -24,8 +21,6 @@ import java.util.Objects;
 import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
-
-    LocationModel loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +30,6 @@ public class MainActivity extends FragmentActivity {
         else setTheme(R.style.AppTheme_Night);
 
         super.onCreate(savedInstanceState);
-        //init();
     }
 
     @Override
@@ -56,12 +50,12 @@ public class MainActivity extends FragmentActivity {
 
     void init() {
         ACT = this;
+        LOC = new LocationModel();
         RQ = Volley.newRequestQueue(this); //Starts a http queue for Volley
         FM = getSupportFragmentManager();
         setContentView(R.layout.activity_main);
         fullscreen();
         checkPermissions();
-        LOC = new LocationModel();
 
         if (getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", false)) setupView();
         else FM.beginTransaction().replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
@@ -83,9 +77,9 @@ public class MainActivity extends FragmentActivity {
         if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
         else checkPermissions();
         FM.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_left_bottom, new WeatherFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_right_top, new OBD2Fragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_right_bottom, new SpotifyFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_right_top, new WeatherFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_left_bottom, new SpotifyFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_right_bottom, new OBD2Fragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_big_center, new MapFragment(), "").commit();
     }
 
@@ -118,7 +112,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int rc, String[] permissions, @NotNull int[] results) {
+    public void onRequestPermissionsResult(int rc, String[] permissions, int[] results) {
         for (int p = 0; p < permissions.length; p++)
             if (results.length > 0 && results[p] == PackageManager.PERMISSION_GRANTED)
                 PERMISSIONS[p] = true;
@@ -144,7 +138,7 @@ public class MainActivity extends FragmentActivity {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
 
-        if (provider != null) msg(this, "Found Location Provider:" + provider);
+        if (provider != null) msg(this, "Best Location Provider: " + provider);
         else {
             msg(this, "No Location provider found");
             return;
@@ -160,19 +154,22 @@ public class MainActivity extends FragmentActivity {
             //if (location == loc.getNow() || location.getBearing() == 0 || location.getSpeed() == 0) return;
             LOC.setLast(LOC.getNow());
             LOC.setNow(location);
-            Log.d("GPS", "onLocationChanged: " + location);
+            //Log.d("GPS", "onLocationChanged: " + location);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
+            msg("LOC Status changed: " + provider + " status: " + status);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
+            msg("LOC Provider enabled: " + provider);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
+            msg("LOC Provider disabled: " + provider);
         }
     };
     //endregion

@@ -14,7 +14,7 @@
 
     <!--    MAPS    -->
     <string name="compass">Compass</string>
-    <string name="bearing">%d°</string>
+    <string name="bearing">%s\n %d°</string>
     <string name="mapspeed">%d</string>
 
     <!--    SPOTIFY    -->

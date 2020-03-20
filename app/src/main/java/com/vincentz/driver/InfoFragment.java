@@ -21,6 +21,8 @@ public class InfoFragment extends Fragment {
 
     private ImageView centerbig;
     private Timer timer;
+    private boolean isHideRight = false;
+
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -63,6 +65,11 @@ public class InfoFragment extends Fragment {
         ImageView rightbtm = root.findViewById(R.id.btn_right_bottom);
         rightbtm.setImageResource(R.drawable.fic_obd2_200dp);
 
+        centerbig.setOnClickListener(v -> {
+            isHideRight = isHideRight ? false : true;
+            if (isHideRight) ACT.findViewById(R.id.right_side).setVisibility(View.GONE);
+            else ACT.findViewById(R.id.right_side).setVisibility(View.VISIBLE);
+        });
         centerbig.setOnLongClickListener(v -> removeFragment(R.id.fl_big_center, centerbig));
 
 
@@ -77,6 +84,9 @@ public class InfoFragment extends Fragment {
         //endregion
 
         return root;
+    }
+
+    private void hideEdges() {
     }
 
     @Override

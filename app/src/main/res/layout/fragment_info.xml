@@ -10,7 +10,7 @@
         android:layout_weight="1">
 
         <TableLayout
-            android:id="@+id/left_side"
+            android:id="@+id/left_side_tab"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -39,7 +39,7 @@
             android:contentDescription="@string/fragment"/>
 
         <TableLayout
-            android:id="@+id/right_side"
+            android:id="@+id/right_side_tab"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">

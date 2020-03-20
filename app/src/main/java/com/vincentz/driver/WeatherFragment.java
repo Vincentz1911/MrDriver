@@ -85,7 +85,7 @@ public class WeatherFragment extends Fragment implements Observer {
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> ACT.runOnUiThread(() -> updateUI(response)),
-                error -> msg(ACT, "Volley Error")));
+                error -> msg(ACT, "Volley Weather Error")));
     }
 
     private void updateUI(JSONObject response) {
@@ -119,12 +119,13 @@ public class WeatherFragment extends Fragment implements Observer {
             Date sunrise = new Date(sys.getInt("sunrise") * 1000L);
             Date sunset = new Date(sys.getInt("sunset") * 1000L);
             int clouds = response.getJSONObject("clouds").getInt("all");
+            int visibility = response.getInt("visibility") / 1000;
             String description = weather.getString("description");
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
             //UPDATES VIEW WITH DATA
             weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
-            txt_clouds.setText(description + clouds+"%");
+            txt_clouds.setText(description + " " + clouds+"% (" + visibility + "km)");
             txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));
@@ -133,7 +134,7 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //msg("WeatherPos: " + response.getString("name"));
         } catch (JSONException e) {
-            msg(ACT, "JSON Error!");
+            msg(ACT, "JSON Weather Error!");
         }
     }
 

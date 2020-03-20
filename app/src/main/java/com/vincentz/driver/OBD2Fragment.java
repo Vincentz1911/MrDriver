@@ -16,8 +16,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-//import com.vincentz1911.mapsandbtandobd2.obd.commands.*;
-//import com.vincentz1911.mapsandbtandobd2.obd.commands.engine.*;
+import com.vincentz.driver.obd.commands.*;
+import com.vincentz.driver.obd.commands.engine.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class OBD2Fragment extends Fragment {
     private String speed, rpm, fuelLevel, oilTemp, consumption;
     private Thread OBDDataThread;
     private BluetoothSocket socket = null;
-    private boolean isOn;
+    private boolean isOn = true;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -50,18 +50,19 @@ public class OBD2Fragment extends Fragment {
             if (socket != null && socket.isConnected()) {
                 if (isOn)
                     while (!Thread.currentThread().isInterrupted()) {
-//                            try {
-//                                Thread.sleep(500);
-//                                RPMCommand engineRpmCommand = new RPMCommand();
-//                                engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-//                                rpm = engineRpmCommand.getFormattedResult();
-//
-//                                SpeedCommand speedCommand = new SpeedCommand();
-//                                speedCommand.run(socket.getInputStream(), socket.getOutputStream());
-//                                speed = speedCommand.getFormattedResult();
-//                            } catch (IOException | InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
+                            try {
+
+                                RPMCommand engineRpmCommand = new RPMCommand();
+                                engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
+                                rpm = engineRpmCommand.getFormattedResult();
+
+                                SpeedCommand speedCommand = new SpeedCommand();
+                                speedCommand.run(socket.getInputStream(), socket.getOutputStream());
+                                speed = speedCommand.getFormattedResult();
+                                //Thread.sleep(100);
+                            } catch (IOException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
                     }
             }
         });
@@ -73,7 +74,7 @@ public class OBD2Fragment extends Fragment {
             public void run() {
                ACT.runOnUiThread(() -> updateView());
             }
-        }, 1000, 1000);
+        }, 1000, 500);
 
         return view;
     }

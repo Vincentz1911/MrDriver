@@ -11,6 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_fullscreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_fullscreen_exit_black_68dp"
+        />
+
     <!--COMPASS-->
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -50,10 +58,25 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/txt_street"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Streetname"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/h3"
+        android:background="@drawable/draw_rounded_corners"
+        android:padding="5dp"
+        />
+
+
+    <TextView
         android:id="@+id/txt_zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/h3" />
+
+
 
     <NumberPicker
         android:id="@+id/np_tilt"

@@ -34,7 +34,7 @@ public class WeatherFragment extends Fragment implements Observer {
     //private MainActivity activity;
     private Timer weatherTimer;
     private ImageView weather_icon;
-    private TextView txt_temp, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
+    private TextView txt_temp, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
     private boolean startup;
 
     @Override
@@ -43,6 +43,7 @@ public class WeatherFragment extends Fragment implements Observer {
         View root = li.inflate(R.layout.fragment_weather, vg, false);
         weather_icon = root.findViewById(R.id.img_weather);
         txt_temp = root.findViewById(R.id.txt_temp);
+        txt_clouds = root.findViewById(R.id.txt_clouds);
         txt_wind = root.findViewById(R.id.txt_wind);
         txt_minmax = root.findViewById(R.id.txt_low_high_temp);
         txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
@@ -117,10 +118,13 @@ public class WeatherFragment extends Fragment implements Observer {
             int humidity = (int) main.getDouble("humidity");
             Date sunrise = new Date(sys.getInt("sunrise") * 1000L);
             Date sunset = new Date(sys.getInt("sunset") * 1000L);
+            int clouds = response.getJSONObject("clouds").getInt("all");
+            String description = weather.getString("description");
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
             //UPDATES VIEW WITH DATA
             weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
+            txt_clouds.setText(description + clouds+"%");
             txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));

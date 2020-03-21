@@ -145,7 +145,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         LOC.setNow(lm.getLastKnownLocation(provider));
-        lm.requestLocationUpdates(provider, gpsUpdate, 0, LocationListener);
+        lm.requestLocationUpdates(provider, GPSUPDATE, 0, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {

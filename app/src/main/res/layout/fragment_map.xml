@@ -9,15 +9,60 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <NumberPicker
+        android:id="@+id/np_tilt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/draw_gradient"
+        android:descendantFocusability="blocksDescendants" />
+
+    <NumberPicker
+        android:id="@+id/np_zoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/draw_gradient"
+        android:descendantFocusability="blocksDescendants" />
+
+    <ImageView
+        android:id="@+id/img_directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:src="@drawable/mic_directions_200dp" />
+
+    <ImageView
         android:id="@+id/img_fullscreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_fullscreen_exit_black_68dp"
-        />
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_fullscreen_exit_black_68dp" />
+
+    <EditText
+        android:id="@+id/input_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/draw_rounded_corners"
+        android:textAlignment="center"
+        android:textSize="@dimen/h4"
+        android:visibility="gone"
+        android:inputType="textPostalAddress"
+        android:autofillHints="@string/maps" />
+
+    <ListView
+        android:id="@+id/listview_locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_search"
+        android:visibility="gone"/>
+
 
     <!--COMPASS-->
     <RelativeLayout
@@ -42,7 +87,7 @@
             android:gravity="center"
             android:textColor="@android:color/black"
             android:textSize="@dimen/h4"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <TextView
@@ -62,37 +107,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Streetname"
         android:layout_centerHorizontal="true"
-        android:textSize="@dimen/h3"
         android:background="@drawable/draw_rounded_corners"
         android:padding="5dp"
-        />
-
+        android:text="Streetname"
+        android:textSize="@dimen/h3" />
 
     <TextView
         android:id="@+id/txt_zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:textSize="@dimen/h3" />
 
-
-
-    <NumberPicker
-        android:id="@+id/np_tilt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/txt_speed"
-        android:layout_centerVertical="true"
-        android:background="@drawable/draw_gradient"
-        android:descendantFocusability="blocksDescendants" />
-
-    <NumberPicker
-        android:id="@+id/np_zoom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/txt_speed"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/draw_gradient"
-        android:descendantFocusability="blocksDescendants" />
 </RelativeLayout>

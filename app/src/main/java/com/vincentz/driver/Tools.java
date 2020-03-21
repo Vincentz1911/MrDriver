@@ -7,9 +7,9 @@ import com.android.volley.RequestQueue;
 
 class Tools {
 
-    static int gpsUpdate = 1000;
-    static int cameraUpdate = 950;
-    static int timerUpdate = 1000;
+    static int GPSUPDATE = 1000;
+    static int CAMERAUPDATE = 950;
+    static int TIMERUPDATE = 1000;
 
     static Activity ACT;
     static FragmentManager FM;

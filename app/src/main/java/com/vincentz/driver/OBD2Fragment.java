@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +38,9 @@ public class OBD2Fragment extends Fragment {
         View view = li.inflate(R.layout.fragment_obd2, vg, false);
         //if (getActivity() != null) ACT = (MainActivity) getActivity();
 
-        ((SeekBar) view.findViewById(R.id.sb_gps)).setProgress(gpsUpdate/100);
-        ((SeekBar) view.findViewById(R.id.sb_cam)).setProgress(cameraUpdate/100);
-        ((SeekBar) view.findViewById(R.id.sb_timer)).setProgress(timerUpdate/100);
+        ((SeekBar) view.findViewById(R.id.sb_gps)).setProgress(GPSUPDATE /100);
+        ((SeekBar) view.findViewById(R.id.sb_cam)).setProgress(CAMERAUPDATE /100);
+        ((SeekBar) view.findViewById(R.id.sb_timer)).setProgress(TIMERUPDATE /100);
 
         (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> isOn = true);
 
@@ -143,12 +142,12 @@ public class OBD2Fragment extends Fragment {
     }
 
     private void updateView() {
-        Tools.gpsUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_gps)).getProgress();
-        ((TextView) getView().findViewById(R.id.txt_gps)).setText("gps: " + Tools.gpsUpdate);
-        Tools.cameraUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_cam)).getProgress();
-        ((TextView) getView().findViewById(R.id.txt_cam)).setText("cam: " + Tools.cameraUpdate);
-        Tools.timerUpdate = 100 * ((SeekBar) getView().findViewById(R.id.sb_timer)).getProgress();
-        ((TextView) getView().findViewById(R.id.txt_timer)).setText("timer: " + Tools.timerUpdate);
+        Tools.GPSUPDATE = 100 * ((SeekBar) getView().findViewById(R.id.sb_gps)).getProgress();
+        ((TextView) getView().findViewById(R.id.txt_gps)).setText("gps: " + Tools.GPSUPDATE);
+        Tools.CAMERAUPDATE = 100 * ((SeekBar) getView().findViewById(R.id.sb_cam)).getProgress();
+        ((TextView) getView().findViewById(R.id.txt_cam)).setText("cam: " + Tools.CAMERAUPDATE);
+        Tools.TIMERUPDATE = 100 * ((SeekBar) getView().findViewById(R.id.sb_timer)).getProgress();
+        ((TextView) getView().findViewById(R.id.txt_timer)).setText("timer: " + Tools.TIMERUPDATE);
 
 //        ((TextView) getView().findViewById(R.id.txt_time))
 //                .setText(getString(R.string.time, Tools.dateFormat.format(new Date())));

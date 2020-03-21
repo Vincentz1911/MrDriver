@@ -2,10 +2,15 @@ package com.vincentz.driver;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -23,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.maps.android.geojson.GeoJsonLayer;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,20 +42,23 @@ import static com.vincentz.driver.Tools.ACT;
 import static com.vincentz.driver.Tools.LOC;
 import static com.vincentz.driver.Tools.RQ;
 import static com.vincentz.driver.Tools.msg;
-import static com.vincentz.driver.Tools.timerUpdate;
+import static com.vincentz.driver.Tools.TIMERUPDATE;
 
 public class MapFragment extends Fragment implements Observer, OnMapReadyCallback {
 
     private String TAG = "Maps";
     private Location location, lastLocation;
     private GoogleMap map;
-    private LatLng pos;
+    private GeoJsonLayer route;
+    private LatLng pos, target;
     private float speed = 0, bearing = 0, tilt = 4, zoom = 20, speedZoom, speedTilt;
     private TextView txt_Speed, txt_Bearing, txt_Zoom, txt_Street;
-    private ImageView img_compass, img_fullscreen;
+    private ImageView img_compass, img_fullscreen, img_directions;
+    private ListView lv_searchResults;
+    private EditText input_search;
     private String street;
     private NumberPicker np_Tilt, np_Zoom;
-    private boolean isTraffic = false, isSatellite = false, isFullscreen = false;
+    private boolean isTraffic = false, isSatellite = false, isFullscreen = false, isCamLock = true;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -58,44 +67,69 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         Objects.requireNonNull((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map)).getMapAsync(this);
 
-        txt_Bearing = root.findViewById(R.id.txt_bearing1);
-        txt_Speed = root.findViewById(R.id.txt_speed);
-        txt_Street = root.findViewById(R.id.txt_street);
-        txt_Speed.setOnClickListener(view -> {
-            geoLocationReversed();
-        });
+        lv_searchResults = root.findViewById(R.id.listview_locations);
+        input_search = root.findViewById(R.id.input_search);
+        input_search.addTextChangedListener(new TextWatcher() {
+            Timer requestAutoComplete = new Timer("AutoComplete");
 
-        txt_Speed.setOnLongClickListener(view -> {
-            isTraffic = isTraffic ? false : true;
-            map.setTrafficEnabled(isTraffic);
-            msg("Show Traffic: " + isTraffic);
-            return true;
-        });
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                msg("BEFORE TEXT");
+            }
 
-        img_compass = root.findViewById(R.id.img_compass);
-        img_fullscreen = root.findViewById(R.id.img_fullscreen);
-        img_fullscreen.setOnClickListener(view -> {
-            isFullscreen = isFullscreen ? false : true;
-            if (isFullscreen){
-                getActivity().findViewById(R.id.left_side).setVisibility(View.GONE);
-                getActivity().findViewById(R.id.right_side).setVisibility(View.GONE);
-                img_fullscreen.setImageResource(R.drawable.ic_fullscreen_exit_black_68dp);
-            } else {
-                getActivity().findViewById(R.id.left_side).setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.right_side).setVisibility(View.VISIBLE);
-                img_fullscreen.setImageResource(R.drawable.ic_fullscreen_black_68dp);
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                msg("DURING TEXT");
+                requestAutoComplete.cancel();
+                //requestAutoComplete.purge();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                msg("AFTER TEXT");
+                requestAutoComplete.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        String url = "https://api.openrouteservice.org/geocode/autocomplete" +
+                                "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62" +
+                                "&text=" + editable.toString();
+
+                        //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
+                        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
+                                response -> {
+                                    try {
+                                        JSONArray searchResults = response.getJSONArray("features");
+                                        //searchResults.length();
+                                        String[] searchList = new String[searchResults.length()];
+                                        for (int i = 0; i < searchResults.length(); i++){
+                                            searchList[i] = searchResults.getJSONObject(i).getJSONObject("properties").getString("label");
+                                        }
+                                        final ArrayAdapter<String> adapter = new ArrayAdapter<String>( getContext(), android.R.layout.simple_list_item_1, searchList );
+                                        lv_searchResults.setAdapter( adapter );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                },
+                                error -> msg(ACT, "Volley Routing Error")));
+                    }
+                }, 2000);
             }
         });
 
-        img_compass.setOnLongClickListener(view -> {
-            isSatellite = isSatellite ? false : true;
-            if (isSatellite) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            return true;
-        });
-        img_compass.setOnClickListener(view -> { routing(); });
 
-        txt_Zoom = root.findViewById(R.id.txt_zoom);
+
+//
+//        input_search.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                return false;
+//            }
+//        });
+
+        txt_Bearing = root.findViewById(R.id.txt_bearing1);
+        txt_Street = root.findViewById(R.id.txt_street);
 
         np_Tilt = root.findViewById(R.id.np_tilt);
         np_Tilt.setMinValue(0);
@@ -106,25 +140,79 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         np_Zoom.setMinValue(15);
         np_Zoom.setMaxValue(25);
         np_Zoom.setValue((int) zoom);
+
+        txt_Speed = root.findViewById(R.id.txt_speed);
+        txt_Speed.setOnClickListener(view -> {
+            geoLocationReversed();
+        });
+        txt_Speed.setOnLongClickListener(view -> {
+            isTraffic = isTraffic ? false : true;
+            map.setTrafficEnabled(isTraffic);
+            msg("Show Traffic: " + isTraffic);
+            return true;
+        });
+
+        img_directions = root.findViewById(R.id.img_directions);
+        img_directions.setOnClickListener(view -> {
+            input_search.setVisibility(View.VISIBLE);
+            isCamLock = false;
+            msg("Search enabled");
+        });
+
+        img_fullscreen = root.findViewById(R.id.img_fullscreen);
+        img_fullscreen.setOnClickListener(view -> {
+            isFullscreen = isFullscreen ? false : true;
+            if (isFullscreen) {
+                getActivity().findViewById(R.id.left_side).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.right_side).setVisibility(View.GONE);
+                img_fullscreen.setImageResource(R.drawable.ic_fullscreen_exit_black_68dp);
+            } else {
+                getActivity().findViewById(R.id.left_side).setVisibility(View.VISIBLE);
+                getActivity().findViewById(R.id.right_side).setVisibility(View.VISIBLE);
+                img_fullscreen.setImageResource(R.drawable.ic_fullscreen_black_68dp);
+            }
+        });
+
+        img_compass = root.findViewById(R.id.img_compass);
+        img_compass.setOnClickListener(view -> {
+            isCamLock = true;
+            zoom = 20;
+            np_Zoom.setValue((int) zoom);
+            msg("Camera Locked:" + isCamLock);
+        });
+        img_compass.setOnLongClickListener(view -> {
+            isSatellite = isSatellite ? false : true;
+            if (isSatellite) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            return true;
+        });
+
+
+        txt_Zoom = root.findViewById(R.id.txt_zoom);
+
+
         //endregion
         LOC.addObserver(this);
 
         return root;
     }
 
-    void routing() {
+    void routing(LatLng target) {
         String url = "https://api.openrouteservice.org/v2/directions/driving-car" +
                 "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62" +
                 "&start=" + LOC.getNow().getLongitude() + ",%20" + LOC.getNow().getLatitude() +
-                "&end=" + "12.4818872,%20" + "55.6805428";
+                "&end=" + target.longitude + ",%20" + target.latitude;
 
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
-                    GeoJsonLayer layer = new GeoJsonLayer(map, response);
-                    layer.getDefaultLineStringStyle().setColor(R.color.colorRoute);
-                    layer.getDefaultPointStyle().setVisible(true);
-                    layer.addLayerToMap();
+                    if (route != null) route.removeLayerFromMap();
+                    route = new GeoJsonLayer(map, response);
+                    route.getDefaultLineStringStyle().setColor(R.color.colorRoute);
+                    route.getDefaultPointStyle().setVisible(true);
+                    route.addLayerToMap();
+                    //map.setLatLngBoundsForCameraTarget(route.getBoundingBox());
+
                 },
                 error -> msg(ACT, "Volley Routing Error")));
     }
@@ -165,7 +253,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         map.setMyLocationEnabled(true);
         map.setBuildingsEnabled(true);
         map.setTrafficEnabled(isTraffic);
-        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         //Projection projection = map.getProjection();
         //projection.getVisibleRegion();
 
@@ -181,12 +269,23 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         else return;
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
 
+        map.setOnMapClickListener(view -> {
+            isCamLock = false;
+            msg("Camera Locked:" + isCamLock);
+        });
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                routing(latLng);
+            }
+        });
+
         new Timer("Cam").schedule(new TimerTask() {
             @Override
             public void run() {
                 updateCamera();
             }
-        }, 0, timerUpdate);
+        }, 0, TIMERUPDATE);
     }
 
     @Override
@@ -210,7 +309,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             count = 0;
         }
 
-
         zoom = np_Zoom.getValue();
         tilt = np_Tilt.getValue() * 10;
         speedTilt = (tilt + speed / 2 < 70) ? tilt + speed / 2 : 70;
@@ -228,16 +326,28 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             txt_Zoom.setText("s" + (int) speed + " /z-sz " + (int) zoom + "/" + (int) speedZoom
                     + " t/st " + (int) tilt + "/" + (int) speedTilt);
 
+
+            //map.on
             // 10 kmt (18 - 3 /6 = 16.5 * (1 + location.getSpeed()/100))
             // 110 kmt (18 - 30 /6 = 12 * (1 + location.getSpeed()/100)
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(pos)
-                    .zoom(speedZoom)
-                    .bearing(bearing)
-                    .tilt(speedTilt)
-                    .build();
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), Tools.cameraUpdate, null);
-            map.setPadding(0, 350, 0, 0);
+
+
+            if (isCamLock) {
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(pos)
+                        .zoom(speedZoom)
+                        .bearing(bearing)
+                        .tilt(speedTilt)
+                        .build();
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), Tools.CAMERAUPDATE, null);
+                map.setPadding(0, 350, 0, 0);
+            } else {
+
+                map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+
+                map.setPadding(0, 0, 0, 0);
+            }
+
         });
     }
 }

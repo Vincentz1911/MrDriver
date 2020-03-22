@@ -1,8 +1,11 @@
 package com.vincentz.driver;
 
 import android.app.Activity;
+import android.view.View;
 import android.widget.Toast;
+
 import androidx.fragment.app.FragmentManager;
+
 import com.android.volley.RequestQueue;
 
 class Tools {
@@ -20,9 +23,20 @@ class Tools {
     static void msg(Activity activity, final String text) {
         activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
     }
+
     static void msg(final String text) {
         ACT.runOnUiThread(() -> Toast.makeText(ACT, text, Toast.LENGTH_LONG).show());
     }
+
+    static void fullscreen() {
+        ACT.getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
     static String getDirection(float b) {
         b -= 11.5;
         if (b <= 0 || b > 337.5) return "N";

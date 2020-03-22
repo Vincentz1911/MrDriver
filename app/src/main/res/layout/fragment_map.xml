@@ -44,26 +44,31 @@
         android:layout_margin="20dp"
         android:src="@drawable/ic_fullscreen_exit_black_68dp" />
 
+    <LinearLayout
+        android:id="@+id/layout_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/img_directions"
+        android:layout_toEndOf="@id/img_directions"
+        android:layout_toStartOf="@id/img_fullscreen"
+        android:orientation="vertical"
+        android:visibility="gone">
+
     <EditText
         android:id="@+id/input_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:background="@drawable/draw_rounded_corners"
         android:textAlignment="center"
-        android:textSize="@dimen/h4"
-        android:visibility="gone"
-        android:inputType="textPostalAddress"
-        android:autofillHints="@string/maps" />
+        android:textSize="@dimen/h4" />
 
     <ListView
         android:id="@+id/listview_locations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/input_search"
-        android:visibility="gone"/>
+        android:layout_below="@id/input_search" />
 
-
+    </LinearLayout>
     <!--COMPASS-->
     <RelativeLayout
         android:layout_width="wrap_content"

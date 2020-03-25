@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,6 @@ import static com.vincentz.driver.Tools.*;
 
 public class WeatherFragment extends Fragment implements Observer {
 
-    //private MainActivity activity;
     private Timer weatherTimer;
     private ImageView weather_icon;
     private TextView txt_temp, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
@@ -90,7 +90,6 @@ public class WeatherFragment extends Fragment implements Observer {
 
     private void updateUI(JSONObject response) {
         try {
-
             //SPLITS JSONRESPONSE INTO JSONOBJECTS
             JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
             JSONObject main = response.getJSONObject("main");
@@ -119,7 +118,9 @@ public class WeatherFragment extends Fragment implements Observer {
             Date sunrise = new Date(sys.getInt("sunrise") * 1000L);
             Date sunset = new Date(sys.getInt("sunset") * 1000L);
             int clouds = response.getJSONObject("clouds").getInt("all");
-            int visibility = response.getInt("visibility") / 1000;
+            int visibility = 0;
+            if (response.has("visibility"))
+                visibility = response.getInt("visibility") / 1000;
             String description = weather.getString("description");
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
@@ -135,6 +136,7 @@ public class WeatherFragment extends Fragment implements Observer {
             //msg("WeatherPos: " + response.getString("name"));
         } catch (JSONException e) {
             msg(ACT, "JSON Weather Error!");
+            Log.e("TAG", "updateUI: ", e);
         }
     }
 

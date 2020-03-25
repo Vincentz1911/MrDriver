@@ -9,6 +9,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDay</item>
         <item name="colorAccent">@color/colorAccentDay</item>
         <item name="android:textColor">@color/colorTextDay</item>
+<!--        <item name="android:numberPickerStyle">NumberPickerText</item>-->
     </style>
 
     <style name="AppTheme_Night" parent="Theme.AppCompat.NoActionBar">
@@ -19,5 +20,10 @@
 
     </style>
 
+    <style name="NumberPickerText">
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="background">@android:color/transparent</item>
+        <item name="android:descendantFocusability">blocksDescendants</item>
+    </style>
 
 </resources>

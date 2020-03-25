@@ -5,11 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".MapFragment">
 
-    <fragment
+    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
+        map:mapType="hybrid"
+
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
     <NumberPicker
         android:id="@+id/np_tilt"
@@ -17,8 +20,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/draw_gradient"
-        android:descendantFocusability="blocksDescendants" />
+        android:textColor="?colorAccent"
+        android:theme="@style/NumberPickerText" />
+
+    <TextView
+        android:id="@+id/txt_tilt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/np_tilt"
+        android:drawableStart="@drawable/ic_tilt"
+        android:textColor="?colorAccent"
+        android:textSize="@dimen/h3" />
 
     <NumberPicker
         android:id="@+id/np_zoom"
@@ -26,8 +38,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/draw_gradient"
-        android:descendantFocusability="blocksDescendants" />
+        android:textColor="?colorAccent"
+        android:theme="@style/NumberPickerText" />
+
+    <TextView
+        android:id="@+id/txt_zoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/np_zoom"
+        android:layout_alignParentEnd="true"
+        android:textColor="?colorAccent"
+        android:drawableEnd="@drawable/ic_zoom"
+        android:textSize="@dimen/h3" />
 
     <ImageView
         android:id="@+id/img_directions"
@@ -42,31 +64,31 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
-        android:src="@drawable/ic_fullscreen_exit_black_68dp" />
+        android:src="@drawable/ic_fullscreen_black_68dp" />
 
     <LinearLayout
         android:id="@+id/layout_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/img_directions"
-        android:layout_toEndOf="@id/img_directions"
+        android:layout_alignTop="@id/np_zoom"
         android:layout_toStartOf="@id/img_fullscreen"
+        android:layout_toEndOf="@id/img_directions"
         android:orientation="vertical"
         android:visibility="gone">
 
-    <EditText
-        android:id="@+id/input_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/draw_rounded_corners"
-        android:textAlignment="center"
-        android:textSize="@dimen/h4" />
+        <EditText
+            android:id="@+id/input_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/draw_rounded_corners"
+            android:textAlignment="center"
+            android:textSize="@dimen/h4" />
 
-    <ListView
-        android:id="@+id/listview_locations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/input_search" />
+        <ListView
+            android:id="@+id/listview_locations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/input_search" />
 
     </LinearLayout>
     <!--COMPASS-->
@@ -115,11 +137,10 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/draw_rounded_corners"
         android:padding="5dp"
-        android:text="Streetname"
         android:textSize="@dimen/h3" />
 
     <TextView
-        android:id="@+id/txt_zoom"
+        android:id="@+id/txt_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

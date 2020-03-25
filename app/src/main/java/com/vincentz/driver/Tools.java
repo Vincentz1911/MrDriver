@@ -10,10 +10,6 @@ import com.android.volley.RequestQueue;
 
 class Tools {
 
-    static int GPSUPDATE = 1000;
-    static int CAMERAUPDATE = 950;
-    static int TIMERUPDATE = 1000;
-
     static Activity ACT;
     static FragmentManager FM;
     static RequestQueue RQ;
@@ -21,7 +17,7 @@ class Tools {
     static boolean[] PERMISSIONS;
 
     static void msg(Activity activity, final String text) {
-        activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
+        activity.runOnUiThread(() -> Toast.makeText(ACT, text, Toast.LENGTH_LONG).show());
     }
 
     static void msg(final String text) {

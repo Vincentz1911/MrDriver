@@ -11,7 +11,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
 
 import com.android.volley.toolbox.Volley;
 
@@ -52,10 +51,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     void firstRun() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
-        else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
         getPreferences(Context.MODE_PRIVATE).edit().putBoolean("HaveRun", true).apply();
-
         FM.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
@@ -64,8 +61,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setupView() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
-        else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
         FM.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_right_top, new WeatherFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_left_bottom, new SpotifyFragment(), "").commit();
@@ -127,7 +123,6 @@ public class MainActivity extends FragmentActivity {
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
-
         if (provider != null) msg(this, "Best Location Provider: " + provider);
         else {
             msg(this, "No Location provider found");
@@ -135,16 +130,19 @@ public class MainActivity extends FragmentActivity {
         }
 
         LOC.setNow(lm.getLastKnownLocation(provider));
-        lm.requestLocationUpdates(provider, GPSUPDATE, 0, LocationListener);
+        lm.requestLocationUpdates(provider, 0, 0, LocationListener);
     }
 
     public LocationListener LocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            //if (location == loc.getNow() || location.getBearing() == 0 || location.getSpeed() == 0) return;
+           // if (!location.hasSpeed() || !location.hasBearing()) return;
             LOC.setLast(LOC.getNow());
             LOC.setNow(location);
-            //Log.d("GPS", "onLocationChanged: " + location);
+
+//            int timeBetween = (int) (LOC.getNow().getElapsedRealtimeNanos()
+//                    - LOC.getLast().getElapsedRealtimeNanos()) / 1000000;
+            //Log.d("TAG", "onLocationChanged: " + timeBetween);
         }
 
         @Override

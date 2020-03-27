@@ -4,7 +4,7 @@
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
-    <style name="AppTheme_Day" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme_Day" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryDay</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDay</item>
         <item name="colorAccent">@color/colorAccentDay</item>

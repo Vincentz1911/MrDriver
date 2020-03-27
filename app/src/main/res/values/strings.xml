@@ -41,6 +41,8 @@
     <string name="oilTemp">Oil Temp: %s</string>
     <string name="fuelLevel">Fuel: %s</string>
     <string name="consumption">Consumption: %s</string>
+    <string name="fullscreen">Fullscreen</string>
+    <string name="directions">Directions</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

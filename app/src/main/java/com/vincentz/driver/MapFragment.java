@@ -2,16 +2,20 @@ package com.vincentz.driver;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,9 +72,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private TextView txt_Speed, txt_Bearing, txt_Street, txt_Zoom, txt_Tilt;
     private ImageView img_compass, img_fullscreen, img_directions;
     private NumberPicker np_Tilt, np_Zoom;
-    private ListView searchListView;
     private LinearLayout searchLayout;
     private EditText searchInput;
+    private ListView searchListView;
+    private boolean hasRunBefore;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -116,7 +121,13 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         if (location.hasBearing()) bearing = location.getBearing();
         if (location.hasSpeed()) speed = location.getSpeed();
         counter = 0;
-        //if (isMapReady && location != null && lastLocation != null) updateCamera();
+
+        if (map != null && location != null && !hasRunBefore) {
+            hasRunBefore = true;
+            markerThread.start();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(location.getLatitude(), location.getLongitude()), 15));
+        }
     }
 
     @Override
@@ -128,17 +139,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(ACT, R.raw.mapstyle_night));
         //map.setMapStyle(new MapStyleOptions(getString(R.string.bluemapday)));
         map.setTrafficEnabled(isTraffic);
-
-        GoogleMapOptions options = new GoogleMapOptions();
-        options.compassEnabled(false)
-                .rotateGesturesEnabled(false)
-                .tiltGesturesEnabled(false);
-
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLatitude(), location.getLongitude()), 15));
-
         initOnClick();
-        markerThread.start();
 
 //        new Timer("Cam").schedule(new TimerTask() {
 //            @Override
@@ -148,43 +149,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //        }, 0, 100);
     }
 
-    private void initOnClick(){
-        searchInput.addTextChangedListener(new TextWatcher() {
-            Timer requestAutoComplete;
-
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (requestAutoComplete != null) {
-                    requestAutoComplete.cancel();
-                    requestAutoComplete.purge();
-                }
-                requestAutoComplete = new Timer("AutoComplete");
-                requestAutoComplete.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        String url = "https://api.openrouteservice.org/geocode/autocomplete" +
-                                "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62"
-                                + "&size=5&text=" + editable.toString()
-                                + "&boundary.circle.lon=" + LOC.getNow().getLongitude()
-                                + "&boundary.circle.lat=" + LOC.getNow().getLatitude()
-                                + "&boundary.circle.radius=500&boundary.country=DK";
-
-                        //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
-                        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                                MapFragment.this::searchAutoComplete,
-                                error -> msg(ACT, "Volley AutoComplete Error")));
-                    }
-                }, 100);
-            }
-        });
+    private void initOnClick() {
+        searchInput.addTextChangedListener(requestAutoComplete());
 
         txt_Speed.setOnClickListener(view -> geoLocationReversed(
                 new LatLng(location.getLatitude(), location.getLongitude())));
@@ -199,6 +165,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                     if (searchLayout.getVisibility() == View.GONE)
                         searchLayout.setVisibility(View.VISIBLE);
                     else searchLayout.setVisibility(View.GONE);
+                    fullscreen();
                 }
         );
 
@@ -254,7 +221,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                     - lastLocation.getElapsedRealtimeNanos()) / 1000000;
             if (timeBetween > 100) {
                 if (counter == 1) updateCamera(timeBetween);
-               // Log.d(TAG, "moveMarker: " + counter);
+                // Log.d(TAG, "moveMarker: " + counter);
                 markerLoc = new LatLng(
                         location.getLatitude() + (location.getLatitude()
                                 - lastLocation.getLatitude()) * counter / 10,
@@ -316,38 +283,78 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         });
     }
 
+    private TextWatcher requestAutoComplete() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() < 2) return;
+
+                String url = "https://api.openrouteservice.org/geocode/search" +
+                        "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62"
+                        + "&text=" + editable
+                        + "&focus.point.lon" + LOC.getNow().getLongitude()
+                        + "&focus.point.lat" + LOC.getNow().getLatitude()
+                        + "&boundary.circle.lon=" + LOC.getNow().getLongitude()
+                        + "&boundary.circle.lat=" + LOC.getNow().getLatitude()
+                        + "&boundary.circle.radius=500&boundary.country=DK"
+                        //+ "&layers=address"
+                        ;
+                url = url.replaceAll("[ ]", "%20");
+                url = url.replaceAll("[,]", "");
+
+                //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
+                RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
+                        MapFragment.this::searchAutoComplete,
+                        error -> msg(ACT, "Volley AutoComplete Error")));
+            }
+        };
+    }
+
     private void searchAutoComplete(JSONObject response) {
         try {
             JSONArray searchResults = response.getJSONArray("features");
             String[] searchList = new String[searchResults.length()];
+            String[] streetname = new String[searchResults.length()];
             LatLng[] searchCoords = new LatLng[searchResults.length()];
             for (int i = 0; i < searchResults.length(); i++) {
                 JSONObject jo = searchResults.getJSONObject(i);
                 searchList[i] = jo.getJSONObject("properties").getString("label");
+                streetname[i] = jo.getJSONObject("properties").getString("name");
                 JSONArray jsonArray = jo.getJSONObject("geometry").getJSONArray("coordinates");
                 searchCoords[i] = new LatLng(jsonArray.getDouble(1), jsonArray.getDouble(0));
             }
-            final ArrayAdapter<String> adapter = new ArrayAdapter<>(ACT, android.R.layout.simple_list_item_1, searchList);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<>(ACT,
+                    android.R.layout.simple_list_item_1, searchList);
 
             searchListView.setAdapter(adapter);
             searchListView.setOnItemClickListener((adapterView, view, i, l) -> {
                 isCamLock = false;
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(searchCoords[i])
-                        .zoom(speedZoom)
-                        .bearing(bearing)
-                        .tilt(speedTilt)
+                        .zoom(18)
+                        .bearing(0)
+                        .tilt(0)
                         .build();
-                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 500, null);
                 map.setPadding(0, 0, 0, 0);
-                searchInput.setText(searchList[i]);
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
+
+                searchInput.setText(streetname[i]);
+
+                searchInput.setOnEditorActionListener((textView, i1, keyEvent) -> {
+                    if (i1 == EditorInfo.IME_ACTION_DONE) {
+                        searchLayout.setVisibility(View.GONE);
+                        routing(searchCoords[i]);
+                        return true;
+                    }
+                    return false;
+                });
             });
-            searchListView.setOnItemLongClickListener((adapterView, view, i, l) -> {
-                //LatLng target = searchList.
-                routing(searchCoords[i]);
-                return true;
-            });
-            //lv_searchResults.notify();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -364,25 +371,21 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     if (route != null) route.removeLayerFromMap();
+
+//                    try {
+//                        JSONObject prop = response.getJSONObject("properties");
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+
+                    //String newString =  response.toString().replace("Case #", "Ticket #");
+                    //response.put()
                     route = new GeoJsonLayer(map, response);
 
-                    //PolylineOptions rectLine = new PolylineOptions().width(10).color(ACT.getResources().getColor(R.color.colorRoute, null));
-
                     GeoJsonLineStringStyle lineStringStyle = route.getDefaultLineStringStyle();
-                    lineStringStyle.setColor(R.color.colorRoute);
+                    lineStringStyle.setColor(Color.BLUE);
+                    lineStringStyle.setWidth(10);
 
-                    for (GeoJsonFeature feature : route.getFeatures()) {
-                        GeoJsonLineStringStyle gs = feature.getLineStringStyle();
-                        gs.setColor(R.color.colorRoute);
-                        feature.setLineStringStyle(gs);
-                        Log.d(TAG, "routing: " + feature);
-                    }
-
-//                    GeoJsonLineStringStyle asdf =
-//                    GeoJsonFeature gjfeat = new GeoJsonFeature( )
-//                    route.addFeature( );
-                    //route.getDefaultLineStringStyle().setColor(R.color.colorRoute);
-                    //route.getDefaultPointStyle().setVisible(true);
                     route.addLayerToMap();
 
                     geoLocationReversed(target);

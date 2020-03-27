@@ -8,11 +8,9 @@
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        map:mapType="hybrid"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        map:mapType="hybrid" />
 
     <NumberPicker
         android:id="@+id/np_tilt"
@@ -47,48 +45,68 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/np_zoom"
         android:layout_alignParentEnd="true"
-        android:textColor="?colorAccent"
         android:drawableEnd="@drawable/ic_zoom"
+        android:textColor="?colorAccent"
         android:textSize="@dimen/h3" />
 
     <ImageView
         android:id="@+id/img_directions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/big_icon"
+        android:layout_height="@dimen/big_icon"
         android:layout_margin="20dp"
+        android:contentDescription="@string/directions"
         android:src="@drawable/mic_directions_200dp" />
 
     <ImageView
         android:id="@+id/img_fullscreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/big_icon"
+        android:layout_height="@dimen/big_icon"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
+        android:contentDescription="@string/fullscreen"
         android:src="@drawable/ic_fullscreen_black_68dp" />
 
     <LinearLayout
         android:id="@+id/layout_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/np_zoom"
+        android:layout_alignTop="@id/img_directions"
+        android:layout_marginTop="50dp"
         android:layout_toStartOf="@id/img_fullscreen"
         android:layout_toEndOf="@id/img_directions"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
+
+        <!--        <AutoCompleteTextView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:id="@+id/input_search"-->
+        <!--            android:textSize="@dimen/h4"-->
+        <!--            android:background="@drawable/draw_rounded_corners"-->
+        <!--            android:padding="@dimen/h4"-->
+        <!--            android:completionThreshold="1"-->
+        <!--            android:popupTheme="@style/AppTheme_Day"-->
+        <!--            />-->
+
+        <!--        <TextView-->
+        <!--            android:id="@+id/txt_results"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"/>-->
 
         <EditText
             android:id="@+id/input_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/draw_rounded_corners"
-            android:textAlignment="center"
+            android:imeOptions="actionDone"
+            android:inputType="textImeMultiLine"
             android:textSize="@dimen/h4" />
 
         <ListView
             android:id="@+id/listview_locations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/input_search" />
+            android:background="@drawable/draw_rounded_corners" />
 
     </LinearLayout>
     <!--COMPASS-->
@@ -101,8 +119,8 @@
 
         <ImageView
             android:id="@+id/img_compass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/big_icon"
+            android:layout_height="@dimen/big_icon"
             android:contentDescription="@string/compass"
             android:src="@drawable/mic_compass_200dp" />
 
@@ -119,8 +137,8 @@
 
     <TextView
         android:id="@+id/txt_speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/big_icon"
+        android:layout_height="@dimen/big_icon"
         android:layout_alignParentBottom="true"
         android:layout_margin="30dp"
         android:background="@drawable/mic_speedsign"

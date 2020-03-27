@@ -1,5 +1,6 @@
 package com.vincentz.driver;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -153,7 +154,7 @@ public class SpotifyFragment extends Fragment {
 
         btn_category.setOnClickListener(view -> mSpotifyAppRemote
                 .getContentApi()
-                .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
+                .getRecommendedContentItems("Fitness")
                 .setResultCallback(this::recommendedContentCallBack)
                 .setErrorCallback(mErrorCallback));
 
@@ -335,12 +336,12 @@ public class SpotifyFragment extends Fragment {
                             mPlayPauseButton.setImageResource(R.drawable.sic_play_48dp);
                             btn_playPauseSmall.setImageResource(R.drawable.sic_play_stroke_128dp);
                             mSeekBar.setThumb(getResources()
-                                    .getDrawable(R.drawable.sic_pause_button, null));
+                                    .getDrawable(R.drawable.sic_pause_button, ACT.getTheme()));
                         } else {
                             mPlayPauseButton.setImageResource(R.drawable.sic_pause_48dp);
                             btn_playPauseSmall.setImageResource(R.drawable.sic_pause_stroke_128dp);
                             mSeekBar.setThumb(getResources()
-                                    .getDrawable(R.drawable.sic_play_button, null));
+                                    .getDrawable(R.drawable.sic_play_button, ACT.getTheme()));
                         }
 
                         // Get image from track

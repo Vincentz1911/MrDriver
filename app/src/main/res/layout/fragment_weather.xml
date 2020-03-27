@@ -40,17 +40,25 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <ImageView
+            android:src="@drawable/wic_windflag_64dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/wind" />
+
         <TextView
             android:id="@+id/txt_wind"
             android:layout_weight="1"
-            android:drawableStart="@drawable/wic_windflag_64dp"
             android:gravity="center_horizontal"
             android:textSize="@dimen/h5" />
+
+        <ImageView
+            android:src="@drawable/wic_humiditypressure_64dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/press_humid" />
 
         <TextView
             android:id="@+id/txt_pressure_humidity"
             android:layout_weight="1"
-            android:drawableStart="@drawable/wic_humiditypressure_64dp"
             android:gravity="center_horizontal"
             android:textSize="@dimen/h5" />
     </TableRow>
@@ -60,17 +68,23 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <ImageView
+            android:src="@drawable/wic_tempminmax_64dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/minmax_temp" />
         <TextView
             android:id="@+id/txt_low_high_temp"
             android:layout_weight="1"
-            android:drawableStart="@drawable/wic_tempminmax_64dp"
             android:gravity="center_horizontal"
             android:textSize="@dimen/h5" />
 
+        <ImageView
+            android:src="@drawable/wic_sunrise_dawn_64dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/sunrise_sunset" />
         <TextView
             android:id="@+id/txt_sunrise_sunset"
             android:layout_weight="1"
-            android:drawableStart="@drawable/wic_sunrise_dawn_64dp"
             android:gravity="center_horizontal"
             android:textSize="@dimen/h5" />
     </TableRow>

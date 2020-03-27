@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <color name="colorPrimaryNight">#A35400</color>-->
-<!--    <color name="colorPrimaryDarkNight">#5E3800</color>-->
-    <color name="colorAccentNight">#FFA000</color>
-    <color name="colorTextNight">#FFFFFF</color>
+    <color name="colorPrimaryDay">#8baad4</color>
+    <color name="colorPrimaryDarkDay">#677fac</color>
+    <color name="colorAccentDay">#FF8C00</color>
+    <color name="colorTextDay">#2c3949</color>
 
     <color name="colorPrimaryNight">#303030</color>
     <color name="colorPrimaryDarkNight">#364137</color>
-<!--    <color name="colorAccent">#00C54F</color>-->
+    <color name="colorAccentNight">#FFA000</color>
+    <color name="colorTextNight">#FFFFFF</color>
+
     <color name="colorRoute">#AAFF0000</color>
-
-
-    <color name="colorPrimaryDay">#95ABF8</color>
-    <color name="colorPrimaryDarkDay">#698EB6</color>
-    <color name="colorAccentDay">#00C54F</color>
-    <color name="colorTextDay">#000000</color>
-
     <color name="faded">#99000000</color>
-    <color name="ic_launcher_background">#000000</color>
+    <color name="ic_launcher_background">#EEEEEE</color>
+<!--    <color name="colorPrimaryDay">#FFEDB7</color>-->
+<!--    <color name="colorPrimaryDarkDay">#FFD351</color>-->
+<!--    <color name="colorAccentDay">#FF8C00</color>-->
+<!--    <color name="colorTextDay">#000000</color>-->
 </resources>

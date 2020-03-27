@@ -14,6 +14,8 @@ import android.os.Bundle;
 
 import com.android.volley.toolbox.Volley;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -98,7 +100,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int rc, String[] permissions, int[] results) {
+    public void onRequestPermissionsResult(int rc, String[] permissions, @NotNull int[] results) {
         for (int p = 0; p < permissions.length; p++)
             if (results.length > 0 && results[p] == PackageManager.PERMISSION_GRANTED)
                 PERMISSIONS[p] = true;
@@ -122,15 +124,17 @@ public class MainActivity extends FragmentActivity {
         criteria.setBearingRequired(true);
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
+       String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
         if (provider != null) msg(this, "Best Location Provider: " + provider);
         else {
             msg(this, "No Location provider found");
             return;
         }
-
-        LOC.setNow(lm.getLastKnownLocation(provider));
         lm.requestLocationUpdates(provider, 0, 0, LocationListener);
+        LOC.setNow(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        if (LOC.getNow() == null)
+            LOC.setNow(lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+
     }
 
     public LocationListener LocationListener = new LocationListener() {

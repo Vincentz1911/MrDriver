@@ -15,10 +15,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -65,12 +63,11 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private Thread markerThread;
     private Timer camTimer;
 
-    private int counter = 0, zoom = 19, tilt = 4;
+    private int counter = 0, zoom = 18, tilt = 4;
     private boolean haveLocation, isTraffic, isFullscreen, isHybrid = true, isCamLock = true;
-    //private float tilt = 4;
 
-    private TextView txt_Speed, txt_Bearing, txt_Zoom, txt_Tilt, txt_Street;
-    private ImageView img_compass, img_fullscreen, img_directions;
+    private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Destination;
+    private ImageView img_Compass, img_fullscreen, img_directions;
     private NumberPicker np_Tilt, np_Zoom;
     private View v_Tilt, v_Zoom;
     private EditText input;
@@ -79,14 +76,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     @Override
     public void onDetach() {
         super.onDetach();
-        markerThread.interrupt();
-        camTimer.purge();
-        camTimer.cancel();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
         markerThread.interrupt();
         camTimer.purge();
         camTimer.cancel();
@@ -107,22 +96,23 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         txt_Zoom = root.findViewById(R.id.txt_zoom);
         txt_Tilt = root.findViewById(R.id.txt_tilt);
         txt_Bearing = root.findViewById(R.id.txt_bearing);
-        txt_Street = root.findViewById(R.id.txt_destination);
+        txt_Compass = root.findViewById(R.id.txt_compass);
+        txt_Destination = root.findViewById(R.id.txt_destination);
         txt_Speed = root.findViewById(R.id.txt_speed);
         img_directions = root.findViewById(R.id.img_directions);
         img_fullscreen = root.findViewById(R.id.img_fullscreen);
-        img_compass = root.findViewById(R.id.img_compass);
+        img_Compass = root.findViewById(R.id.img_compass);
 
         v_Zoom = root.findViewById(R.id.v_zoom);
         v_Tilt = root.findViewById(R.id.v_tilt);
         np_Tilt = root.findViewById(R.id.np_tilt);
         np_Tilt.setMinValue(0);
-        np_Tilt.setMaxValue(7);
-        np_Tilt.setValue((int) tilt);
+        np_Tilt.setMaxValue(8);
+        np_Tilt.setValue(tilt);
         np_Zoom = root.findViewById(R.id.np_zoom);
         np_Zoom.setMinValue(0);
-        np_Zoom.setMaxValue(15);
-        np_Zoom.setValue((int) zoom - 10);
+        np_Zoom.setMaxValue(8);
+        np_Zoom.setValue(zoom / 2 - 10);
         //endregion
         LOC.addObserver(this);
         return root;
@@ -168,13 +158,15 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     private void initOnClick() {
         np_Zoom.setOnValueChangedListener((numberPicker, oldVal, newVal) -> {
-
+            if (!isCamLock) {
+                map.animateCamera(CameraUpdateFactory.zoomTo(newVal * 2 + 10));
+            }
         });
 
         //''' STREET TEXT BOTTOM '''
         //CLICK = ROUTING, LONGCLICK = SAVE LOCATION
-        txt_Street.setOnClickListener(view -> routing(destination.latLng));
-        txt_Street.setOnLongClickListener(view -> {
+        txt_Destination.setOnClickListener(view -> routing(destination.latLng));
+        txt_Destination.setOnLongClickListener(view -> {
             saveLocation(destination);
             return true;
         });
@@ -239,9 +231,12 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         //''' COMPASS ICON '''
         //CLICK = , LONGCLICK = CHANGE BETWEEN HYBRID AND NORMAL MAP
-        img_compass.setOnClickListener(view -> {
+        img_Compass.setOnClickListener(view -> {
             if (!isCamLock) {
                 isCamLock = true;
+                np_Zoom.setValue(4);
+                np_Tilt.setValue(4);
+                msg("Follow enabled");
                 return;
                 //                tilt = 0;
 //                np_Tilt.setValue((int) tilt);
@@ -251,20 +246,24 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 isCamLock = false;
                 map.setPadding(50, 50, 50, 50);
                 map.animateCamera(CameraUpdateFactory.newLatLngBounds(route.getBoundingBox(), 0));
-//                tilt = 0;
-//                np_Tilt.setValue((int) tilt);
+
                 msg("Showing Route");
-                return;
             } else {
                 isCamLock = false;
-                map.animateCamera(CameraUpdateFactory.zoomTo(17));
-//                tilt = 0;
-//                np_Tilt.setValue((int) tilt);
+                zoom = 16;
+                np_Zoom.setValue((zoom - 10) / 2);
+                tilt = 0;
+                np_Tilt.setValue(tilt);
+                map.setPadding(0, 0, 0, 0);
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                        .target(LOC.latlng()).bearing(0)
+                        .zoom(zoom)
+                        .tilt(0)
+                        .build()), 1000, null);
+                msg("Free Camera");
             }
-
-            msg("Traveling Mode: " + isCamLock);
         });
-        img_compass.setOnLongClickListener(view -> {
+        img_Compass.setOnLongClickListener(view -> {
             isHybrid = !isHybrid;
             if (isHybrid) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -275,7 +274,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         //CLICK = CAMLOCK FALSE AND REV.GEOLOC,
         //LONGCLICK ROUTING TO POINT CLICKED
         map.setOnMapClickListener(latLng -> {
-            geoLocationReversed(latLng);
+            //geoLocationReversed(latLng);
             isCamLock = false;
         });
         map.setOnMapLongClickListener(target -> routing(target));
@@ -330,32 +329,31 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private void updateCamera(int camTime) {
         ACT.runOnUiThread(() -> {
             //map.getCameraPosition().tilt
-            zoom = np_Zoom.getValue() + 10;
+            zoom = np_Zoom.getValue() * 2 + 10;
             tilt = np_Tilt.getValue() * 10;
             if (isCamLock) {
-                float speedTilt = (tilt + LOC.speed() / 2 < 80) ? tilt + LOC.speed() / 2 : 80;
-                float speedZoom = (zoom - LOC.speed() / 10 < 20) ? zoom - LOC.speed() / 10 : 19;
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                        .target(LOC.latlng()).bearing(LOC.bearing()).zoom(speedZoom).tilt(speedTilt)
+                        .target(LOC.latlng()).bearing(LOC.bearing())
+                        .zoom((zoom - LOC.speed() / 10 < 20) ? zoom - LOC.speed() / 10 : 20)
+                        .tilt((tilt + LOC.speed() / 2 < 70) ? tilt + LOC.speed() / 2 : 70)
                         .build()), camTime, null);
                 map.setPadding(0, 330, 0, 0);
             }
 
             ViewGroup.LayoutParams params = v_Tilt.getLayoutParams();
-            params.height = (int)map.getCameraPosition().tilt * np_Tilt.getHeight() /70;
+            params.height = (int) map.getCameraPosition().tilt * np_Tilt.getHeight() / 70;
             v_Tilt.setLayoutParams(params);
 
             params = v_Zoom.getLayoutParams();
-            params.height = (int)map.getCameraPosition().zoom * np_Zoom.getHeight() /20;
+            params.height = (int) map.getCameraPosition().zoom * np_Zoom.getHeight() / 20;
             v_Zoom.setLayoutParams(params);
 
             txt_Tilt.setText(String.valueOf((int) map.getCameraPosition().tilt));
             txt_Zoom.setText(String.valueOf((int) map.getCameraPosition().zoom));
             txt_Speed.setText(String.valueOf((int) (LOC.speed() * 3.6)));
-            txt_Bearing.setText(getString(R.string.bearing,
-                    getCompassDirection(map.getCameraPosition().bearing),
-                    (int) map.getCameraPosition().bearing));
-            img_compass.setRotation(map.getCameraPosition().bearing);
+            txt_Bearing.setText((int) LOC.bearing() + "\u00B0");
+            txt_Compass.setText(getCompassDirection(map.getCameraPosition().bearing));
+            img_Compass.setRotation(map.getCameraPosition().bearing);
         });
     }
 
@@ -398,6 +396,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         ArrayList<LocationModel> list = new ArrayList<>();
         try {
             JSONArray searchResults = response.getJSONArray("features");
+            if (searchResults.length() == 0) return null;
             for (int i = 0; i < searchResults.length(); i++) {
                 JSONObject prop = searchResults.getJSONObject(i).getJSONObject("properties");
                 JSONArray geom = searchResults.getJSONObject(i).getJSONObject("geometry").
@@ -437,7 +436,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private void onClickListViewItem(LocationModel location) {
         isCamLock = false;
         destination = location;
-        txt_Street.setText(destination.name);
+        txt_Destination.setText(destination.name);
         map.setPadding(0, 0, 0, 0);
         map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
                 .target(destination.latLng).zoom(17).bearing(0).tilt(0).build()));
@@ -508,8 +507,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 "&point.lat=" + latLng.latitude + "&point.lon=" + latLng.longitude +
                 "&size=1&layers=address";
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-            destination = JSONsearchToModel(response).get(0);
-            txt_Street.setText(destination.name);
+            if (JSONsearchToModel(response) != null) {
+                destination = JSONsearchToModel(response).get(0);
+                txt_Destination.setText(destination.name);
+            }
         }, error -> msg("Volley GeoLocation Error")
         ));
     }

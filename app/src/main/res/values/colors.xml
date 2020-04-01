@@ -7,10 +7,10 @@
     <color name="colorAccentDay">#FF8C00</color>
     <color name="colorTextDay">#2c3949</color>
 
-    <color name="colorPrimaryNight">#303030</color>
-    <color name="colorPrimaryDarkNight">#364137</color>
-    <color name="colorFadedDarkNight">#88364137</color>
-    <color name="colorFadedNight">#88303030</color>
+    <color name="colorPrimaryNight">#292929</color>
+    <color name="colorFadedNight">#88292929</color>
+    <color name="colorPrimaryDarkNight">#121212</color>
+    <color name="colorFadedDarkNight">#88121212</color>
     <color name="colorAccentNight">#FFA000</color>
     <color name="colorTextNight">#FFFFFF</color>
 

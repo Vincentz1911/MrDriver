@@ -12,6 +12,10 @@
         <item name="colorFaded">@color/colorFadedDay</item>
         <item name="android:textColor">@color/colorTextDay</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#FFFFFF</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
     </style>
 
     <style name="AppTheme_Night" parent="Theme.AppCompat.NoActionBar">
@@ -22,12 +26,16 @@
         <item name="colorFaded">@color/colorFadedNight</item>
         <item name="android:textColor">@color/colorTextNight</item>
         <item name="android:textStyle">bold</item>
-
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
     </style>
 
     <style name="NumberPickerText">
         <item name="android:textColorPrimary">?colorAccent</item>
         <item name="android:textSize">@dimen/h4</item>
+        <item name="background">@drawable/draw_rounded_corners</item>
         <item name="android:descendantFocusability">blocksDescendants</item>
     </style>
 

@@ -77,61 +77,72 @@
         android:id="@+id/img_fullscreen"
         android:layout_width="@dimen/big_icon"
         android:layout_height="@dimen/big_icon"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/margin"
         android:contentDescription="@string/fullscreen"
         android:src="@drawable/mic_fullscreen_100dp" />
 
-    <!--COMPASS-->
-    <RelativeLayout
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/margin"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_compass"
+                android:layout_width="@dimen/big_icon"
+                android:layout_height="@dimen/big_icon"
+                android:contentDescription="@string/compass"
+                android:src="@drawable/mic_compass_200dp" />
+
+            <TextView
+                android:id="@+id/txt_compass"
+                android:layout_width="@dimen/big_icon"
+                android:layout_height="@dimen/big_icon"
+                android:gravity="center"
+                android:textSize="@dimen/h3" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txt_bearing"
+            android:layout_width="@dimen/big_icon"
+            android:layout_height="@dimen/small_icon"
+            android:background="@drawable/draw_rounded_corners"
+            android:gravity="center"
+            android:textSize="@dimen/h3" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/margin"
-        android:layout_toStartOf="@id/img_fullscreen">
-
-        <ImageView
-            android:id="@+id/img_compass"
-            android:layout_width="@dimen/big_icon"
-            android:layout_height="@dimen/big_icon"
-            android:contentDescription="@string/compass"
-            android:src="@drawable/mic_compass_200dp" />
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txt_bearing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:id="@+id/txt_maxspeed"
+            android:layout_width="@dimen/big_icon"
+            android:layout_height="@dimen/big_icon"
+            android:background="@drawable/mic_speedsign"
             android:gravity="center"
-            android:textSize="@dimen/h4"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/h3" />
 
-    <TextView
-        android:id="@+id/txt_maxspeed"
-        android:layout_width="@dimen/big_icon"
-        android:layout_height="@dimen/big_icon"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/margin"
-        android:layout_toEndOf="@id/txt_speed"
-        android:background="@drawable/mic_speedsign"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/h3"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txt_speed"
-        android:layout_width="@dimen/big_icon"
-        android:layout_height="@dimen/big_icon"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/margin"
-        android:background="@drawable/mic_speed"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/h3"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/txt_speed"
+            android:layout_width="@dimen/big_icon"
+            android:layout_height="@dimen/small_icon"
+            android:background="@drawable/draw_rounded_corners"
+            android:gravity="center"
+            android:textSize="@dimen/h3" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txt_destination"
@@ -140,10 +151,11 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/mic_roadsign"
-        android:padding="@dimen/padding"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="5dp"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/h3"
-        android:textStyle="bold" />
+        android:textSize="@dimen/h3" />
 
     <EditText
         android:id="@+id/input_search"
@@ -166,6 +178,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/input_search"
-        android:background="@drawable/draw_rounded_corners" />
+        android:background="@drawable/draw_rounded_corners"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -8,22 +8,36 @@
         <item name="colorPrimary">@color/colorPrimaryDay</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDay</item>
         <item name="colorAccent">@color/colorAccentDay</item>
+        <item name="colorFadedDark">@color/colorFadedDarkDay</item>
+        <item name="colorFaded">@color/colorFadedDay</item>
         <item name="android:textColor">@color/colorTextDay</item>
-<!--        <item name="android:numberPickerStyle">NumberPickerText</item>-->
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="AppTheme_Night" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryNight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
         <item name="colorAccent">@color/colorAccentNight</item>
+        <item name="colorFadedDark">@color/colorFadedDarkNight</item>
+        <item name="colorFaded">@color/colorFadedNight</item>
         <item name="android:textColor">@color/colorTextNight</item>
+        <item name="android:textStyle">bold</item>
 
     </style>
 
     <style name="NumberPickerText">
+        <item name="android:textColorPrimary">?colorAccent</item>
         <item name="android:textSize">@dimen/h4</item>
-        <item name="background">@android:color/transparent</item>
         <item name="android:descendantFocusability">blocksDescendants</item>
+    </style>
+
+    <style name="ShadowText" parent="android:TextAppearance">
+        <item name="android:padding">2dp</item>
+        <item name="android:textColor">@color/colorAccentDay</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
     </style>
 
 </resources>

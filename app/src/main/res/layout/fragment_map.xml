@@ -13,39 +13,55 @@
         map:mapType="hybrid" />
 
     <NumberPicker
-        android:id="@+id/np_tilt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/np_zoom"
+        android:layout_width="@dimen/small_icon"
+        android:layout_height="@dimen/big_element"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:textColor="?colorAccent"
+        android:background="@drawable/draw_rounded_corners"
         android:theme="@style/NumberPickerText" />
 
-    <TextView
-        android:id="@+id/txt_tilt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/np_tilt"
-        android:drawableStart="@drawable/ic_tilt"
-        android:textColor="?colorAccent"
-        android:textSize="@dimen/h3" />
-
-    <NumberPicker
-        android:id="@+id/np_zoom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:textColor="?colorAccent"
-        android:theme="@style/NumberPickerText" />
+    <RelativeLayout
+        android:id="@+id/v_zoom"
+        android:layout_width="@dimen/padding"
+        android:layout_height="@dimen/big_element"
+        android:layout_alignBottom="@id/np_zoom"
+        android:layout_toEndOf="@id/np_zoom"
+        android:background="?colorAccent" />
 
     <TextView
         android:id="@+id/txt_zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/np_zoom"
+        android:drawableStart="@drawable/mic_zoom"
+        android:textColor="?colorAccent"
+        android:textSize="@dimen/h3" />
+
+    <NumberPicker
+        android:id="@+id/np_tilt"
+        android:layout_width="@dimen/small_icon"
+        android:layout_height="@dimen/big_element"
         android:layout_alignParentEnd="true"
-        android:drawableEnd="@drawable/ic_zoom"
+        android:layout_centerVertical="true"
+        android:background="@drawable/draw_rounded_corners"
+        android:theme="@style/NumberPickerText" />
+
+    <RelativeLayout
+        android:id="@+id/v_tilt"
+        android:layout_width="@dimen/padding"
+        android:layout_height="@dimen/big_element"
+        android:layout_alignBottom="@id/np_tilt"
+        android:layout_toStartOf="@id/np_tilt"
+        android:background="?colorAccent" />
+
+    <TextView
+        android:id="@+id/txt_tilt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/np_tilt"
+        android:layout_alignParentEnd="true"
+        android:drawableEnd="@drawable/mic_tilt"
         android:textColor="?colorAccent"
         android:textSize="@dimen/h3" />
 
@@ -62,60 +78,18 @@
         android:layout_width="@dimen/big_icon"
         android:layout_height="@dimen/big_icon"
         android:layout_alignParentEnd="true"
-        android:layout_margin="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/margin"
         android:contentDescription="@string/fullscreen"
-        android:src="@drawable/ic_fullscreen_black_68dp" />
+        android:src="@drawable/mic_fullscreen_100dp" />
 
-    <LinearLayout
-        android:id="@+id/layout_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/img_directions"
-        android:layout_marginTop="50dp"
-        android:layout_toStartOf="@id/img_fullscreen"
-        android:layout_toEndOf="@id/img_directions"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <!--        <AutoCompleteTextView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:id="@+id/input_search"-->
-        <!--            android:textSize="@dimen/h4"-->
-        <!--            android:background="@drawable/draw_rounded_corners"-->
-        <!--            android:padding="@dimen/h4"-->
-        <!--            android:completionThreshold="1"-->
-        <!--            android:popupTheme="@style/AppTheme_Day"-->
-        <!--            />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/txt_results"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"/>-->
-
-        <EditText
-            android:id="@+id/input_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/draw_rounded_corners"
-            android:imeOptions="actionDone"
-            android:inputType="textImeMultiLine"
-            android:textSize="@dimen/h4" />
-
-        <ListView
-            android:id="@+id/listview_locations"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/draw_rounded_corners" />
-
-    </LinearLayout>
     <!--COMPASS-->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="30dp">
+        android:layout_margin="@dimen/margin"
+        android:layout_toStartOf="@id/img_fullscreen">
 
         <ImageView
             android:id="@+id/img_compass"
@@ -125,22 +99,22 @@
             android:src="@drawable/mic_compass_200dp" />
 
         <TextView
-            android:id="@+id/txt_bearing1"
+            android:id="@+id/txt_bearing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:textColor="@android:color/black"
             android:textSize="@dimen/h4"
             android:textStyle="bold" />
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/txt_speed"
+        android:id="@+id/txt_maxspeed"
         android:layout_width="@dimen/big_icon"
         android:layout_height="@dimen/big_icon"
         android:layout_alignParentBottom="true"
-        android:layout_margin="30dp"
+        android:layout_margin="@dimen/margin"
+        android:layout_toEndOf="@id/txt_speed"
         android:background="@drawable/mic_speedsign"
         android:gravity="center"
         android:textColor="@android:color/black"
@@ -148,20 +122,50 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/txt_street"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/txt_speed"
+        android:layout_width="@dimen/big_icon"
+        android:layout_height="@dimen/big_icon"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/draw_rounded_corners"
-        android:padding="5dp"
-        android:textSize="@dimen/h3" />
+        android:layout_margin="@dimen/margin"
+        android:background="@drawable/mic_speed"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/h3"
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/txt_info"
+        android:id="@+id/txt_destination"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/mic_roadsign"
+        android:padding="@dimen/padding"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/h3"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/input_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_destination"
+        android:layout_toStartOf="@id/img_fullscreen"
+        android:layout_toEndOf="@id/img_directions"
+        android:background="@drawable/draw_rounded_corners"
+        android:gravity="center"
+        android:hint="@string/destination"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="textImeMultiLine"
+        android:padding="@dimen/padding"
         android:textSize="@dimen/h3" />
+
+    <ListView
+        android:id="@+id/listview_locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_search"
+        android:background="@drawable/draw_rounded_corners" />
 
 </RelativeLayout>

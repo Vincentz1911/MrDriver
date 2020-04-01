@@ -1,7 +1,10 @@
 package com.vincentz.driver;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.os.IBinder;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
@@ -13,12 +16,9 @@ class Tools {
     static Activity ACT;
     static FragmentManager FM;
     static RequestQueue RQ;
-    static LocationModel LOC;
+    static GPSLocationModel LOC;
+    static SharedPreferences IO;
     static boolean[] PERMISSIONS;
-
-    static void msg(Activity activity, final String text) {
-        activity.runOnUiThread(() -> Toast.makeText(ACT, text, Toast.LENGTH_LONG).show());
-    }
 
     static void msg(final String text) {
         ACT.runOnUiThread(() -> Toast.makeText(ACT, text, Toast.LENGTH_LONG).show());
@@ -30,10 +30,24 @@ class Tools {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LOW_PROFILE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    static String getDirection(float b) {
+    static void hideKeyboard() {
+        ACT.findViewById(R.id.map).requestFocus();
+        InputMethodManager imm = (InputMethodManager)
+                ACT.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            if (ACT.getCurrentFocus() != null) {
+                IBinder ib = ACT.getCurrentFocus().getWindowToken();
+                imm.hideSoftInputFromWindow(ib, 0);
+            }
+        }
+    }
+
+    static String getCompassDirection(float b) {
         b -= 11.5;
         if (b <= 0 || b > 337.5) return "N";
         else if (b <= 22.5) return "NNE";
@@ -53,5 +67,4 @@ class Tools {
         else if (b <= 337.5) return "NNW";
         else return "";
     }
-
 }

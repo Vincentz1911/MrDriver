@@ -1,5 +1,6 @@
 package com.vincentz.driver;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -14,8 +15,6 @@ import android.os.Bundle;
 
 import com.android.volley.toolbox.Volley;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -25,35 +24,50 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //SETS THEME BASED ON TIME OF DAY. TODO: REQUEST SUNRISE AND SUNSET FROM HTTP
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        if (hour > 8 && hour < 20) setTheme(R.style.AppTheme_Day);
-        else setTheme(R.style.AppTheme_Night);
-
+        setThemeBasedOnTimeOfDay();
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onResume() {
+        setThemeBasedOnTimeOfDay();
         super.onResume();
         init();
     }
 
+    //SETS THEME BASED ON SUNRISE AND SUNSET.
+    private void setThemeBasedOnTimeOfDay() {
+        Calendar now = Calendar.getInstance();
+        Calendar sunUp = Calendar.getInstance();
+        Calendar sunDown = Calendar.getInstance();
+
+        sunUp.setTimeInMillis(getPreferences(Context.MODE_PRIVATE).getLong("Sunrise", 0));
+        sunUp.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        sunDown.setTimeInMillis(getPreferences(Context.MODE_PRIVATE).getLong("Sunset", 0));
+        sunDown.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+
+        if (now.after(sunUp) && now.before(sunDown)) setTheme(R.style.AppTheme_Night);
+        else setTheme(R.style.AppTheme_Night);
+    }
+
     void init() {
         ACT = this;
-        LOC = new LocationModel();
-        RQ = Volley.newRequestQueue(this); //Starts a http queue for Volley
+        LOC = new GPSLocationModel();
+        RQ = Volley.newRequestQueue(this);
         FM = getSupportFragmentManager();
+        IO = getPreferences(MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         fullscreen();
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen());
         checkPermissions();
 
-        if (getPreferences(Context.MODE_PRIVATE).getBoolean("HaveRun", false)) setupView();
+        if (IO.getBoolean("HaveRun", false)) setupView();
         else FM.beginTransaction().replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
     }
 
     void firstRun() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        else checkPermissions();
         getPreferences(Context.MODE_PRIVATE).edit().putBoolean("HaveRun", true).apply();
         FM.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
@@ -63,7 +77,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setupView() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        else checkPermissions();
         FM.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_right_top, new WeatherFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_left_bottom, new SpotifyFragment(), "").commit();
@@ -100,7 +115,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int rc, String[] permissions, @NotNull int[] results) {
+    public void onRequestPermissionsResult(int rc, String[] permissions, @NonNull int[] results) {
         for (int p = 0; p < permissions.length; p++)
             if (results.length > 0 && results[p] == PackageManager.PERMISSION_GRANTED)
                 PERMISSIONS[p] = true;
@@ -124,29 +139,24 @@ public class MainActivity extends FragmentActivity {
         criteria.setBearingRequired(true);
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-       String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
-        if (provider != null) msg(this, "Best Location Provider: " + provider);
+        String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
+        if (provider != null) msg("Best Location Provider: " + provider);
         else {
-            msg(this, "No Location provider found");
+            msg("No Location provider found");
             return;
         }
         lm.requestLocationUpdates(provider, 0, 0, LocationListener);
         LOC.setNow(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-        if (LOC.getNow() == null)
+        if (LOC.now() == null)
             LOC.setNow(lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
-
     }
 
     public LocationListener LocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-           // if (!location.hasSpeed() || !location.hasBearing()) return;
-            LOC.setLast(LOC.getNow());
+            if (!location.hasSpeed() || !location.hasBearing()) return;
+            LOC.setLast(LOC.now());
             LOC.setNow(location);
-
-//            int timeBetween = (int) (LOC.getNow().getElapsedRealtimeNanos()
-//                    - LOC.getLast().getElapsedRealtimeNanos()) / 1000000;
-            //Log.d("TAG", "onLocationChanged: " + timeBetween);
         }
 
         @Override
@@ -156,12 +166,12 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public void onProviderEnabled(String provider) {
-            msg("LOC Provider enabled: " + provider);
+            msg("LOC enabled: " + provider);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            msg("LOC Provider disabled: " + provider);
+            msg("LOC disabled: " + provider);
         }
     };
     //endregion

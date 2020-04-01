@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">Mr. Driver</string>
-
+    <string name="Tutorial">tutorial</string>
     <string name="week">Week %s</string>
     <string name="fragment">Fragment</string>
-
     <!--    FRAGMENTS    -->
     <string name="spotify">Spotify</string>
     <string name="dashcam">Dashcam</string>
@@ -11,21 +10,19 @@
     <string name="obd2">OBD2</string>
     <string name="infoscreen">Infoscreen</string>
     <string name="weather">Weather</string>
-
     <!--    MAPS    -->
     <string name="compass">Compass</string>
     <string name="bearing">%s\n %d°</string>
-    <string name="mapspeed">%d</string>
-
+    <string name="fullscreen">Fullscreen</string>
+    <string name="directions">Directions</string>
     <!--    SPOTIFY    -->
     <string name="command_feedback">"'%1$s' command successful!"</string>
     <string name="command_response">"'%1$s' command response"</string>
     <string name="browse_content">Browse Content</string>
     <string name="artist">Artist</string>
     <string name="album">Album</string>
-    <string name="song">Song Title</string>
+    <string name="song">Song</string>
     <string name="playlists">Playlists</string>
-
     <!--    WEATHER    -->
     <string name="weather_icon">Weather Icon</string>
     <string name="temperature">%d°</string>
@@ -34,16 +31,11 @@
     <string name="minmax_temp">%1$.1f°\n%2$.1f°</string>
     <string name="press_humid">%1$d\n%2$d%%</string>
     <string name="sunrise_sunset">%1$s\n%2$s</string>
-
     <!--    OBD2    -->
     <string name="speed">Speed: %s km/h</string>
     <string name="rpm">RPM: %s</string>
     <string name="oilTemp">Oil Temp: %s</string>
     <string name="fuelLevel">Fuel: %s</string>
     <string name="consumption">Consumption: %s</string>
-    <string name="fullscreen">Fullscreen</string>
-    <string name="directions">Directions</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-
+    <string name="destination">Destination</string>
 </resources>

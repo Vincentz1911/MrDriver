@@ -30,45 +30,62 @@ import static com.vincentz.driver.Tools.*;
 
 public class OBD2Fragment extends Fragment {
 
-    private String speed, rpm, fuelLevel, oilTemp, consumption;
+    private String speed ="", rpm ="", fuelLevel, oilTemp, consumption;
     private TextView txt_speed, txt_rpm;
     private Thread OBDDataThread;
     private BluetoothSocket socket = null;
-    private boolean isOn = true;
+    private boolean isOn = false;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_obd2, vg, false);
-        //if (getActivity() != null) ACT = (MainActivity) getActivity();
-
-//        ((SeekBar) view.findViewById(R.id.sb_gps)).setProgress(GPSUPDATE / 100);
-//        ((SeekBar) view.findViewById(R.id.sb_cam)).setProgress(CAMERAUPDATE / 100);
-//        ((SeekBar) view.findViewById(R.id.sb_timer)).setProgress(TIMERUPDATE / 100);
 
         txt_speed = view.findViewById(R.id.txt_speed);
         txt_rpm = view.findViewById(R.id.txt_rpm);
-        (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> isOn = true);
 
-        new Thread(this::initBT).start();
+
+
+        (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> {
+                    isOn = true;
+//                    new Thread(this::initBT).start();
+                    initBT();
+                    Timer update = new Timer();
+                    update.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            updateView();
+                        }
+                    }, 0, 500);
+
+        }
+        );
+
+        //new Thread(this::initBT).start();
 
         OBDDataThread = new Thread(() -> {
             if (socket != null && socket.isConnected()) {
                 if (isOn)
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
+                            SpeedCommand speedCommand = new SpeedCommand();
+                            speedCommand.run(socket.getInputStream(), socket.getOutputStream());
+                            speed = speedCommand.getFormattedResult();
 
                             RPMCommand engineRpmCommand = new RPMCommand();
                             engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
                             rpm = engineRpmCommand.getFormattedResult();
 
-                            SpeedCommand speedCommand = new SpeedCommand();
-                            speedCommand.run(socket.getInputStream(), socket.getOutputStream());
-                            speed = speedCommand.getFormattedResult();
 
-                            ACT.runOnUiThread(() -> updateView());
 
+//                            ACT.runOnUiThread(() -> {
+//                                txt_speed.setText(getString(R.string.speed, speed));
+//                                txt_rpm.setText(getString(R.string.rpm, rpm));
+//                                //updateView();
+//                            });
+                            msg("Running thread");
                             Thread.sleep(1000);
                         } catch (IOException | InterruptedException e) {
+                            msg(e.getMessage());
                             e.printStackTrace();
                         }
                     }
@@ -91,20 +108,20 @@ public class OBD2Fragment extends Fragment {
     private void initBT() {
         //Gets list of paired devices
         if (BluetoothAdapter.getDefaultAdapter() == null) {
-            msg(ACT, "No Bluetooth device detected");
+            msg("No Bluetooth device detected");
             return;
         }
 
         final ArrayList<BluetoothDevice> paired =
                 new ArrayList<>(BluetoothAdapter.getDefaultAdapter().getBondedDevices());
         if (paired.size() == 0) {
-            msg(ACT, "No paired devices found");
+            msg("No paired devices found");
             return;
         }
         //Checks if device is named OBDII and connects
         for (BluetoothDevice device : paired) {
             if (device.getName().toUpperCase().equals("OBDII")) {
-                msg(ACT, "Bluetooth OBDII device found: " + device.getName());
+                msg("Bluetooth OBDII device found: " + device.getName());
                 ACT.getPreferences(Context.MODE_PRIVATE).edit()
                         .putString("btaddress", device.getAddress()).apply();
                 connectBT(device.getAddress());
@@ -143,12 +160,20 @@ public class OBD2Fragment extends Fragment {
         try {
             socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
             socket.connect();
+            msg("Connected to ELM327 Bluetooth ODBII adapter");
+            OBDDataThread.start();
             //getODBdata(socket);
         } catch (IOException e) {
-            msg(ACT, "Couldn't connect to ELM327 Bluetooth ODBII adapter");
+            msg("Couldn't connect to ELM327 Bluetooth ODBII adapter");
+            ACT.runOnUiThread(() -> {
+                txt_speed.setText(getString(R.string.speed, speed));
+                txt_rpm.setText(e.getMessage());
+                //updateView();
+            });
+
             e.printStackTrace();
         }
-        OBDDataThread.start();
+
     }
 
     private void updateView() {
@@ -161,8 +186,14 @@ public class OBD2Fragment extends Fragment {
 
 //        ((TextView) getView().findViewById(R.id.txt_time))
 //                .setText(getString(R.string.time, Tools.dateFormat.format(new Date())));
-        txt_speed.setText(getString(R.string.speed, speed));
-        txt_rpm.setText(getString(R.string.rpm, rpm));
+                                    ACT.runOnUiThread(() -> {
+                                txt_speed.setText(getString(R.string.speed, speed));
+                                txt_rpm.setText(getString(R.string.rpm, rpm));
+                                //updateView();
+                            });
+
+//        txt_speed.setText(getString(R.string.speed, speed));
+//        txt_rpm.setText(getString(R.string.rpm, rpm));
     }
 }
 //}

@@ -2,12 +2,12 @@ package com.vincentz.driver;
 
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,27 +49,24 @@ public class WeatherFragment extends Fragment implements Observer {
         txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
         txt_sunrise_sunset = root.findViewById(R.id.txt_sunrise_sunset);
         //endregion
-//        if (getActivity() != null) activity = (MainActivity) getActivity();
-//        else return root;
-        LOC.addObserver(this); //Add Observer on LocationModel in MainActivity
+        LOC.addObserver(this); //Add Observer on GPSLocationModel in MainActivity
         return root;
     }
 
     public void update(Observable locModel, Object loc) {
-        //Listener for LocationModel Observable.
+        //Listener for GPSLocationModel Observable.
         if (loc == null || startup) return;
         startup = true;
         LOC.deleteObserver(this);
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.schedule(new TimerTask() {
             @Override
-            public void run() { requestWeather(); }}, 0, 10000);
+            public void run() { requestWeather(); }}, 0, 60 * 1000);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //LOC.deleteObserver(this);
         if (weatherTimer != null) {
             weatherTimer.cancel();
             weatherTimer.purge();
@@ -78,14 +75,14 @@ public class WeatherFragment extends Fragment implements Observer {
 
     private void requestWeather() {
         String url = "https://api.openweathermap.org/data/2.5/weather?lat="
-                + LOC.getNow().getLatitude() + "&lon="
-                + LOC.getNow().getLongitude()
+                + LOC.now().getLatitude() + "&lon="
+                + LOC.now().getLongitude()
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
 
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> ACT.runOnUiThread(() -> updateUI(response)),
-                error -> msg(ACT, "Volley Weather Error")));
+                error -> msg("Volley Weather Error")));
     }
 
     private void updateUI(JSONObject response) {
@@ -109,20 +106,22 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //SETS DATA FROM JSON OBJECTS
             String dir = "NA";
-            if (wind.has("deg")) dir = getDirection((float) wind.getDouble("deg"));
+            if (wind.has("deg")) dir = getCompassDirection((float) wind.getDouble("deg"));
             double windspeed = wind.getDouble("speed");
             double maxTemp = main.getDouble("temp_max") - 273.15;
             double minTemp = main.getDouble("temp_min") - 273.15;
             int pressure = (int) main.getDouble("pressure");
             int humidity = (int) main.getDouble("humidity");
-            Date sunrise = new Date(sys.getInt("sunrise") * 1000L);
-            Date sunset = new Date(sys.getInt("sunset") * 1000L);
+            long sunrise = sys.getInt("sunrise") * 1000L;
+            long sunset = sys.getInt("sunset") * 1000L;
+            ACT.getPreferences(Context.MODE_PRIVATE).edit().putLong("Sunrise", sunrise).apply();
+            ACT.getPreferences(Context.MODE_PRIVATE).edit().putLong("Sunset", sunset).apply();
             int clouds = response.getJSONObject("clouds").getInt("all");
             int visibility = 0;
             if (response.has("visibility"))
                 visibility = response.getInt("visibility") / 1000;
             String description = weather.getString("description");
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            description = description.substring(0, 1).toUpperCase() + description.substring(1);
 
             //UPDATES VIEW WITH DATA
             weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
@@ -131,12 +130,13 @@ public class WeatherFragment extends Fragment implements Observer {
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));
             txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
-            txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset, sdf.format(sunrise), sdf.format(sunset)));
+            SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset,
+                    time.format(new Date(sunrise)), time.format(new Date(sunset))));
 
             //msg("WeatherPos: " + response.getString("name"));
         } catch (JSONException e) {
-            msg(ACT, "JSON Weather Error!");
-            Log.e("TAG", "updateUI: ", e);
+            msg("JSON Weather Error!");
         }
     }
 

@@ -23,32 +23,12 @@ public class InfoFragment extends Fragment {
     private Timer timer;
     private boolean isHideRight = false;
 
-
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View root = li.inflate(R.layout.fragment_info, vg, false);
-        // SharedPreferences pref = activity.getSharedPreferences("12", Context.MODE_PRIVATE);
-
-        //region TIME AND DATE
-//        TextView time = root.findViewById(R.id.txt_time);
-//        TextView date = root.findViewById(R.id.txt_date);
-//        TextView week = root.findViewById(R.id.txt_week);
-//        timer = new Timer("Timer");
-//        timer.scheduleAtFixedRate(new TimerTask() {
-//            public void run() {
-//                ACT.runOnUiThread(() -> {
-//                    Date dateNow = new Date();
-//                    time.setText(new SimpleDateFormat("HH:mm:ss",
-//                            Locale.getDefault()).format(dateNow));
-//                    date.setText(new SimpleDateFormat("EEEE d. MMMM",
-//                            Locale.getDefault()).format(dateNow));
-//                    week.setText(getString(R.string.week, new SimpleDateFormat("w - yyyy",
-//                            Locale.getDefault()).format(dateNow)));
-//                });
-//            }
-//        }, 1000, 1000);
-        //endregion
-
+        TextView time = root.findViewById(R.id.txt_time);
+        TextView date = root.findViewById(R.id.txt_date);
+        TextView week = root.findViewById(R.id.txt_week);
         //region INIT ONCLICK
         centerbig = root.findViewById(R.id.btn_big);
         centerbig.setImageResource(R.drawable.fic_maps_200dp);
@@ -83,22 +63,10 @@ public class InfoFragment extends Fragment {
         rightbtm.setOnLongClickListener(v -> removeFragment(R.id.fl_right_bottom, rightbtm));
         //endregion
 
-        return root;
-    }
-
-    private void hideEdges() {
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //region TIME AND DATE
-        TextView time = getView().findViewById(R.id.txt_time);
-        TextView date = getView().findViewById(R.id.txt_date);
-        TextView week = getView().findViewById(R.id.txt_week);
         timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
+                if (ACT == null) return;
                 ACT.runOnUiThread(() -> {
                     Date dateNow = new Date();
                     time.setText(new SimpleDateFormat("HH:mm:ss",
@@ -110,6 +78,16 @@ public class InfoFragment extends Fragment {
                 });
             }
         }, 1000, 1000);
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //region TIME AND DATE
+
+
     }
 
     @Override

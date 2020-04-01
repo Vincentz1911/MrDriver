@@ -7,7 +7,8 @@
     <dimen name="h2">36sp</dimen>
     <dimen name="h1">48sp</dimen>
     <dimen name="padding">3dp</dimen>
+    <dimen name="margin">10dp</dimen>
     <dimen name="big_icon">64dp</dimen>
     <dimen name="small_icon">32dp</dimen>
-
+    <dimen name="big_element">100dp</dimen>
 </resources>

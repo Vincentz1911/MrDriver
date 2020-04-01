@@ -2,15 +2,20 @@
 <resources>
     <color name="colorPrimaryDay">#8baad4</color>
     <color name="colorPrimaryDarkDay">#677fac</color>
+    <color name="colorFadedDarkDay">#88677fac</color>
+    <color name="colorFadedDay">#888baad4</color>
     <color name="colorAccentDay">#FF8C00</color>
     <color name="colorTextDay">#2c3949</color>
 
     <color name="colorPrimaryNight">#303030</color>
     <color name="colorPrimaryDarkNight">#364137</color>
+    <color name="colorFadedDarkNight">#88364137</color>
+    <color name="colorFadedNight">#88303030</color>
     <color name="colorAccentNight">#FFA000</color>
     <color name="colorTextNight">#FFFFFF</color>
 
-    <color name="colorRoute">#AAFF0000</color>
+    <color name="colorRoute">#80FFC800</color>
+    <color name="colorSign">#009900</color>
     <color name="faded">#99000000</color>
     <color name="ic_launcher_background">#EEEEEE</color>
 <!--    <color name="colorPrimaryDay">#FFEDB7</color>-->

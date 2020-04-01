@@ -1,25 +1,18 @@
 package com.vincentz.driver;
 
-import android.location.Location;
-import java.util.Observable;
+import com.google.android.gms.maps.model.LatLng;
 
-class LocationModel extends Observable {
+class LocationModel {
 
-    private Location now;
-    private Location last;
+    String localadmin;
+    String name;
+    LatLng latLng;
+    float distance;
 
-    void setNow(Location now) {
-        synchronized (this) { this.now = now; }
-        setChanged();
-        notifyObservers(now);
+    LocationModel(String localadmin, String name, LatLng latLng, float distance) {
+        this.localadmin = localadmin;
+        this.name = name;
+        this.latLng = latLng;
+        this.distance = distance;
     }
-    synchronized Location getNow() { return now; }
-
-    void setLast(Location last) {
-        synchronized (this) { this.last = last; }
-        setChanged();
-        notifyObservers(last);
-    }
-    synchronized Location getLast() { return last; }
 }
-

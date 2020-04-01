@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
     android:background="@drawable/draw_gradient"
+    android:baselineAligned="false"
     tools:context=".MainActivity">
 
     <TableLayout
@@ -17,20 +17,20 @@
             android:id="@+id/fl_left_top"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="@dimen/padding"/>
+            android:padding="@dimen/padding" />
 
         <FrameLayout
             android:id="@+id/fl_left_bottom"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="@dimen/padding"/>
+            android:padding="@dimen/padding" />
     </TableLayout>
 
     <FrameLayout
         android:id="@+id/fl_big_center"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"/>
+        android:layout_weight="2" />
 
     <TableLayout
         android:id="@+id/right_side"
@@ -42,12 +42,12 @@
             android:id="@+id/fl_right_top"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="@dimen/padding"/>
+            android:padding="@dimen/padding" />
 
         <FrameLayout
             android:id="@+id/fl_right_bottom"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="@dimen/padding"/>
+            android:padding="@dimen/padding" />
     </TableLayout>
 </LinearLayout>

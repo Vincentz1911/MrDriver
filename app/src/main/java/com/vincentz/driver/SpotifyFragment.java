@@ -99,13 +99,13 @@ public class SpotifyFragment extends Fragment {
         SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
-                Tools.msg(ACT, "Connected to Spotify");
+                msg("Connected to Spotify");
                 connected();
             }
 
             public void onFailure(Throwable throwable) {
                 Log.e(TAG, throwable.getMessage(), throwable);
-                Tools.msg(ACT, "Failed to Connect to Spotify");
+                msg("Failed to Connect to Spotify");
             }
         });
     }
@@ -142,12 +142,12 @@ public class SpotifyFragment extends Fragment {
 
         btn_album.setOnClickListener(view -> {
             mSpotifyAppRemote.getPlayerApi().play(track.album.uri);
-            msg(ACT, "Playing Album: " + track.album.name);
+            msg("Playing Album: " + track.album.name);
         });
 
         btn_artist.setOnClickListener(view -> {
             mSpotifyAppRemote.getPlayerApi().play(track.artist.uri);
-            msg(ACT, "Playing Artist: " + track.artist.name);
+            msg("Playing Artist: " + track.artist.name);
         });
 
 //        btn_playlist.setOnClickListener(this::onSubscribedToPlayerContextButtonClicked);
@@ -187,7 +187,7 @@ public class SpotifyFragment extends Fragment {
 //                Types.;
 //        mSpotifyAppRemote.getUserApi().getClientId();
         //mSpotifyAppRemote.getPlayerApi().play();
-        msg(ACT, "Playing Artist: " + track.artist.name);
+        msg("Playing Artist: " + track.artist.name);
     }
 
     private void onSkipNextButtonClicked() {
@@ -279,7 +279,7 @@ public class SpotifyFragment extends Fragment {
 
             gridView.setOnItemClickListener((adapterView, view, i, l) -> {
                 mSpotifyAppRemote.getPlayerApi().play(combined.get(i).uri);
-                msg(ACT, "Playing: " + combined.get(i).title);
+                msg("Playing: " + combined.get(i).title);
                 gridView.setVisibility(View.INVISIBLE);
             });
 //            showDialog(

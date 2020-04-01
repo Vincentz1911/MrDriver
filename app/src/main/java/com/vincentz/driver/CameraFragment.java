@@ -24,13 +24,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
-        View view = li.inflate(R.layout.fragment_camera, vg, false);
+        View root = li.inflate(R.layout.fragment_camera, vg, false);
 
-        recorder = new MediaRecorder();
         initRecorder();
-        //getActivity().setContentView(R.layout.activity_main);
 
-        SurfaceView cameraView = view.findViewById(R.id.sv_camera);
+        SurfaceView cameraView = root.findViewById(R.id.sv_camera);
         holder = cameraView.getHolder();
         holder.addCallback(this);
 //        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -38,10 +36,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
         cameraView.setClickable(true);
         cameraView.setOnClickListener(this);
 
-        return view;
+        return root;
     }
 
     private void initRecorder() {
+
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
 

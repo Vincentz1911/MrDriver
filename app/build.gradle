@@ -1,20 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        release {
-        }
-
-        //Your configuration here
-    }
+    signingConfigs { release {} }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.vincentz.driver"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
-        versionName "2.0"
+        versionCode 3
+        versionName "3.0"
         archivesBaseName = "$applicationId-v$versionCode($versionName)"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -24,7 +19,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-//            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -35,12 +29,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':spotify-app-remote-release-0.7.0')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation project(':spotify-app-remote-release-0.7.0')
+    implementation 'com.google.maps.android:android-maps-utils:0.4'
     implementation "com.google.code.gson:gson:2.8.6"
     implementation 'com.android.volley:volley:1.1.1'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'org.jetbrains:annotations:15.0'
-    implementation 'com.google.maps.android:android-maps-utils:0.4'
 }

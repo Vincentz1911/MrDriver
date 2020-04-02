@@ -125,7 +125,7 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //UPDATES VIEW WITH DATA
             weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
-            txt_clouds.setText(description + " " + clouds+"% (" + visibility + "km)");
+            txt_clouds.setText(clouds+"% " + description);
             txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));

@@ -69,7 +69,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Destination;
     private ImageView img_Compass, img_fullscreen, img_directions;
     private NumberPicker np_Tilt, np_Zoom;
-    private View v_Tilt, v_Zoom;
+    private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
     private EditText input;
     private ListView listView;
 
@@ -97,8 +97,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         txt_Tilt = root.findViewById(R.id.txt_tilt);
         txt_Bearing = root.findViewById(R.id.txt_bearing);
         txt_Compass = root.findViewById(R.id.txt_compass);
+        btn_Compass = root.findViewById(R.id.btn_compass);
         txt_Destination = root.findViewById(R.id.txt_destination);
         txt_Speed = root.findViewById(R.id.txt_speed);
+        btn_Speed = root.findViewById(R.id.btn_speed);
         img_directions = root.findViewById(R.id.img_directions);
         img_fullscreen = root.findViewById(R.id.img_fullscreen);
         img_Compass = root.findViewById(R.id.img_compass);
@@ -112,7 +114,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         np_Zoom = root.findViewById(R.id.np_zoom);
         np_Zoom.setMinValue(0);
         np_Zoom.setMaxValue(8);
-        np_Zoom.setValue(zoom / 2 - 10);
+        np_Zoom.setValue((zoom - 10) / 2);
         //endregion
         LOC.addObserver(this);
         return root;
@@ -163,6 +165,17 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             }
         });
 
+        np_Tilt.setOnValueChangedListener((numberPicker, oldVal, newVal) -> {
+            if (!isCamLock) {
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                        .target(map.getCameraPosition().target)
+                        .bearing(map.getCameraPosition().bearing)
+                        .zoom(map.getCameraPosition().zoom)
+                        .tilt(numberPicker.getValue() * 10)
+                        .build()), 1000, null);
+            }
+        });
+
         //''' STREET TEXT BOTTOM '''
         //CLICK = ROUTING, LONGCLICK = SAVE LOCATION
         txt_Destination.setOnClickListener(view -> routing(destination.latLng));
@@ -174,7 +187,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         //''' INPUT TEXT BAR '''
         //CLICK = SET CURSOR AT END, LONGCLICK = CLEAR TEXT, TEXT CHANGED = AUTOCOMPLETE
         input.setOnClickListener(view -> {
-            if (input.isFocused()) input.setSelection(input.getText().length());
+            if (!input.isFocused()) input.setSelection(input.getText().length());
         });
         input.setOnLongClickListener(view -> {
             input.setText("");
@@ -185,8 +198,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         //''' SPEED SIGN '''
         //CLICK = GET ADRESS, LONGCLICK = TRAFFIC ON/OFF
-        txt_Speed.setOnClickListener(view -> geoLocationReversed(LOC.latlng()));
-        txt_Speed.setOnLongClickListener(view -> {
+        btn_Speed.setOnClickListener(view -> geoLocationReversed(LOC.latlng()));
+        btn_Speed.setOnLongClickListener(view -> {
             isTraffic = !isTraffic;
             map.setTrafficEnabled(isTraffic);
             msg("Show Traffic: " + isTraffic);
@@ -231,7 +244,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         //''' COMPASS ICON '''
         //CLICK = , LONGCLICK = CHANGE BETWEEN HYBRID AND NORMAL MAP
-        img_Compass.setOnClickListener(view -> {
+        btn_Compass.setOnClickListener(view -> {
             if (!isCamLock) {
                 isCamLock = true;
                 np_Zoom.setValue(4);
@@ -263,7 +276,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 msg("Free Camera");
             }
         });
-        img_Compass.setOnLongClickListener(view -> {
+        btn_Compass.setOnLongClickListener(view -> {
             isHybrid = !isHybrid;
             if (isHybrid) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -328,7 +341,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     //TODO make zoom and tilt compatible with native gmap zoom and tilt
     private void updateCamera(int camTime) {
         ACT.runOnUiThread(() -> {
-            //map.getCameraPosition().tilt
             zoom = np_Zoom.getValue() * 2 + 10;
             tilt = np_Tilt.getValue() * 10;
             if (isCamLock) {
@@ -337,16 +349,16 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         .zoom((zoom - LOC.speed() / 10 < 20) ? zoom - LOC.speed() / 10 : 20)
                         .tilt((tilt + LOC.speed() / 2 < 70) ? tilt + LOC.speed() / 2 : 70)
                         .build()), camTime, null);
-                map.setPadding(0, 330, 0, 0);
+                map.setPadding(0, 350 - tilt, 0, 0);
             }
 
-            ViewGroup.LayoutParams params = v_Tilt.getLayoutParams();
-            params.height = (int) map.getCameraPosition().tilt * np_Tilt.getHeight() / 70;
-            v_Tilt.setLayoutParams(params);
-
-            params = v_Zoom.getLayoutParams();
+            ViewGroup.LayoutParams params = v_Zoom.getLayoutParams();
             params.height = (int) map.getCameraPosition().zoom * np_Zoom.getHeight() / 20;
             v_Zoom.setLayoutParams(params);
+
+            params = v_Tilt.getLayoutParams();
+            params.height = (int) map.getCameraPosition().tilt * np_Tilt.getHeight() / 70;
+            v_Tilt.setLayoutParams(params);
 
             txt_Tilt.setText(String.valueOf((int) map.getCameraPosition().tilt));
             txt_Zoom.setText(String.valueOf((int) map.getCameraPosition().zoom));
@@ -402,11 +414,15 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 JSONArray geom = searchResults.getJSONObject(i).getJSONObject("geometry").
                         getJSONArray("coordinates");
 
+                String area = (prop.getString("neighbourhood") != null)
+                        ? prop.getString("neighbourhood") : prop.getString("localadmin");
+
                 list.add(new LocationModel(
-                        prop.getString("localadmin"),
+                        area,
                         prop.getString("name"),
                         new LatLng(geom.getDouble(1), geom.getDouble(0)),
-                        ((int) (prop.getDouble("distance") * 10)) / 10f));
+                        ((int) (prop.getDouble("distance") * 10)) / 10f,
+                        false));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -416,18 +432,15 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     private void fillSearchListView(ArrayList<LocationModel> list) {
         ArrayList<String> nameList = new ArrayList<>();
-        for (LocationModel lm : list)
-            nameList.add(lm.name + ", " + lm.localadmin + " (" + lm.distance + "km)");
+        for (LocationModel lm : list) {
+            if (lm.saved) nameList.add("S " + lm.name + ", " + lm.area);
+            else nameList.add(lm.distance + "km " + lm.name + ", " + lm.area);
+        }
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                ACT, R.layout.adapter_maps_listview, nameList);
-
-        listView.setAdapter(adapter);
+        listView.setAdapter(new ArrayAdapter<>(ACT, R.layout.adapter_maps_listview, nameList));
         listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            destination = list.get(i);
-            input.setVisibility(View.GONE);
-            listView.setVisibility(View.GONE);
-            routing(destination.latLng);
+            if (list.get(i).saved) deleteLocation(list.get(i));
+            else saveLocation(list.get(i));
             return true;
         });
         listView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
@@ -528,20 +541,20 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     }
 
     private ArrayList<LocationModel> loadLocations() {
-        String json = IO.getString("locations", null);
         Type type = new TypeToken<ArrayList<LocationModel>>() {
         }.getType();
-        ArrayList<LocationModel> list = new Gson().fromJson(json, type);
+        ArrayList<LocationModel> list = new Gson()
+                .fromJson(IO.getString("locations", null), type);
         if (list == null) list = new ArrayList<>();
         return list;
     }
 
-    private ArrayList<LocationModel> saveLocation(LocationModel location) {
+    private void saveLocation(LocationModel location) {
         ArrayList<LocationModel> list = loadLocations();
+        location.saved = true;
         list.add(location);
         IO.edit().putString("locations", new Gson().toJson(list)).apply();
         msg("Saved Location: " + location.name);
-        return list;
     }
 
     private ArrayList<LocationModel> deleteLocation(LocationModel location) {

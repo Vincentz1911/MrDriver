@@ -4,15 +4,17 @@ import com.google.android.gms.maps.model.LatLng;
 
 class LocationModel {
 
-    String localadmin;
+    String area;
     String name;
     LatLng latLng;
     float distance;
+    boolean saved;
 
-    LocationModel(String localadmin, String name, LatLng latLng, float distance) {
-        this.localadmin = localadmin;
+    LocationModel(String area, String name, LatLng latLng, float distance, boolean saved) {
+        this.area = area;
         this.name = name;
         this.latLng = latLng;
         this.distance = distance;
+        this.saved = saved;
     }
 }

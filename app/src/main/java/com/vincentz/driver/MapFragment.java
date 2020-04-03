@@ -439,8 +439,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         listView.setAdapter(new ArrayAdapter<>(ACT, R.layout.adapter_maps_listview, nameList));
         listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            if (list.get(i).saved) deleteLocation(list.get(i));
-            else saveLocation(list.get(i));
+            if (list.get(i).saved) {
+                deleteLocation(list, i);
+                loadLocations();
+            } else saveLocation(list.get(i));
             return true;
         });
         listView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
@@ -505,10 +507,9 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                                 }.getType());
                 if (hash.get("distance") != null && hash.get("duration") != null) {
                     float d = hash.get("distance");
-                    array[0] = (d < 1000) ? d + "m" : ((int) (d * 10)) / 10000f + "km";
+                    array[0] = (d < 1000) ? d + "m" : ((int) (d /100)) / 10f + "km";
                     array[1] = DateUtils.formatElapsedTime((hash.get("duration")).longValue());
                 }
-
             }
         }
         return array;
@@ -550,18 +551,18 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     }
 
     private void saveLocation(LocationModel location) {
+        if (location == null || location.saved) return;
         ArrayList<LocationModel> list = loadLocations();
         location.saved = true;
         list.add(location);
-        IO.edit().putString("locations", new Gson().toJson(list)).apply();
         msg("Saved Location: " + location.name);
+        IO.edit().putString("locations", new Gson().toJson(list)).apply();
     }
 
-    private ArrayList<LocationModel> deleteLocation(LocationModel location) {
-        ArrayList<LocationModel> list = loadLocations();
-        list.remove(location);
-        SharedPreferences.Editor editor = IO.edit();
-        editor.putString("locations", new Gson().toJson(list)).apply();
-        return list;
+    private void deleteLocation(ArrayList<LocationModel> list, int i) {
+//        ArrayList<LocationModel> list = loadLocations();
+        msg("Deleted Location: " + list.get(i).name);
+        list.remove(i);
+        IO.edit().putString("locations", new Gson().toJson(list)).apply();
     }
 }

@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -17,8 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.vincentz.driver.obd.commands.*;
 import com.vincentz.driver.obd.commands.engine.*;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,11 +27,11 @@ import static com.vincentz.driver.Tools.*;
 
 public class OBD2Fragment extends Fragment {
 
-    private String speed ="", rpm ="", fuelLevel, oilTemp, consumption;
+    private String speed = "", rpm = "", fuelLevel, oilTemp, consumption;
     private TextView txt_speed, txt_rpm;
     private Thread OBDDataThread;
     private BluetoothSocket socket = null;
-    private boolean isOn = false;
+    private boolean isOn;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -43,38 +40,42 @@ public class OBD2Fragment extends Fragment {
         txt_speed = view.findViewById(R.id.txt_speed);
         txt_rpm = view.findViewById(R.id.txt_rpm);
 
+        Timer update = new Timer();
+        update.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateView();
+            }
+        }, 0, 500);
 
-
-        (view.findViewById(R.id.btn_ison)).setOnClickListener(v -> {
-                    isOn = true;
-//                    new Thread(this::initBT).start();
+        (view.findViewById(R.id.btn_startbt)).setOnClickListener(v -> {
                     initBT();
-                    Timer update = new Timer();
-                    update.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            updateView();
-                        }
-                    }, 0, 500);
+//                    new Thread(this::initBT).start();
+                }
+        );
 
-        }
+        (view.findViewById(R.id.btn_startupdates)).setOnClickListener(v -> {
+                    isOn = !isOn;
+                    if (isOn) OBDDataThread.start();
+                    else OBDDataThread.interrupt();
+                    msg("Is Thread Running: " + isOn);
+                }
         );
 
         //new Thread(this::initBT).start();
 
         OBDDataThread = new Thread(() -> {
             if (socket != null && socket.isConnected()) {
-                if (isOn)
-                    while (!Thread.currentThread().isInterrupted()) {
-                        try {
-                            SpeedCommand speedCommand = new SpeedCommand();
-                            speedCommand.run(socket.getInputStream(), socket.getOutputStream());
-                            speed = speedCommand.getFormattedResult();
-
-                            RPMCommand engineRpmCommand = new RPMCommand();
-                            engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-                            rpm = engineRpmCommand.getFormattedResult();
-
+                while (!Thread.currentThread().isInterrupted()) {
+                    try {
+                        Thread.sleep(1000);
+                        SpeedCommand speedCommand = new SpeedCommand();
+                        speedCommand.run(socket.getInputStream(), socket.getOutputStream());
+                        speed = speedCommand.getFormattedResult();
+                        Thread.sleep(1000);
+                        RPMCommand engineRpmCommand = new RPMCommand();
+                        engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
+                        rpm = engineRpmCommand.getFormattedResult();
 
 
 //                            ACT.runOnUiThread(() -> {
@@ -82,16 +83,15 @@ public class OBD2Fragment extends Fragment {
 //                                txt_rpm.setText(getString(R.string.rpm, rpm));
 //                                //updateView();
 //                            });
-                            msg("Running thread");
-                            Thread.sleep(1000);
-                        } catch (IOException | InterruptedException e) {
-                            msg(e.getMessage());
-                            e.printStackTrace();
-                        }
+                        msg("Running thread");
+
+                    } catch (IOException | InterruptedException e) {
+                        msg(e.getMessage());
+                        e.printStackTrace();
                     }
+                }
             }
         });
-
 
 
 //        Timer timer = new Timer("Timer");
@@ -160,16 +160,17 @@ public class OBD2Fragment extends Fragment {
         try {
             socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
             socket.connect();
+            Thread.sleep(5000);
             msg("Connected to ELM327 Bluetooth ODBII adapter");
-            OBDDataThread.start();
+
             //getODBdata(socket);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             msg("Couldn't connect to ELM327 Bluetooth ODBII adapter");
-            ACT.runOnUiThread(() -> {
-                txt_speed.setText(getString(R.string.speed, speed));
-                txt_rpm.setText(e.getMessage());
-                //updateView();
-            });
+//            ACT.runOnUiThread(() -> {
+//                txt_speed.setText(getString(R.string.speed, speed));
+//                txt_rpm.setText(e.getMessage());
+//                //updateView();
+//            });
 
             e.printStackTrace();
         }
@@ -177,6 +178,10 @@ public class OBD2Fragment extends Fragment {
     }
 
     private void updateView() {
+        ACT.runOnUiThread(() -> {
+            txt_speed.setText(getString(R.string.speed, speed));
+            txt_rpm.setText(getString(R.string.rpm, rpm));
+        });
 //        Tools.GPSUPDATE = 100 * ((SeekBar) getView().findViewById(R.id.sb_gps)).getProgress();
 //        ((TextView) getView().findViewById(R.id.txt_gps)).setText("gps: " + Tools.GPSUPDATE);
 //        Tools.CAMERAUPDATE = 100 * ((SeekBar) getView().findViewById(R.id.sb_cam)).getProgress();
@@ -186,11 +191,7 @@ public class OBD2Fragment extends Fragment {
 
 //        ((TextView) getView().findViewById(R.id.txt_time))
 //                .setText(getString(R.string.time, Tools.dateFormat.format(new Date())));
-                                    ACT.runOnUiThread(() -> {
-                                txt_speed.setText(getString(R.string.speed, speed));
-                                txt_rpm.setText(getString(R.string.rpm, rpm));
-                                //updateView();
-                            });
+
 
 //        txt_speed.setText(getString(R.string.speed, speed));
 //        txt_rpm.setText(getString(R.string.rpm, rpm));

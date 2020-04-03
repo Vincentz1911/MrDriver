@@ -3,41 +3,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OBD2Fragment"
+    android:orientation="vertical"
     android:tag="obd2tag"
-    android:orientation="vertical">
+    tools:context=".OBD2Fragment">
 
     <Button
+        android:id="@+id/btn_startbt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_ison"
-        android:text="Start"/>
+        android:text="Start BT" />
+
+    <Button
+        android:id="@+id/btn_startupdates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start updates" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/txt_speed"
-        android:textSize="16sp"
-        android:text="SPEED"/>
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="SPEED"
+        android:textSize="16sp" />
+
+    <TextView
         android:id="@+id/txt_rpm"
-        android:textSize="16sp"
-        android:text="RPM"/>
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="RPM"
+        android:textSize="16sp" />
+
+    <TextView
         android:id="@+id/txt_oiltemp"
-        android:textSize="16sp"/>
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16sp" />
+
+    <TextView
         android:id="@+id/txt_fuellevel"
-        android:textSize="16sp"/>
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16sp" />
+
+    <TextView
         android:id="@+id/txt_consumption"
-        android:textSize="16sp"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp" />
 </LinearLayout>

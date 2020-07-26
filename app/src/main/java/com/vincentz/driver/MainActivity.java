@@ -80,11 +80,18 @@ public class MainActivity extends FragmentActivity {
         ImageView btn_camera = findViewById(R.id.btn_camera);
 
         btn_spotify.setOnClickListener(v -> {
+            hideAllFrameLayouts();
             FM.beginTransaction().replace(R.id.fl_left_window, new SpotifyFragment(), "").commit();
         });
         btn_weather.setOnClickListener(v -> {
             FM.beginTransaction().replace(R.id.fl_left_window, new WeatherFragment(), "").commit();
         });
+    }
+
+    private void hideAllFrameLayouts() {
+
+
+
     }
 
 

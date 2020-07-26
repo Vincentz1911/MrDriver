@@ -50,6 +50,27 @@
     </TableLayout>
 
     <FrameLayout
+        android:id="@+id/fl_spotify"
+        android:layout_width="@dimen/big_element"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/fk_sidebar"
+        android:visibility="invisible"/>
+
+    <FrameLayout
+        android:id="@+id/fl_weather"
+        android:layout_width="@dimen/big_element"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:layout_toEndOf="@id/fk_sidebar" />
+
+    <FrameLayout
+        android:id="@+id/fl_maps"
+        android:layout_width="@dimen/big_element"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:layout_toEndOf="@id/fk_sidebar" />
+
+    <FrameLayout
         android:id="@+id/fl_left_window"
         android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"

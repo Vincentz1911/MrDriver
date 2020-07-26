@@ -3,6 +3,7 @@ package com.vincentz.driver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
+import android.text.method.ScrollingMovementMethod;
 import android.text.style.RelativeSizeSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -10,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -52,15 +51,14 @@ public class SpotifyFragment extends Fragment {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private TrackProgressBar mTrackProgressBar;
-    private ImageView mCoverArtImageView;
+    private AppCompatImageView mCoverArtImageView;
     Subscription<PlayerState> mPlayerStateSubscription;
     private Subscription<PlayerContext> mPlayerContextSubscription;
 
     private AppCompatTextView txt_artist, txt_song, txt_album;
-    private AppCompatImageView mPlayPauseButton, mSkipNextButton, mSkipPrevButton, btn_shuffle, btn_repeat;
+    private AppCompatImageView btnPlayPause, btnSkipNext, btnSkipPrev, btnShuffle, btnRepeat;
     private AppCompatImageView btn_album, btn_artist, btn_playlist, btn_category;
     private AppCompatSeekBar mSeekBar;
-    private LinearLayout lay_controls;
     private GridView gridView;
 
     @Override
@@ -110,22 +108,18 @@ public class SpotifyFragment extends Fragment {
     }
 
     private void initUI(View view) {
-        mPlayPauseButton = view.findViewById(R.id.play_pause_button);
-        //btn_playPauseSmall = view.findViewById(R.id.play_pause_button_small);
-        mSkipPrevButton = view.findViewById(R.id.skip_prev_button);
-        mSkipNextButton = view.findViewById(R.id.skip_next_button);
-        btn_shuffle = view.findViewById(R.id.btn_shuffle);
-        btn_repeat = view.findViewById(R.id.btn_repeat);
+        btnPlayPause = view.findViewById(R.id.play_pause_button);
+        btnSkipPrev = view.findViewById(R.id.skip_prev_button);
+        btnSkipNext = view.findViewById(R.id.skip_next_button);
+        btnShuffle = view.findViewById(R.id.btn_shuffle);
+        btnRepeat = view.findViewById(R.id.btn_repeat);
         btn_album = view.findViewById(R.id.img_album);
         btn_artist = view.findViewById(R.id.img_artist);
-        // btn_playlist = view.findViewById(R.id.img_playlist);
+
         btn_category = view.findViewById(R.id.img_category);
 
         mCoverArtImageView = view.findViewById(R.id.image);
-//        txt_album = view.findViewById(R.id.txt_album);
-//        txt_song = view.findViewById(R.id.txt_song);
         txt_artist = view.findViewById(R.id.txt_artist);
-        lay_controls = view.findViewById(R.id.lay_controls);
         mSeekBar = view.findViewById(R.id.seek_to);
         mSeekBar.setEnabled(false);
         mTrackProgressBar = new TrackProgressBar(mSeekBar);
@@ -133,7 +127,7 @@ public class SpotifyFragment extends Fragment {
     }
 
     private void initOnClick() {
-        mPlayPauseButton.setOnClickListener(v -> playPause());
+        btnPlayPause.setOnClickListener(v -> playPause());
 //        btn_playPauseSmall.setOnClickListener(v -> playPause());
 //        btn_playPauseSmall.setOnLongClickListener(v -> {
 //            onSkipNextButtonClicked();
@@ -158,14 +152,17 @@ public class SpotifyFragment extends Fragment {
                 .setResultCallback(this::recommendedContentCallBack)
                 .setErrorCallback(mErrorCallback));
 
-        btn_shuffle.setOnClickListener(view -> mSpotifyAppRemote
-                .getPlayerApi()
-                .toggleShuffle()
-                .setResultCallback(
-                        empty -> logMessage(getString(R.string.command_feedback, "toggle shuffle")))
-                .setErrorCallback(mErrorCallback));
+        btnShuffle.setOnClickListener(view -> {
+            mSpotifyAppRemote
+                    .getPlayerApi()
+                    .toggleShuffle()
+                    .setResultCallback(
+                            empty -> logMessage(getString(R.string.command_feedback, "toggle shuffle")))
+                    .setErrorCallback(mErrorCallback);
 
-        btn_repeat.setOnClickListener(view -> mSpotifyAppRemote
+        });
+
+        btnRepeat.setOnClickListener(view -> mSpotifyAppRemote
                 .getPlayerApi()
                 .toggleRepeat()
                 .setResultCallback(
@@ -186,7 +183,8 @@ public class SpotifyFragment extends Fragment {
 //            return true;
 //        });
 
-        mSkipNextButton.setOnClickListener(v -> onSkipNextButtonClicked());
+        btnSkipNext.setOnClickListener(v -> onSkipNextButtonClicked());
+        btnSkipPrev.setOnClickListener(v -> onSkipPreviousButtonClicked());
     }
 
     private void playPlaylist() {
@@ -344,14 +342,29 @@ public class SpotifyFragment extends Fragment {
 
                         // Invalidate play / pause
                         if (playerState.isPaused) {
-                            mPlayPauseButton.setImageResource(R.drawable.sic_play_48dp);
+                            btnPlayPause.setImageResource(R.drawable.sic_play_48dp);
                             mSeekBar.setThumb(getResources()
                                     .getDrawable(R.drawable.sic_pause_button, ACT.getTheme()));
                         } else {
-                            mPlayPauseButton.setImageResource(R.drawable.sic_pause_48dp);
+                            btnPlayPause.setImageResource(R.drawable.sic_pause_48dp);
                             mSeekBar.setThumb(getResources()
                                     .getDrawable(R.drawable.sic_play_button, ACT.getTheme()));
                         }
+
+                        //Sets ICON for shuffling
+                        if (playerState.playbackOptions.isShuffling)
+                            btnShuffle.setImageResource(R.drawable.sic_baseline_shuffle_24);
+                        else
+                            btnShuffle.setImageResource(R.drawable.sic_baseline_trending_flat_24);
+
+                        //Sets ICON for noRepeat/repeat/repeat1
+                        if (playerState.playbackOptions.repeatMode == 0)
+                            btnRepeat.setImageResource(R.drawable.sic_baseline_vertical_align_bottom_24);
+                        else if (playerState.playbackOptions.repeatMode == 1)
+                            btnRepeat.setImageResource(R.drawable.sic_baseline_repeat_one_24);
+                        else if (playerState.playbackOptions.repeatMode == 2)
+                            btnRepeat.setImageResource(R.drawable.sic_baseline_repeat_24);
+
 
                         // Get image from track
                         mSpotifyAppRemote.getImagesApi()
@@ -363,6 +376,7 @@ public class SpotifyFragment extends Fragment {
                         ss1.setSpan(new RelativeSizeSpan(0.6f), track.name.length(), track.name.length() + 4, 0); // set size
                         ss1.setSpan(new RelativeSizeSpan(0.6f), track.name.length() + 4 + track.artist.name.length(), track.name.length() + 10 + track.artist.name.length(), 0); // set size
                         txt_artist.setText(ss1);
+                        txt_artist.setMovementMethod(new ScrollingMovementMethod());
                         Log.d(TAG, track.name + " by " + track.artist.name + " from " + track.album.name);
 
                         // Invalidate seekbar length and position
@@ -374,7 +388,6 @@ public class SpotifyFragment extends Fragment {
                     }
                 });
     }
-
 
 
     private void logError(Throwable throwable) {

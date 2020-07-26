@@ -1,5 +1,6 @@
 package com.vincentz.driver;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -32,6 +33,7 @@ public class OBD2Fragment extends Fragment {
     private Thread OBDDataThread;
     private BluetoothSocket socket = null;
     private boolean isOn;
+    private Activity ACT;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -40,13 +42,13 @@ public class OBD2Fragment extends Fragment {
         txt_speed = view.findViewById(R.id.txt_speed);
         txt_rpm = view.findViewById(R.id.txt_rpm);
 
-        Timer update = new Timer();
-        update.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateView();
-            }
-        }, 0, 500);
+//        Timer update = new Timer();
+//        update.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                updateView();
+//            }
+//        }, 0, 500);
 
         (view.findViewById(R.id.btn_startbt)).setOnClickListener(v -> {
                     initBT();
@@ -103,6 +105,12 @@ public class OBD2Fragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ACT = getActivity();
     }
 
     private void initBT() {
@@ -178,6 +186,7 @@ public class OBD2Fragment extends Fragment {
     }
 
     private void updateView() {
+        if (ACT == null) return;
         ACT.runOnUiThread(() -> {
             txt_speed.setText(getString(R.string.speed, speed));
             txt_rpm.setText(getString(R.string.rpm, rpm));

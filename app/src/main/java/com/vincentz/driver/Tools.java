@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.RequestQueue;
@@ -46,6 +47,10 @@ class Tools {
             }
         }
     }
+
+    //static Fragment FRAGMENTS =
+
+    //static int[] Images =
 
     static String getCompassDirection(float b) {
         b -= 11.5;

@@ -1,6 +1,5 @@
 package com.vincentz.driver;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -74,8 +73,9 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private ListView listView;
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
+        super.onDestroy();
+
         markerThread.interrupt();
         camTimer.purge();
         camTimer.cancel();
@@ -85,7 +85,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         //region INIT UI
         View root = li.inflate(R.layout.fragment_map, vg, false);
-        Objects.requireNonNull((SupportMapFragment) getChildFragmentManager()
+        Objects.requireNonNull((SupportMapFragment) getFragmentManager()
                 .findFragmentById(R.id.map)).getMapAsync(this);
 
         input = root.findViewById(R.id.input_search);
@@ -146,6 +146,13 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             }, 0, 500);
             initOnClick();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
     }
 
     //TODO Set mapstyle depending on time of day
@@ -232,12 +239,12 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         img_fullscreen.setOnClickListener(view -> {
             isFullscreen = !isFullscreen;
             if (isFullscreen) {
-                ACT.findViewById(R.id.left_side).setVisibility(View.GONE);
-                ACT.findViewById(R.id.right_side).setVisibility(View.GONE);
+ //               ACT.findViewById(R.id.left_side).setVisibility(View.GONE);
+//                ACT.findViewById(R.id.right_side).setVisibility(View.GONE);
                 img_fullscreen.setImageResource(R.drawable.mic_fullscreen_exit_100dp);
             } else {
-                ACT.findViewById(R.id.left_side).setVisibility(View.VISIBLE);
-                ACT.findViewById(R.id.right_side).setVisibility(View.VISIBLE);
+//                ACT.findViewById(R.id.left_side).setVisibility(View.VISIBLE);
+//                ACT.findViewById(R.id.right_side).setVisibility(View.VISIBLE);
                 img_fullscreen.setImageResource(R.drawable.mic_fullscreen_100dp);
             }
         });
@@ -414,7 +421,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 JSONArray geom = searchResults.getJSONObject(i).getJSONObject("geometry").
                         getJSONArray("coordinates");
 
-                String area = (prop.getString("neighbourhood") != null)
+                String area = (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
                         ? prop.getString("neighbourhood") : prop.getString("localadmin");
 
                 list.add(new LocationModel(

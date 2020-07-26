@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="h6">12sp</dimen>
-    <dimen name="h5">20sp</dimen>
+    <dimen name="h5">16sp</dimen>
     <dimen name="h4">24sp</dimen>
     <dimen name="h3">32sp</dimen>
     <dimen name="h2">48sp</dimen>
     <dimen name="h1">64sp</dimen>
-    <dimen name="padding">5dp</dimen>
-    <dimen name="margin">20dp</dimen>
-    <dimen name="big_icon">100dp</dimen>
+    <dimen name="padding">3dp</dimen>
+    <dimen name="margin">10dp</dimen>
+    <dimen name="big_icon">128dp</dimen>
+    <dimen name="medium_icon">98dp</dimen>
     <dimen name="small_icon">64dp</dimen>
-    <dimen name="big_element">200dp</dimen>
+    <dimen name="big_element">300dp</dimen>
 </resources>

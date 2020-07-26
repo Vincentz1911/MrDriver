@@ -4,61 +4,61 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+<!--    <TableRow-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1">-->
 
-        <TableLayout
-            android:id="@+id/left_side_tab"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+<!--        <TableLayout-->
+<!--            android:id="@+id/left_side_tab"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1">-->
 
-            <ImageView
-                android:id="@+id/btn_left_top"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/draw_rounded_corners"
-                android:contentDescription="@string/fragment" />
+<!--            <ImageView-->
+<!--                android:id="@+id/btn_left_top"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/draw_rounded_corners"-->
+<!--                android:contentDescription="@string/fragment" />-->
 
-            <ImageView
-                android:id="@+id/btn_left_bottom"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/draw_rounded_corners"
-                android:contentDescription="@string/fragment"/>
-        </TableLayout>
+<!--            <ImageView-->
+<!--                android:id="@+id/btn_left_bottom"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/draw_rounded_corners"-->
+<!--                android:contentDescription="@string/fragment"/>-->
+<!--        </TableLayout>-->
 
-        <ImageView
-            android:id="@+id/btn_big"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@drawable/draw_rounded_corners"
-            android:contentDescription="@string/fragment"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/btn_big"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="2"-->
+<!--            android:background="@drawable/draw_rounded_corners"-->
+<!--            android:contentDescription="@string/fragment"/>-->
 
-        <TableLayout
-            android:id="@+id/right_side_tab"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+<!--        <TableLayout-->
+<!--            android:id="@+id/right_side_tab"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1">-->
 
-            <ImageView
-                android:id="@+id/btn_right_top"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/draw_rounded_corners"
-                android:contentDescription="@string/fragment"/>
+<!--            <ImageView-->
+<!--                android:id="@+id/btn_right_top"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/draw_rounded_corners"-->
+<!--                android:contentDescription="@string/fragment"/>-->
 
-            <ImageView
-                android:id="@+id/btn_right_bottom"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/draw_rounded_corners"
-                android:contentDescription="@string/fragment"/>
-        </TableLayout>
-    </TableRow>
+<!--            <ImageView-->
+<!--                android:id="@+id/btn_right_bottom"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/draw_rounded_corners"-->
+<!--                android:contentDescription="@string/fragment"/>-->
+<!--        </TableLayout>-->
+<!--    </TableRow>-->
 
     <TableLayout
         android:layout_width="match_parent"

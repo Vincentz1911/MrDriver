@@ -1,8 +1,9 @@
 package com.vincentz.driver;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.ContentApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.ErrorCallback;
 import com.spotify.protocol.client.Subscription;
@@ -58,8 +57,8 @@ public class SpotifyFragment extends Fragment {
     private Subscription<PlayerContext> mPlayerContextSubscription;
 
     private AppCompatTextView txt_artist, txt_song, txt_album;
-    private AppCompatImageButton mPlayPauseButton, mSkipNextButton, mSkipPrevButton;
-    private AppCompatImageView btn_playPauseSmall, btn_album, btn_artist, btn_playlist, btn_category;
+    private AppCompatImageView mPlayPauseButton, mSkipNextButton, mSkipPrevButton, btn_shuffle, btn_repeat;
+    private AppCompatImageView btn_album, btn_artist, btn_playlist, btn_category;
     private AppCompatSeekBar mSeekBar;
     private LinearLayout lay_controls;
     private GridView gridView;
@@ -77,14 +76,14 @@ public class SpotifyFragment extends Fragment {
         ACT.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
 
-        root.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
-            final View[] viewsToHide = {txt_artist, txt_album, lay_controls};
-            if (view.getHeight() < (height + 100) / 2) {
-                for (View v : viewsToHide) v.setVisibility(View.INVISIBLE);
-            } else for (View v : viewsToHide) v.setVisibility(View.VISIBLE);
-
-            Log.d(TAG, "onLayoutChange: ");
-        });
+//        root.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
+//            final View[] viewsToHide = {txt_artist, txt_album, lay_controls};
+//            if (view.getHeight() < (height + 100) / 2) {
+//                for (View v : viewsToHide) v.setVisibility(View.INVISIBLE);
+//            } else for (View v : viewsToHide) v.setVisibility(View.VISIBLE);
+//
+//            Log.d(TAG, "onLayoutChange: ");
+//        });
 
         return root;
     }
@@ -112,18 +111,19 @@ public class SpotifyFragment extends Fragment {
 
     private void initUI(View view) {
         mPlayPauseButton = view.findViewById(R.id.play_pause_button);
-        btn_playPauseSmall = view.findViewById(R.id.play_pause_button_small);
+        //btn_playPauseSmall = view.findViewById(R.id.play_pause_button_small);
         mSkipPrevButton = view.findViewById(R.id.skip_prev_button);
         mSkipNextButton = view.findViewById(R.id.skip_next_button);
-
+        btn_shuffle = view.findViewById(R.id.btn_shuffle);
+        btn_repeat = view.findViewById(R.id.btn_repeat);
         btn_album = view.findViewById(R.id.img_album);
         btn_artist = view.findViewById(R.id.img_artist);
-       // btn_playlist = view.findViewById(R.id.img_playlist);
+        // btn_playlist = view.findViewById(R.id.img_playlist);
         btn_category = view.findViewById(R.id.img_category);
 
         mCoverArtImageView = view.findViewById(R.id.image);
-        txt_album = view.findViewById(R.id.txt_album);
-        txt_song = view.findViewById(R.id.txt_song);
+//        txt_album = view.findViewById(R.id.txt_album);
+//        txt_song = view.findViewById(R.id.txt_song);
         txt_artist = view.findViewById(R.id.txt_artist);
         lay_controls = view.findViewById(R.id.lay_controls);
         mSeekBar = view.findViewById(R.id.seek_to);
@@ -134,11 +134,11 @@ public class SpotifyFragment extends Fragment {
 
     private void initOnClick() {
         mPlayPauseButton.setOnClickListener(v -> playPause());
-        btn_playPauseSmall.setOnClickListener(v -> playPause());
-        btn_playPauseSmall.setOnLongClickListener(v -> {
-            onSkipNextButtonClicked();
-            return true;
-        });
+//        btn_playPauseSmall.setOnClickListener(v -> playPause());
+//        btn_playPauseSmall.setOnLongClickListener(v -> {
+//            onSkipNextButtonClicked();
+//            return true;
+//        });
 
         btn_album.setOnClickListener(view -> {
             mSpotifyAppRemote.getPlayerApi().play(track.album.uri);
@@ -156,6 +156,20 @@ public class SpotifyFragment extends Fragment {
                 .getContentApi()
                 .getRecommendedContentItems("Fitness")
                 .setResultCallback(this::recommendedContentCallBack)
+                .setErrorCallback(mErrorCallback));
+
+        btn_shuffle.setOnClickListener(view -> mSpotifyAppRemote
+                .getPlayerApi()
+                .toggleShuffle()
+                .setResultCallback(
+                        empty -> logMessage(getString(R.string.command_feedback, "toggle shuffle")))
+                .setErrorCallback(mErrorCallback));
+
+        btn_repeat.setOnClickListener(view -> mSpotifyAppRemote
+                .getPlayerApi()
+                .toggleRepeat()
+                .setResultCallback(
+                        empty -> logMessage(getString(R.string.command_feedback, "toggle repeat")))
                 .setErrorCallback(mErrorCallback));
 
 //        btn_playlist.setOnLongClickListener(view -> {
@@ -325,21 +339,16 @@ public class SpotifyFragment extends Fragment {
 
                     if (track != null) {
                         // Update progressbar
-                        if (playerState.playbackSpeed > 0) {
-                            mTrackProgressBar.unpause();
-                        } else {
-                            mTrackProgressBar.pause();
-                        }
+                        if (playerState.playbackSpeed > 0) mTrackProgressBar.unpause();
+                        else mTrackProgressBar.pause();
 
                         // Invalidate play / pause
                         if (playerState.isPaused) {
                             mPlayPauseButton.setImageResource(R.drawable.sic_play_48dp);
-                            btn_playPauseSmall.setImageResource(R.drawable.sic_play_stroke_128dp);
                             mSeekBar.setThumb(getResources()
                                     .getDrawable(R.drawable.sic_pause_button, ACT.getTheme()));
                         } else {
                             mPlayPauseButton.setImageResource(R.drawable.sic_pause_48dp);
-                            btn_playPauseSmall.setImageResource(R.drawable.sic_pause_stroke_128dp);
                             mSeekBar.setThumb(getResources()
                                     .getDrawable(R.drawable.sic_play_button, ACT.getTheme()));
                         }
@@ -349,10 +358,12 @@ public class SpotifyFragment extends Fragment {
                                 .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
                                 .setResultCallback(bitmap -> mCoverArtImageView.setImageBitmap(bitmap));
 
-                        txt_artist.setText(track.artist.name);
-                        txt_album.setText(track.album.name);
-                        txt_song.setText(track.name);// + "(" + track.duration + ")"
-                        Log.d(TAG, track.name + " by " + track.artist.name);
+                        //Creates song info text with smaller by and from textsize
+                        SpannableString ss1 = new SpannableString(track.name + " by " + track.artist.name + " from " + track.album.name);
+                        ss1.setSpan(new RelativeSizeSpan(0.6f), track.name.length(), track.name.length() + 4, 0); // set size
+                        ss1.setSpan(new RelativeSizeSpan(0.6f), track.name.length() + 4 + track.artist.name.length(), track.name.length() + 10 + track.artist.name.length(), 0); // set size
+                        txt_artist.setText(ss1);
+                        Log.d(TAG, track.name + " by " + track.artist.name + " from " + track.album.name);
 
                         // Invalidate seekbar length and position
                         mSeekBar.setMax((int) playerState.track.duration);
@@ -364,19 +375,21 @@ public class SpotifyFragment extends Fragment {
                 });
     }
 
+
+
     private void logError(Throwable throwable) {
         Toast.makeText(getContext(), "R.string.err_generic_toast", Toast.LENGTH_SHORT).show();
         Log.e(TAG, "", throwable);
     }
 
-//    private void logMessage(String msg) {
-//        logMessage(msg, Toast.LENGTH_SHORT);
-//    }
-//
-//    private void logMessage(String msg, int duration) {
-//        Toast.makeText(getContext(), msg, duration).show();
-//        Log.d(TAG, msg);
-//    }
+    private void logMessage(String msg) {
+        logMessage(msg, Toast.LENGTH_SHORT);
+    }
+
+    private void logMessage(String msg, int duration) {
+        Toast.makeText(getContext(), msg, duration).show();
+        Log.d(TAG, msg);
+    }
 
 
     //region TRACKBAR

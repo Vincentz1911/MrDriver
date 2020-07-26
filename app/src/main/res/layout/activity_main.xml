@@ -1,53 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/draw_gradient"
-    android:baselineAligned="false"
     tools:context=".MainActivity">
 
     <TableLayout
-        android:id="@+id/left_side"
-        android:layout_width="0dp"
+        android:id="@+id/fk_sidebar"
+        android:layout_width="@dimen/big_icon"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:gravity="center">
 
-        <FrameLayout
-            android:id="@+id/fl_left_top"
-            android:layout_height="0dp"
+        <ImageView
+            android:id="@+id/btn_navigation"
             android:layout_weight="1"
-            android:padding="@dimen/padding" />
+            android:scaleType="fitStart"
+            android:src="@drawable/mic_directions_200dp" />
 
-        <FrameLayout
-            android:id="@+id/fl_left_bottom"
-            android:layout_height="0dp"
+        <ImageView
+            android:id="@+id/btn_weather"
             android:layout_weight="1"
-            android:padding="@dimen/padding" />
+            android:scaleType="fitStart"
+            android:src="@drawable/fic_weather_200dp" />
+
+        <ImageView
+            android:id="@+id/btn_obd2"
+            android:layout_weight="1"
+            android:scaleType="fitStart"
+            android:src="@drawable/fic_engine_200dp" />
+
+        <ImageView
+            android:id="@+id/btn_spotify"
+            android:layout_weight="1"
+            android:scaleType="fitStart"
+            android:src="@drawable/fic_spotify_logo_200dp" />
+
+        <ImageView
+            android:id="@+id/btn_phone"
+            android:layout_weight="1"
+            android:scaleType="fitStart"
+            android:src="@drawable/fic_phone_bluetooth_200dp" />
+
+        <ImageView
+            android:id="@+id/btn_camera"
+            android:layout_weight="1"
+            android:scaleType="fitStart"
+            android:src="@drawable/fic_videocam_200dp" />
     </TableLayout>
 
     <FrameLayout
-        android:id="@+id/fl_big_center"
-        android:layout_width="0dp"
+        android:id="@+id/fl_left_window"
+        android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"
-        android:layout_weight="2" />
+        android:layout_toEndOf="@id/fk_sidebar" />
 
-    <TableLayout
-        android:id="@+id/right_side"
-        android:layout_width="0dp"
+    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_toEndOf="@id/fl_left_window"
+        map:mapType="hybrid" />
 
-        <FrameLayout
-            android:id="@+id/fl_right_top"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="@dimen/padding" />
+    <FrameLayout
+        android:id="@+id/fl_map_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/fl_left_window" />
 
-        <FrameLayout
-            android:id="@+id/fl_right_bottom"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="@dimen/padding" />
-    </TableLayout>
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/fl_right_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/draw_rounded_corners"
+        android:padding="@dimen/padding" />
+
+
+
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:baselineAligned="false">-->
+
+    <!--&lt;!&ndash;        <FrameLayout&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:id="@+id/fl_shortcuts"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_width="100dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_height="match_parent"/>&ndash;&gt;-->
+
+
+    <!--        <FrameLayout-->
+    <!--            android:id="@+id/fl_big_center"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:layout_weight="4" />-->
+
+    <!--&lt;!&ndash;        <TableLayout&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:id="@+id/right_side"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_width="0dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_height="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_weight="1">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;            <FrameLayout&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:id="@+id/fl_right_top"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:layout_height="0dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:padding="@dimen/padding"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:background="@drawable/draw_rounded_corners"/>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;            <FrameLayout&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:id="@+id/fl_right_bottom"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:layout_height="0dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:padding="@dimen/padding"&ndash;&gt;-->
+    <!--&lt;!&ndash;                android:background="@drawable/draw_rounded_corners"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;        </TableLayout>&ndash;&gt;-->
+    <!--    </LinearLayout>-->
+</RelativeLayout>

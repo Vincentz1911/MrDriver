@@ -6,12 +6,15 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.android.volley.toolbox.Volley;
 
@@ -26,14 +29,15 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setThemeBasedOnTimeOfDay();
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onResume() {
-        setThemeBasedOnTimeOfDay();
-        super.onResume();
         init();
     }
+
+//    @Override
+//    protected void onResume() {
+//        setThemeBasedOnTimeOfDay();
+//        super.onResume();
+//        init();
+//    }
 
     //SETS THEME BASED ON SUNRISE AND SUNSET.
     private void setThemeBasedOnTimeOfDay() {
@@ -46,7 +50,7 @@ public class MainActivity extends FragmentActivity {
         sunDown.setTimeInMillis(getPreferences(Context.MODE_PRIVATE).getLong("Sunset", 0));
         sunDown.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
-        if (now.after(sunUp) && now.before(sunDown)) setTheme(R.style.AppTheme_Night);
+        if (now.after(sunUp) && now.before(sunDown)) setTheme(R.style.AppTheme_Day);
         else setTheme(R.style.AppTheme_Night);
     }
 
@@ -62,28 +66,35 @@ public class MainActivity extends FragmentActivity {
         checkPermissions();
 
         if (IO.getBoolean("HaveRun", false)) setupView();
-        else FM.beginTransaction().replace(R.id.fl_big_center, new WelcomeFragment(), "").commit();
+        else FM.beginTransaction().replace(R.id.fl_map_overlay, new WelcomeFragment(), "").commit();
+
+        initButtons();
     }
 
-    void firstRun() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
-        else checkPermissions();
-        getPreferences(Context.MODE_PRIVATE).edit().putBoolean("HaveRun", true).apply();
-        FM.beginTransaction().replace(R.id.fl_left_top, new SelectorFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_left_bottom, new SelectorFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_right_top, new SelectorFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_right_bottom, new SelectorFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_big_center, new SelectorFragment(), "").commit();
+    private void initButtons() {
+        ImageView btn_navigation = findViewById(R.id.btn_navigation);
+        ImageView btn_weather = findViewById(R.id.btn_weather);
+        ImageView btn_obd2 = findViewById(R.id.btn_obd2);
+        ImageView btn_spotify = findViewById(R.id.btn_spotify);
+        ImageView btn_phone = findViewById(R.id.btn_phone);
+        ImageView btn_camera = findViewById(R.id.btn_camera);
+
+        btn_spotify.setOnClickListener(v -> {
+            FM.beginTransaction().replace(R.id.fl_left_window, new SpotifyFragment(), "").commit();
+        });
+        btn_weather.setOnClickListener(v -> {
+            FM.beginTransaction().replace(R.id.fl_left_window, new WeatherFragment(), "").commit();
+        });
     }
 
-    private void setupView() {
+
+    void setupView() {
         if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
         else checkPermissions();
-        FM.beginTransaction().replace(R.id.fl_left_top, new InfoFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_right_top, new WeatherFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_left_bottom, new SpotifyFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_right_bottom, new OBD2Fragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_big_center, new MapFragment(), "").commit();
+        IO.edit().putBoolean("HaveRun", true).apply();
+        FM.beginTransaction().replace(R.id.fl_right_top, new InfoFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_left_window, new SpotifyFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_map_overlay, new MapFragment(), "").commit();
     }
 
     //region PERMISSIONS
@@ -161,7 +172,6 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            msg("LOC Status changed: " + provider + " status: " + status);
         }
 
         @Override

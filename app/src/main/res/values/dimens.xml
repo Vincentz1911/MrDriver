@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="h6">12sp</dimen>
-    <dimen name="h5">16sp</dimen>
-    <dimen name="h4">24sp</dimen>
-    <dimen name="h3">32sp</dimen>
-    <dimen name="h2">48sp</dimen>
-    <dimen name="h1">64sp</dimen>
+    <dimen name="h6">8sp</dimen>
+    <dimen name="h5">12sp</dimen>
+    <dimen name="h4">16sp</dimen>
+    <dimen name="h3">24sp</dimen>
+    <dimen name="h2">32sp</dimen>
+    <dimen name="h1">48sp</dimen>
     <dimen name="padding">3dp</dimen>
     <dimen name="margin">10dp</dimen>
-    <dimen name="big_icon">64dp</dimen>
-    <dimen name="medium_icon">48dp</dimen>
-    <dimen name="small_icon">32dp</dimen>
+    <dimen name="big_icon">48dp</dimen>
+    <dimen name="medium_icon">32dp</dimen>
+    <dimen name="small_icon">24dp</dimen>
     <dimen name="big_element">150dp</dimen>
 </resources>

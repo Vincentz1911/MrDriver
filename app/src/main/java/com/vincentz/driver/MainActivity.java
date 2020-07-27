@@ -6,14 +6,15 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.volley.toolbox.Volley;
@@ -24,6 +25,11 @@ import java.util.Objects;
 import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
+
+    boolean isFullscreen;
+    FrameLayout fl_leftWindow, fl_spotify, fl_weather;
+    ImageView btn_fullscreen;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,7 @@ public class MainActivity extends FragmentActivity {
         RQ = Volley.newRequestQueue(this);
         FM = getSupportFragmentManager();
         IO = getPreferences(MODE_PRIVATE);
+
         setContentView(R.layout.activity_main);
         fullscreen();
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen());
@@ -72,35 +79,76 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initButtons() {
+        fl_spotify = findViewById(R.id.fl_spotify);
+        fl_weather = findViewById(R.id.fl_weather);
+        fl_leftWindow = findViewById(R.id.fl_left_window);
         ImageView btn_navigation = findViewById(R.id.btn_navigation);
         ImageView btn_weather = findViewById(R.id.btn_weather);
         ImageView btn_obd2 = findViewById(R.id.btn_obd2);
         ImageView btn_spotify = findViewById(R.id.btn_spotify);
         ImageView btn_phone = findViewById(R.id.btn_phone);
         ImageView btn_camera = findViewById(R.id.btn_camera);
+        btn_fullscreen = findViewById(R.id.img_fullscreen);
 
         btn_spotify.setOnClickListener(v -> {
             hideAllFrameLayouts();
-            FM.beginTransaction().replace(R.id.fl_left_window, new SpotifyFragment(), "").commit();
+            showFrameLayout();
+            fl_spotify.setVisibility(View.VISIBLE);
+
         });
         btn_weather.setOnClickListener(v -> {
-            FM.beginTransaction().replace(R.id.fl_left_window, new WeatherFragment(), "").commit();
+            hideAllFrameLayouts();
+            showFrameLayout();
+            fl_weather.setVisibility(View.VISIBLE);
         });
+
+        btn_fullscreen.setOnClickListener(view -> {
+            isFullscreen = !isFullscreen;
+            if (isFullscreen) {
+                fl_leftWindow.setVisibility(View.GONE);
+                btn_fullscreen.setImageResource(R.drawable.mic_fullscreen_exit_100dp);
+            } else {
+                showFrameLayout();
+            }
+        });
+
+        btn_navigation.setOnClickListener(view -> {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            FrameLayout layout = (FrameLayout) inflater.inflate(R.layout.fragment_map, null);
+            //FrameLayout layoutteamInfo  = (FrameLayout) layout.findViewById(R.id.teamInfoLayout);
+
+//            if (input.getVisibility() == View.GONE) {
+//                input.setVisibility(View.VISIBLE);
+//                listView.setVisibility(View.VISIBLE);
+//                fillSearchListView(loadLocations());
+//            } else {
+//                hideKeyboard();
+//                input.setVisibility(View.GONE);
+//                listView.setVisibility(View.GONE);
+//            }
+        });
+    }
+
+
+    private void showFrameLayout(){
+        fl_leftWindow.setVisibility(View.VISIBLE);
+        btn_fullscreen.setImageResource(R.drawable.mic_fullscreen_100dp);
     }
 
     private void hideAllFrameLayouts() {
-
-
-
+        fl_spotify.setVisibility(View.GONE);
+        fl_weather.setVisibility(View.GONE);
     }
-
 
     void setupView() {
         if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
         else checkPermissions();
         IO.edit().putBoolean("HaveRun", true).apply();
-        FM.beginTransaction().replace(R.id.fl_right_top, new InfoFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_left_window, new SpotifyFragment(), "").commit();
+
+        FM.beginTransaction().replace(R.id.fl_dateAndTime, new InfoFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_spotify, new SpotifyFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_weather, new WeatherFragment(), "").commit();
+
         FM.beginTransaction().replace(R.id.fl_map_overlay, new MapFragment(), "").commit();
     }
 

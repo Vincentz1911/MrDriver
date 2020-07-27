@@ -47,6 +47,13 @@
             android:layout_weight="1"
             android:scaleType="fitStart"
             android:src="@drawable/fic_videocam_200dp" />
+
+        <ImageView
+            android:id="@+id/img_fullscreen"
+            android:layout_weight="1"
+            android:contentDescription="@string/fullscreen"
+            android:src="@drawable/mic_fullscreen_100dp" />
+
     </TableLayout>
 
     <FrameLayout
@@ -91,10 +98,11 @@
         android:layout_toEndOf="@id/fl_left_window" />
 
     <FrameLayout
-        android:id="@+id/fl_right_top"
+        android:id="@+id/fl_dateAndTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/draw_rounded_corners"
         android:padding="@dimen/padding" />
 

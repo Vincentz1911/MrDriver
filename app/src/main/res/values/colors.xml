@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryDay">#8baad4</color>
-    <color name="colorPrimaryDarkDay">#677fac</color>
-    <color name="colorFadedDarkDay">#88677fac</color>
-    <color name="colorFadedDay">#888baad4</color>
-    <color name="colorAccentDay">#FF8C00</color>
-    <color name="colorTextDay">#2c3949</color>
+<!--    <color name="colorPrimaryDay">#8baad4</color>-->
+<!--    <color name="colorPrimaryDarkDay">#677fac</color>-->
+<!--    <color name="colorFadedDarkDay">#88677fac</color>-->
+<!--    <color name="colorFadedDay">#888baad4</color>-->
+<!--    <color name="colorAccentDay">#FF8C00</color>-->
+<!--    <color name="colorTextDay">#2c3949</color>-->
+
+    <color name="colorPrimaryDay">#e8efcd</color>
+    <color name="colorPrimaryDarkDay">#c5c96b</color>
+    <color name="colorFadedDarkDay">#88c5c96b</color>
+    <color name="colorFadedDay">#88e8efcd</color>
+    <color name="colorAccentDay">#7e8825</color>
+    <color name="colorTextDay">#473c1e</color>
 
     <color name="colorPrimaryNight">#292929</color>
     <color name="colorFadedNight">#88292929</color>

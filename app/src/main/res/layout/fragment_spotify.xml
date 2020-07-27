@@ -48,7 +48,7 @@
         android:layout_above="@id/lay_seek"
         android:maxLines="100"
         android:text="@string/artist"
-        android:textSize="@dimen/h5"
+        android:textSize="@dimen/h4"
         android:scrollbars = "vertical"/>
 
 

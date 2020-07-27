@@ -63,10 +63,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private Timer camTimer;
 
     private int counter = 0, zoom = 18, tilt = 4;
-    private boolean haveLocation, isTraffic, isFullscreen, isHybrid = true, isCamLock = true;
+    private boolean haveLocation, isTraffic, isHybrid = true, isCamLock = true;
 
     private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Destination;
-    private ImageView img_Compass, img_fullscreen, img_directions;
+    private ImageView img_Compass, img_directions;
     private NumberPicker np_Tilt, np_Zoom;
     private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
     private EditText input;
@@ -102,7 +102,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         txt_Speed = root.findViewById(R.id.txt_speed);
         btn_Speed = root.findViewById(R.id.btn_speed);
         img_directions = root.findViewById(R.id.img_directions);
-        img_fullscreen = root.findViewById(R.id.img_fullscreen);
         img_Compass = root.findViewById(R.id.img_compass);
 
         v_Zoom = root.findViewById(R.id.v_zoom);
@@ -162,7 +161,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         if (isHybrid) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.setTrafficEnabled(isTraffic);
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(ACT, R.raw.mapstyle_night));
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(ACT, R.raw.mapstyle_day));
     }
 
     private void initOnClick() {
@@ -232,21 +231,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 return true;
             }
             return false;
-        });
-
-        //''' FULLSCREEN ICON '''
-        //CLICK = SHOW/HIDE SIDEPANELS
-        img_fullscreen.setOnClickListener(view -> {
-            isFullscreen = !isFullscreen;
-            if (isFullscreen) {
- //               ACT.findViewById(R.id.left_side).setVisibility(View.GONE);
-//                ACT.findViewById(R.id.right_side).setVisibility(View.GONE);
-                img_fullscreen.setImageResource(R.drawable.mic_fullscreen_exit_100dp);
-            } else {
-//                ACT.findViewById(R.id.left_side).setVisibility(View.VISIBLE);
-//                ACT.findViewById(R.id.right_side).setVisibility(View.VISIBLE);
-                img_fullscreen.setImageResource(R.drawable.mic_fullscreen_100dp);
-            }
         });
 
         //''' COMPASS ICON '''

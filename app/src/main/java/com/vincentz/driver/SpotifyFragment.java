@@ -372,9 +372,13 @@ public class SpotifyFragment extends Fragment {
                                 .setResultCallback(bitmap -> mCoverArtImageView.setImageBitmap(bitmap));
 
                         //Creates song info text with smaller by and from textsize
-                        SpannableString ss1 = new SpannableString(track.name + " by " + track.artist.name + " from " + track.album.name);
-                        ss1.setSpan(new RelativeSizeSpan(0.6f), track.name.length(), track.name.length() + 4, 0); // set size
-                        ss1.setSpan(new RelativeSizeSpan(0.6f), track.name.length() + 4 + track.artist.name.length(), track.name.length() + 10 + track.artist.name.length(), 0); // set size
+                        SpannableString ss1 = new SpannableString(track.name + " by "
+                                + track.artist.name + " from " + track.album.name);
+                        ss1.setSpan(new RelativeSizeSpan(0.7f), track.name.length(),
+                                track.name.length() + 4, 0); // set size
+                        ss1.setSpan(new RelativeSizeSpan(0.7f), track.name.length()
+                                + 4 + track.artist.name.length(), track.name.length()
+                                + 10 + track.artist.name.length(), 0); // set size
                         txt_artist.setText(ss1);
                         txt_artist.setMovementMethod(new ScrollingMovementMethod());
                         Log.d(TAG, track.name + " by " + track.artist.name + " from " + track.album.name);

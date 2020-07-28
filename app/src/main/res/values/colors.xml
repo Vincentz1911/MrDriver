@@ -22,6 +22,7 @@
     <color name="colorTextNight">#FFFFFF</color>
 
     <color name="colorRoute">#80FFC800</color>
+    <color name="colorRouteDay">#800037FF</color>
     <color name="colorSign">#009900</color>
     <color name="faded">#99000000</color>
     <color name="ic_launcher_background">#EEEEEE</color>

@@ -4,6 +4,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,9 +16,11 @@ import androidx.fragment.app.Fragment;
 import java.io.IOException;
 
 import static com.vincentz.driver.Tools.ACT;
+import static com.vincentz.driver.Tools.msg;
 
 public class CameraFragment extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
 
+    private String TAG = "Camera";
     private MediaRecorder recorder;
     private SurfaceHolder holder;
     private boolean recording = false;
@@ -40,9 +43,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
     }
 
     private void initRecorder() {
+        try {
+            recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+            recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+        } catch (Exception e) {
+            Log.d(TAG, "initRecorder: " + e.getMessage());
+            msg("No audio or video device found");
+            return;
+        }
 
-        recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-        recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
 
         CamcorderProfile cpHigh = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
         recorder.setProfile(cpHigh);

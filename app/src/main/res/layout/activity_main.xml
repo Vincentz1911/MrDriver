@@ -61,21 +61,35 @@
         android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <FrameLayout
         android:id="@+id/fl_weather"
         android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:layout_toEndOf="@id/fk_sidebar" />
+        android:layout_toEndOf="@id/fk_sidebar"
+        android:visibility="invisible" />
 
     <FrameLayout
-        android:id="@+id/fl_maps"
+        android:id="@+id/fl_navigation"
         android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:layout_toEndOf="@id/fk_sidebar" />
+        android:layout_toEndOf="@id/fk_sidebar"
+        android:visibility="invisible" />
+
+    <FrameLayout
+        android:id="@+id/fl_camera"
+        android:layout_width="@dimen/big_element"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/fk_sidebar"
+        android:visibility="invisible" />
+
+    <FrameLayout
+        android:id="@+id/fl_obd2"
+        android:layout_width="@dimen/big_element"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/fk_sidebar"
+        android:visibility="invisible" />
 
     <FrameLayout
         android:id="@+id/fl_left_window"
@@ -106,44 +120,4 @@
         android:background="@drawable/draw_rounded_corners"
         android:padding="@dimen/padding" />
 
-
-
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:baselineAligned="false">-->
-
-    <!--&lt;!&ndash;        <FrameLayout&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:id="@+id/fl_shortcuts"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_width="100dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_height="match_parent"/>&ndash;&gt;-->
-
-
-    <!--        <FrameLayout-->
-    <!--            android:id="@+id/fl_big_center"-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:layout_weight="4" />-->
-
-    <!--&lt;!&ndash;        <TableLayout&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:id="@+id/right_side"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_width="0dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_height="match_parent"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_weight="1">&ndash;&gt;-->
-
-    <!--&lt;!&ndash;            <FrameLayout&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:id="@+id/fl_right_top"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:layout_height="0dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:padding="@dimen/padding"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:background="@drawable/draw_rounded_corners"/>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;            <FrameLayout&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:id="@+id/fl_right_bottom"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:layout_height="0dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:padding="@dimen/padding"&ndash;&gt;-->
-    <!--&lt;!&ndash;                android:background="@drawable/draw_rounded_corners"/>&ndash;&gt;-->
-    <!--&lt;!&ndash;        </TableLayout>&ndash;&gt;-->
-    <!--    </LinearLayout>-->
 </RelativeLayout>

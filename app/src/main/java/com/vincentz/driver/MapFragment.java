@@ -150,8 +150,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
-
-
     }
 
     //TODO Set mapstyle depending on time of day
@@ -161,6 +159,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         if (isHybrid) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.setTrafficEnabled(isTraffic);
+        map.getUiSettings().setCompassEnabled(false);
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(ACT, R.raw.mapstyle_day));
     }
 
@@ -472,7 +471,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                     if (route != null) route.removeLayerFromMap();
                     route = new GeoJsonLayer(map, response);
                     GeoJsonLineStringStyle lineStringStyle = route.getDefaultLineStringStyle();
-                    lineStringStyle.setColor(getResources().getColor(R.color.colorRoute, ACT.getTheme()));
+                    lineStringStyle.setColor(getResources().getColor(R.color.colorRouteDay, ACT.getTheme()));
                     lineStringStyle.setWidth(10);
                     route.addLayerToMap();
                     geoLocationReversed(target);

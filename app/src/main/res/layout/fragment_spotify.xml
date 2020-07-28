@@ -1,171 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".SpotifyFragment">
+
+    <TableRow
+        android:id="@+id/route_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_category"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/sic_library_music_black_64dp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_artist"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/sic_account_circle_black_48dp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_album"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/sic_album_black_48dp" />
+
+    </TableRow>
+
+    <ListView
+        android:id="@+id/playlistView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/padding"
+        android:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image"
         android:layout_width="@dimen/big_element"
         android:layout_height="@dimen/big_element"
+        android:padding="@dimen/padding"
         android:scaleType="fitCenter"
         android:src="@drawable/album" />
-
-<TableRow
-    android:layout_below="@id/image"
-    android:id="@+id/route_buttons"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_height="@dimen/medium_icon"
-        android:id="@+id/img_category"
-        android:scaleType="fitCenter"
-        android:layout_weight="1"
-        android:src="@drawable/sic_library_music_black_64dp" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_height="@dimen/medium_icon"
-        android:id="@+id/img_artist"
-        android:scaleType="fitCenter"
-        android:layout_weight="1"
-        android:src="@drawable/sic_account_circle_black_48dp" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_height="@dimen/medium_icon"
-        android:id="@+id/img_album"
-        android:scaleType="fitCenter"
-        android:layout_weight="1"
-        android:src="@drawable/sic_album_black_48dp" />
-
-</TableRow>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_artist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/route_buttons"
-        android:layout_above="@id/lay_seek"
+        android:layout_height="0dp"
+
+        android:layout_weight="1"
         android:maxLines="100"
+
+        android:scrollbars="vertical"
         android:text="@string/artist"
-        android:textSize="@dimen/h4"
-        android:scrollbars = "vertical"/>
+        android:textSize="@dimen/h4" />
+
+    <!--    <TableLayout-->
+    <!--        android:id="@+id/song_info"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_above="@id/image"-->
+    <!--        android:layout_alignParentTop="true">-->
+
+    <!--        <TableRow-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:gravity="center_vertical">-->
 
 
-<!--    <TableLayout-->
-<!--        android:id="@+id/song_info"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_above="@id/image"-->
-<!--        android:layout_alignParentTop="true">-->
+    <!--        </TableRow>-->
 
-<!--        <TableRow-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:gravity="center_vertical">-->
+    <!--        <TableRow-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:gravity="center_vertical">-->
 
 
+    <!--            <androidx.appcompat.widget.AppCompatTextView-->
+    <!--                android:id="@+id/txt_album"-->
+    <!--                android:text="@string/album"-->
+    <!--                android:scrollHorizontally="false"-->
+    <!--                android:textSize="@dimen/h5" />-->
+    <!--        </TableRow>-->
 
-<!--        </TableRow>-->
-
-<!--        <TableRow-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:gravity="center_vertical">-->
-
-
-<!--            <androidx.appcompat.widget.AppCompatTextView-->
-<!--                android:id="@+id/txt_album"-->
-<!--                android:text="@string/album"-->
-<!--                android:scrollHorizontally="false"-->
-<!--                android:textSize="@dimen/h5" />-->
-<!--        </TableRow>-->
-
-<!--        <TableRow-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:gravity="center_vertical">-->
+    <!--        <TableRow-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:gravity="center_vertical">-->
 
 
-<!--            <androidx.appcompat.widget.AppCompatTextView-->
-<!--                android:id="@+id/txt_song"-->
-<!--                android:text="@string/song"-->
-<!--                android:textSize="@dimen/h5" />-->
-<!--        </TableRow>-->
+    <!--            <androidx.appcompat.widget.AppCompatTextView-->
+    <!--                android:id="@+id/txt_song"-->
+    <!--                android:text="@string/song"-->
+    <!--                android:textSize="@dimen/h5" />-->
+    <!--        </TableRow>-->
 
-<!--        <androidx.appcompat.widget.AppCompatImageView-->
-<!--            android:id="@+id/btn_playlist"-->
-<!--            android:src="@drawable/sic_playlist_play_black_64dp"-->
-<!--            android:visibility="gone" />-->
-<!--    </TableLayout>-->
+    <!--        <androidx.appcompat.widget.AppCompatImageView-->
+    <!--            android:id="@+id/btn_playlist"-->
+    <!--            android:src="@drawable/sic_playlist_play_black_64dp"-->
+    <!--            android:visibility="gone" />-->
+    <!--    </TableLayout>-->
 
-    <LinearLayout
-        android:id="@+id/lay_controls"
+
+    <TableRow
+        android:id="@+id/controls1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_shuffle"
+            android:layout_weight="1"
+            android:src="@drawable/sic_baseline_shuffle_24" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_like"
+            android:layout_weight="1"
+            android:src="@drawable/sic_baseline_favorite_border_24" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_repeat"
+            android:layout_weight="1"
+            android:src="@drawable/sic_baseline_repeat_24" />
+
+    </TableRow>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/seek_to"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/medium_icon"
+        android:thumb="@drawable/sic_play_button" />
+
+    <TableRow
+        android:id="@+id/controls2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/skip_prev_button"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/medium_icon"
             android:layout_weight="1"
             android:src="@drawable/sic_skip_previous_48dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/play_pause_button"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/medium_icon"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:src="@drawable/sic_play_48dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/skip_next_button"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/medium_icon"
             android:layout_weight="1"
             android:src="@drawable/sic_skip_next_48dp" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/lay_seek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_above="@id/lay_controls">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_shuffle"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/medium_icon"
-            android:layout_weight="1"
-
-            android:src="@drawable/sic_baseline_shuffle_24" />
-
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/seek_to"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/medium_icon"
-            android:layout_weight="2"
-            android:thumb="@drawable/sic_play_button" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_repeat"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/medium_icon"
-            android:layout_weight="1"
-            android:src="@drawable/sic_baseline_repeat_24" />
-    </LinearLayout>
+    </TableRow>
 
 
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/lay_controls"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="true">-->
 
-    <GridView
-        android:id="@+id/gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="2"
-        android:visibility="invisible" />
+    <!--        <androidx.appcompat.widget.AppCompatImageView-->
+    <!--            android:id="@+id/skip_prev_button"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            -->
+    <!--            android:layout_height="@dimen/medium_icon"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:src="@drawable/sic_skip_previous_48dp" />-->
+
+    <!--        <androidx.appcompat.widget.AppCompatImageView-->
+    <!--            android:id="@+id/play_pause_button"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="@dimen/medium_icon"-->
+    <!--            android:layout_weight="2"-->
+    <!--            android:src="@drawable/sic_play_48dp" />-->
+
+    <!--        <androidx.appcompat.widget.AppCompatImageView-->
+    <!--            android:id="@+id/skip_next_button"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="@dimen/medium_icon"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:src="@drawable/sic_skip_next_48dp" />-->
+    <!--    </LinearLayout>-->
+
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/lay_seek"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:gravity="center_vertical">-->
+
+    <!--        <androidx.appcompat.widget.AppCompatImageView-->
+    <!--            android:id="@+id/btn_shuffle"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="@dimen/medium_icon"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:src="@drawable/sic_baseline_shuffle_24" />-->
+
+    <!--        <androidx.appcompat.widget.AppCompatImageView-->
+    <!--            android:id="@+id/btn_repeat"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="@dimen/medium_icon"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:src="@drawable/sic_baseline_repeat_24" />-->
+    <!--    </LinearLayout>-->
+
 
     <!--    <androidx.appcompat.widget.AppCompatImageView-->
     <!--        android:id="@+id/play_pause_button_small"-->
@@ -173,4 +215,4 @@
     <!--        android:layout_height="@dimen/big_icon"-->
     <!--        android:background="@android:color/transparent"-->
     <!--        android:src="@drawable/sic_play_stroke_128dp" />-->
-</RelativeLayout>
+</LinearLayout>

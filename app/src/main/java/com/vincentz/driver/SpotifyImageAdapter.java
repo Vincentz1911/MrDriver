@@ -16,6 +16,8 @@ import com.spotify.protocol.types.ListItem;
 
 import java.util.List;
 
+import static com.vincentz.driver.Tools.msg;
+
 class SpotifyImageAdapter extends ArrayAdapter<ListItem> {
 
     private List<ListItem> list;
@@ -40,6 +42,7 @@ class SpotifyImageAdapter extends ArrayAdapter<ListItem> {
         mSpotifyAppRemote.getImagesApi()
                 .getImage(currentItem.imageUri, Image.Dimension.X_SMALL)
                 .setResultCallback(imageView::setImageBitmap);
+
         return listItem;
     }
 }

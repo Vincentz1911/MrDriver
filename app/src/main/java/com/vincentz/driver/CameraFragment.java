@@ -49,7 +49,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
         } catch (Exception e) {
             Log.d(TAG, "initRecorder: " + e.getMessage());
             msg("No audio or video device found");
-            return;
+
         }
 
 
@@ -68,7 +68,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recorder.prepare();
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
-            ACT.finish();
+            //ACT.finish();
         }
     }
 

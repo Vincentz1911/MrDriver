@@ -151,7 +151,6 @@ public class MainActivity extends FragmentActivity {
     private void hideAllFrameLayouts() {
         isFullscreen = true;
         fl_leftWindow.setVisibility(View.GONE);
-        fl_navigation.setVisibility(View.GONE);
         fl_spotify.setVisibility(View.GONE);
         fl_weather.setVisibility(View.GONE);
         fl_navigation.setVisibility(View.GONE);
@@ -164,12 +163,12 @@ public class MainActivity extends FragmentActivity {
         else checkPermissions();
         IO.edit().putBoolean("HaveRun", true).apply();
         FM.beginTransaction().replace(R.id.fl_map_overlay, new MapFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_navigation, new InfoFragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_navigation, new NavigationFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_dateAndTime, new InfoFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_spotify, new SpotifyFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_weather, new WeatherFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_camera, new CameraFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_obd2, new OBD2Fragment(), "").commit();
+        //FM.beginTransaction().replace(R.id.fl_camera, new CameraFragment(), "").commit();
+        //FM.beginTransaction().replace(R.id.fl_obd2, new OBD2Fragment(), "").commit();
     }
 
     //region PERMISSIONS

@@ -148,11 +148,10 @@
         android:paddingBottom="5dp"
         android:layout_margin="@dimen/padding"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/h3"
-        android:visibility="invisible"/>
+        android:textSize="@dimen/h3" />
 
     <EditText
-        android:id="@+id/input_search"
+        android:id="@+id/searchBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_destination"
@@ -169,8 +168,13 @@
         android:id="@+id/listview_locations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/input_search"
+        android:layout_below="@id/searchBox"
         android:background="@drawable/draw_rounded_corners"
         android:visibility="gone" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchbox"
+        android:visibility="visible"/>
 </RelativeLayout>

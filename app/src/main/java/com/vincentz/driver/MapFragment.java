@@ -58,7 +58,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     //TODO http://www.overpass-api.de/api/xapi?*[maxspeed=*][bbox=12.4831598,55.682295,12.4842598,55.683395]
     private GoogleMap map;
     private GeoJsonLayer route;
-    private LocationModel destination;
+    LocationModel destination;
     private Thread markerThread;
     private Timer camTimer;
 
@@ -88,7 +88,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         Objects.requireNonNull((SupportMapFragment) getFragmentManager()
                 .findFragmentById(R.id.map)).getMapAsync(this);
 
-        input = root.findViewById(R.id.input_search);
+        input = root.findViewById(R.id.searchbox);
         input.setVisibility(View.GONE);
         listView = root.findViewById(R.id.listview_locations);
         listView.setVisibility(View.GONE);
@@ -183,27 +183,28 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         //''' STREET TEXT BOTTOM '''
         //CLICK = ROUTING, LONGCLICK = SAVE LOCATION
-        txt_Destination.setOnClickListener(view -> routing(destination.latLng));
-        txt_Destination.setOnLongClickListener(view -> {
-            saveLocation(destination);
-            return true;
-        });
+//        txt_Destination.setOnClickListener(view -> routing(destination.latLng));
+//        txt_Destination.setOnLongClickListener(view -> {
+//            saveLocation(destination);
+//            return true;
+//        });
 
         //''' INPUT TEXT BAR '''
         //CLICK = SET CURSOR AT END, LONGCLICK = CLEAR TEXT, TEXT CHANGED = AUTOCOMPLETE
-        input.setOnClickListener(view -> {
-            if (!input.isFocused()) input.setSelection(input.getText().length());
-        });
-        input.setOnLongClickListener(view -> {
-            input.setText("");
-            fillSearchListView(loadLocations());
-            return false;
-        });
-        input.addTextChangedListener(requestAutoComplete());
+//        input.setOnClickListener(view -> {
+//            if (!input.isFocused()) input.setSelection(input.getText().length());
+//        });
+//        input.setOnLongClickListener(view -> {
+//            input.setText("");
+//            fillSearchListView(loadLocations());
+//            return false;
+//        });
+//        input.addTextChangedListener(requestAutoComplete());
 
         //''' SPEED SIGN '''
         //CLICK = GET ADRESS, LONGCLICK = TRAFFIC ON/OFF
-        btn_Speed.setOnClickListener(view -> geoLocationReversed(LOC.latlng()));
+//TODO
+//        btn_Speed.setOnClickListener(view -> geoLocationReversed(LOC.latlng()));
         btn_Speed.setOnLongClickListener(view -> {
             isTraffic = !isTraffic;
             map.setTrafficEnabled(isTraffic);
@@ -213,24 +214,27 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         //''' DIRECTIONS SIGN '''
         //CLICK = SHOW/HIDE INPUT AND LISTVIEW, LONGCLICK = ROUTING
-        img_directions.setOnClickListener(view -> {
-            if (input.getVisibility() == View.GONE) {
-                input.setVisibility(View.VISIBLE);
-                listView.setVisibility(View.VISIBLE);
-                fillSearchListView(loadLocations());
-            } else {
-                hideKeyboard();
-                input.setVisibility(View.GONE);
-                listView.setVisibility(View.GONE);
-            }
-        });
-        img_directions.setOnLongClickListener(view -> {
-            if (destination != null) {
-                routing(destination.latLng);
-                return true;
-            }
-            return false;
-        });
+        //img_directions = getView().getRootView().findViewById(R.id.btn_navigation);
+
+
+//        img_directions.setOnClickListener(view -> {
+//            if (input.getVisibility() == View.GONE) {
+//                input.setVisibility(View.VISIBLE);
+//                listView.setVisibility(View.VISIBLE);
+//                fillSearchListView(loadLocations());
+//            } else {
+//                hideKeyboard();
+//                input.setVisibility(View.GONE);
+//                listView.setVisibility(View.GONE);
+//            }
+//        });
+//        img_directions.setOnLongClickListener(view -> {
+//            if (destination != null) {
+//                routing(destination.latLng);
+//                return true;
+//            }
+//            return false;
+//        });
 
         //''' COMPASS ICON '''
         //CLICK = , LONGCLICK = CHANGE BETWEEN HYBRID AND NORMAL MAP
@@ -280,7 +284,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             //geoLocationReversed(latLng);
             isCamLock = false;
         });
-        map.setOnMapLongClickListener(target -> routing(target));
+        //map.setOnMapLongClickListener(target -> routing(target));
     }
 
     //TODO DELETE LOCATION
@@ -359,165 +363,167 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         });
     }
 
-    private TextWatcher requestAutoComplete() {
-        return new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+//    private TextWatcher requestAutoComplete() {
+//        return new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//            }
+//
+//            //TODO SET UP URL FOR COUNTRY OR BETTER WAY TO GET LOCAL RESULTS
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                //ONLY START AUTOFILL WITH 3 LETTERS. SETUP URL AND HTTP REQUEST SUGGESTIONS
+//                if (editable.length() < 3) return;
+//                String url = "https://api.openrouteservice.org/geocode/search" +
+//                        "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62"
+//                        + "&text=" + editable
+//                        + "&focus.point.lon=" + LOC.now().getLongitude()
+//                        + "&focus.point.lat=" + LOC.now().getLatitude()
+//                        + "&boundary.circle.lon=" + LOC.now().getLongitude()
+//                        + "&boundary.circle.lat=" + LOC.now().getLatitude()
+//                        + "&boundary.circle.radius=500&boundary.country=DK";
+//                url = url.replace(",", "");
+//                url = url.replace(" ", "+");
+//
+//                //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
+//                RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
+//                        response -> fillSearchListView(JSONsearchToModel(response)),
+//                        error -> msg("Volley AutoComplete Error")));
+//            }
+//        };
+//    }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+//    //PUTS JSON RESPONSE INTO LOCATIONMODEL ARRAYLIST
+//    private ArrayList<LocationModel> JSONsearchToModel(JSONObject response) {
+//        ArrayList<LocationModel> list = new ArrayList<>();
+//        try {
+//            JSONArray searchResults = response.getJSONArray("features");
+//            if (searchResults.length() == 0) return null;
+//            for (int i = 0; i < searchResults.length(); i++) {
+//                JSONObject prop = searchResults.getJSONObject(i).getJSONObject("properties");
+//                JSONArray geom = searchResults.getJSONObject(i).getJSONObject("geometry").
+//                        getJSONArray("coordinates");
+//
+//                String area = (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
+//                        ? prop.getString("neighbourhood") : prop.getString("localadmin");
+//
+//                list.add(new LocationModel(
+//                        area,
+//                        prop.getString("name"),
+//                        new LatLng(geom.getDouble(1), geom.getDouble(0)),
+//                        ((int) (prop.getDouble("distance") * 10)) / 10f,
+//                        false));
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return list;
+//    }
 
-            //TODO SET UP URL FOR COUNTRY OR BETTER WAY TO GET LOCAL RESULTS
-            @Override
-            public void afterTextChanged(Editable editable) {
-                //ONLY START AUTOFILL WITH 3 LETTERS. SETUP URL AND HTTP REQUEST SUGGESTIONS
-                if (editable.length() < 3) return;
-                String url = "https://api.openrouteservice.org/geocode/search" +
-                        "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62"
-                        + "&text=" + editable
-                        + "&focus.point.lon=" + LOC.now().getLongitude()
-                        + "&focus.point.lat=" + LOC.now().getLatitude()
-                        + "&boundary.circle.lon=" + LOC.now().getLongitude()
-                        + "&boundary.circle.lat=" + LOC.now().getLatitude()
-                        + "&boundary.circle.radius=500&boundary.country=DK";
-                url = url.replace(",", "");
-                url = url.replace(" ", "+");
+//    private void fillSearchListView(ArrayList<LocationModel> list) {
+//        ArrayList<String> nameList = new ArrayList<>();
+//        for (LocationModel lm : list) {
+//            if (lm.saved) nameList.add("Saved\n" + lm.name + "\n" + lm.area);
+//            else nameList.add(lm.distance + "km\n" + lm.name + "\n" + lm.area);
+//        }
+//
+//        ListView listView = getView().getRootView().findViewById(R.id.listview_locations);
+//
+//        listView.setAdapter(new ArrayAdapter<>(ACT, R.layout.adapter_maps_listview, nameList));
+//        listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
+//            if (list.get(i).saved) {
+//                deleteLocation(list, i);
+//                loadLocations();
+//            } else saveLocation(list.get(i));
+//            return true;
+//        });
+//        listView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
+//    }
 
-                //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
-                RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                        response -> fillSearchListView(JSONsearchToModel(response)),
-                        error -> msg("Volley AutoComplete Error")));
-            }
-        };
-    }
+//    private void onClickListViewItem(LocationModel location) {
+//        isCamLock = false;
+//        destination = location;
+//        txt_Destination.setText(destination.name);
+//        map.setPadding(0, 0, 0, 0);
+//        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+//                .target(destination.latLng).zoom(17).bearing(0).tilt(0).build()));
+//
+//        input.setText(destination.name + " ");
+//        input.setSelection(input.getText().length());
+//        input.setOnEditorActionListener((textView, i1, keyEvent) -> {
+//            if (i1 == EditorInfo.IME_ACTION_DONE) {
+//                input.setVisibility(View.GONE);
+//                listView.setVisibility(View.GONE);
+//                routing(destination.latLng);
+//                return true;
+//            }
+//            return false;
+//        });
+//        hideKeyboard();
+//    }
 
-    //PUTS JSON RESPONSE INTO LOCATIONMODEL ARRAYLIST
-    private ArrayList<LocationModel> JSONsearchToModel(JSONObject response) {
-        ArrayList<LocationModel> list = new ArrayList<>();
-        try {
-            JSONArray searchResults = response.getJSONArray("features");
-            if (searchResults.length() == 0) return null;
-            for (int i = 0; i < searchResults.length(); i++) {
-                JSONObject prop = searchResults.getJSONObject(i).getJSONObject("properties");
-                JSONArray geom = searchResults.getJSONObject(i).getJSONObject("geometry").
-                        getJSONArray("coordinates");
+//    private void routing(LatLng target) {
+//        String url = "https://api.openrouteservice.org/v2/directions/driving-car" +
+//                "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62" +
+//                "&start=" + LOC.now().getLongitude() + ",%20" + LOC.now().getLatitude() +
+//                "&end=" + target.longitude + ",%20" + target.latitude;
+//
+//        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
+//                response -> {
+//                    if (route != null) route.removeLayerFromMap();
+//                    route = new GeoJsonLayer(map, response);
+//                    GeoJsonLineStringStyle lineStringStyle = route.getDefaultLineStringStyle();
+//                    lineStringStyle.setColor(getResources().getColor(R.color.colorRouteDay, ACT.getTheme()));
+//                    lineStringStyle.setWidth(10);
+//                    route.addLayerToMap();
+//                    geoLocationReversed(target);
+//                    hideKeyboard();
+//                    fullscreen();
+//                    isCamLock = false;
+//                    input.setVisibility(View.GONE);
+//                    listView.setVisibility(View.GONE);
+//                    map.setPadding(50, 100, 50, 50);
+//                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(route.getBoundingBox(), 0));
+//                    String[] arr = getDistanceAndTime();
+//                    msg("Distance: " + arr[0] + " Time: " + arr[1]);
+//                }, error -> msg("Volley Routing Error")));
+//    }
 
-                String area = (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
-                        ? prop.getString("neighbourhood") : prop.getString("localadmin");
+//    private String[] getDistanceAndTime() {
+//        String[] array = new String[2];
+//        for (GeoJsonFeature feature : route.getFeatures()) {
+//            if (feature.hasProperty("summary")) {
+//                HashMap<String, Float> hash =
+//                        new Gson().fromJson(feature.getProperty("summary"),
+//                                new TypeToken<HashMap<String, Float>>() {
+//                                }.getType());
+//                if (hash.get("distance") != null && hash.get("duration") != null) {
+//                    float d = hash.get("distance");
+//                    array[0] = (d < 1000) ? d + "m" : ((int) (d /100)) / 10f + "km";
+//                    array[1] = DateUtils.formatElapsedTime((hash.get("duration")).longValue());
+//                }
+//            }
+//        }
+//        return array;
+//    }
 
-                list.add(new LocationModel(
-                        area,
-                        prop.getString("name"),
-                        new LatLng(geom.getDouble(1), geom.getDouble(0)),
-                        ((int) (prop.getDouble("distance") * 10)) / 10f,
-                        false));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    private void fillSearchListView(ArrayList<LocationModel> list) {
-        ArrayList<String> nameList = new ArrayList<>();
-        for (LocationModel lm : list) {
-            if (lm.saved) nameList.add("S " + lm.name + ", " + lm.area);
-            else nameList.add(lm.distance + "km " + lm.name + ", " + lm.area);
-        }
-
-        listView.setAdapter(new ArrayAdapter<>(ACT, R.layout.adapter_maps_listview, nameList));
-        listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            if (list.get(i).saved) {
-                deleteLocation(list, i);
-                loadLocations();
-            } else saveLocation(list.get(i));
-            return true;
-        });
-        listView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
-    }
-
-    private void onClickListViewItem(LocationModel location) {
-        isCamLock = false;
-        destination = location;
-        txt_Destination.setText(destination.name);
-        map.setPadding(0, 0, 0, 0);
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                .target(destination.latLng).zoom(17).bearing(0).tilt(0).build()));
-
-        input.setText(destination.name + " ");
-        input.setSelection(input.getText().length());
-        input.setOnEditorActionListener((textView, i1, keyEvent) -> {
-            if (i1 == EditorInfo.IME_ACTION_DONE) {
-                input.setVisibility(View.GONE);
-                listView.setVisibility(View.GONE);
-                routing(destination.latLng);
-                return true;
-            }
-            return false;
-        });
-        hideKeyboard();
-    }
-
-    private void routing(LatLng target) {
-        String url = "https://api.openrouteservice.org/v2/directions/driving-car" +
-                "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62" +
-                "&start=" + LOC.now().getLongitude() + ",%20" + LOC.now().getLatitude() +
-                "&end=" + target.longitude + ",%20" + target.latitude;
-
-        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    if (route != null) route.removeLayerFromMap();
-                    route = new GeoJsonLayer(map, response);
-                    GeoJsonLineStringStyle lineStringStyle = route.getDefaultLineStringStyle();
-                    lineStringStyle.setColor(getResources().getColor(R.color.colorRouteDay, ACT.getTheme()));
-                    lineStringStyle.setWidth(10);
-                    route.addLayerToMap();
-                    geoLocationReversed(target);
-                    hideKeyboard();
-                    fullscreen();
-                    isCamLock = false;
-                    input.setVisibility(View.GONE);
-                    listView.setVisibility(View.GONE);
-                    map.setPadding(50, 100, 50, 50);
-                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(route.getBoundingBox(), 0));
-                    String[] arr = getDistanceAndTime();
-                    msg("Distance: " + arr[0] + " Time: " + arr[1]);
-                }, error -> msg("Volley Routing Error")));
-    }
-
-    private String[] getDistanceAndTime() {
-        String[] array = new String[2];
-        for (GeoJsonFeature feature : route.getFeatures()) {
-            if (feature.hasProperty("summary")) {
-                HashMap<String, Float> hash =
-                        new Gson().fromJson(feature.getProperty("summary"),
-                                new TypeToken<HashMap<String, Float>>() {
-                                }.getType());
-                if (hash.get("distance") != null && hash.get("duration") != null) {
-                    float d = hash.get("distance");
-                    array[0] = (d < 1000) ? d + "m" : ((int) (d /100)) / 10f + "km";
-                    array[1] = DateUtils.formatElapsedTime((hash.get("duration")).longValue());
-                }
-            }
-        }
-        return array;
-    }
-
-    private void geoLocationReversed(LatLng latLng) {
-        String url = "https://api.openrouteservice.org/geocode/reverse" +
-                "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62" +
-                "&point.lat=" + latLng.latitude + "&point.lon=" + latLng.longitude +
-                "&size=1&layers=address";
-        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-            if (JSONsearchToModel(response) != null) {
-                destination = JSONsearchToModel(response).get(0);
-                txt_Destination.setText(destination.name);
-            }
-        }, error -> msg("Volley GeoLocation Error")
-        ));
-    }
+//    private void geoLocationReversed(LatLng latLng) {
+//        String url = "https://api.openrouteservice.org/geocode/reverse" +
+//                "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62" +
+//                "&point.lat=" + latLng.latitude + "&point.lon=" + latLng.longitude +
+//                "&size=1&layers=address";
+//        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+//            if (JSONsearchToModel(response) != null) {
+//                destination = JSONsearchToModel(response).get(0);
+//                txt_Destination.setText(destination.name);
+//            }
+//        }, error -> msg("Volley GeoLocation Error")
+//        ));
+//    }
 
     private BitmapDescriptor SVG2Bitmap(int vectorResId) {
         Drawable icon = ACT.getDrawable(vectorResId);
@@ -531,28 +537,28 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    private ArrayList<LocationModel> loadLocations() {
-        Type type = new TypeToken<ArrayList<LocationModel>>() {
-        }.getType();
-        ArrayList<LocationModel> list = new Gson()
-                .fromJson(IO.getString("locations", null), type);
-        if (list == null) list = new ArrayList<>();
-        return list;
-    }
+//    private ArrayList<LocationModel> loadLocations() {
+//        Type type = new TypeToken<ArrayList<LocationModel>>() {
+//        }.getType();
+//        ArrayList<LocationModel> list = new Gson()
+//                .fromJson(IO.getString("locations", null), type);
+//        if (list == null) list = new ArrayList<>();
+//        return list;
+//    }
 
-    private void saveLocation(LocationModel location) {
-        if (location == null || location.saved) return;
-        ArrayList<LocationModel> list = loadLocations();
-        location.saved = true;
-        list.add(location);
-        msg("Saved Location: " + location.name);
-        IO.edit().putString("locations", new Gson().toJson(list)).apply();
-    }
-
-    private void deleteLocation(ArrayList<LocationModel> list, int i) {
+//    private void saveLocation(LocationModel location) {
+//        if (location == null || location.saved) return;
 //        ArrayList<LocationModel> list = loadLocations();
-        msg("Deleted Location: " + list.get(i).name);
-        list.remove(i);
-        IO.edit().putString("locations", new Gson().toJson(list)).apply();
-    }
+//        location.saved = true;
+//        list.add(location);
+//        msg("Saved Location: " + location.name);
+//        IO.edit().putString("locations", new Gson().toJson(list)).apply();
+//    }
+
+//    private void deleteLocation(ArrayList<LocationModel> list, int i) {
+////        ArrayList<LocationModel> list = loadLocations();
+//        msg("Deleted Location: " + list.get(i).name);
+//        list.remove(i);
+//        IO.edit().putString("locations", new Gson().toJson(list)).apply();
+//    }
 }

@@ -69,8 +69,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private ImageView img_Compass, img_directions;
     private NumberPicker np_Tilt, np_Zoom;
     private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
-    private EditText input;
-    private ListView listView;
+//    private EditText input;
+//    private ListView listView;
 
     @Override
     public void onDestroy() {
@@ -88,10 +88,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         Objects.requireNonNull((SupportMapFragment) getFragmentManager()
                 .findFragmentById(R.id.map)).getMapAsync(this);
 
-        input = root.findViewById(R.id.searchbox);
-        input.setVisibility(View.GONE);
-        listView = root.findViewById(R.id.listview_locations);
-        listView.setVisibility(View.GONE);
+//        input = root.findViewById(R.id.searchbox);
+//        input.setVisibility(View.GONE);
+//        listView = root.findViewById(R.id.listview_locations);
+//        listView.setVisibility(View.GONE);
 
         txt_Zoom = root.findViewById(R.id.txt_zoom);
         txt_Tilt = root.findViewById(R.id.txt_tilt);
@@ -101,7 +101,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         txt_Destination = root.findViewById(R.id.txt_destination);
         txt_Speed = root.findViewById(R.id.txt_speed);
         btn_Speed = root.findViewById(R.id.btn_speed);
-        img_directions = root.findViewById(R.id.img_directions);
+        //img_directions = root.findViewById(R.id.img_directions);
         img_Compass = root.findViewById(R.id.img_compass);
 
         v_Zoom = root.findViewById(R.id.v_zoom);
@@ -363,6 +363,18 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         });
     }
 
+    private BitmapDescriptor SVG2Bitmap(int vectorResId) {
+        Drawable icon = ACT.getDrawable(vectorResId);
+        if (icon == null) return null;
+        icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(
+                icon.getIntrinsicWidth(),
+                icon.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888);
+        icon.draw(new Canvas(bitmap));
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 //    private TextWatcher requestAutoComplete() {
 //        return new TextWatcher() {
 //            @Override
@@ -525,17 +537,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //        ));
 //    }
 
-    private BitmapDescriptor SVG2Bitmap(int vectorResId) {
-        Drawable icon = ACT.getDrawable(vectorResId);
-        if (icon == null) return null;
-        icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(
-                icon.getIntrinsicWidth(),
-                icon.getIntrinsicHeight(),
-                Bitmap.Config.ARGB_8888);
-        icon.draw(new Canvas(bitmap));
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
+
 
 //    private ArrayList<LocationModel> loadLocations() {
 //        Type type = new TypeToken<ArrayList<LocationModel>>() {

@@ -174,11 +174,11 @@ public class SpotifyFragment extends Fragment {
 
     private void connected() {
         //GET RECOMMENDED ITEMS. SHOW IN LISTVIEW WHEN BUTTON IS CLICKED
-        mSpotifyAppRemote
-                .getContentApi()
-                .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
-                .setResultCallback(this::recommendedContentCallBack)
-                .setErrorCallback(mErrorCallback);
+//        mSpotifyAppRemote
+//                .getContentApi()
+//                .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
+//                .setResultCallback(this::recommendedContentCallBack)
+//                .setErrorCallback(mErrorCallback);
 
         // Play a playlist
         mSpotifyAppRemote.getPlayerApi().resume();
@@ -190,10 +190,10 @@ public class SpotifyFragment extends Fragment {
                 // Invalidate play / pause
                 if (playerState.isPaused) {
                     PlayButton.setImageResource(R.drawable.sic_play_48dp);
-                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_pause_button, ACT.getTheme()));
+                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_pause_button, getActivity().getTheme()));
                 } else {
                     PlayButton.setImageResource(R.drawable.sic_pause_48dp);
-                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_play_button, ACT.getTheme()));
+                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_play_button, getActivity().getTheme()));
                 }
 
                 //Sets ICON for shuffling
@@ -270,7 +270,7 @@ public class SpotifyFragment extends Fragment {
     private void handleLatch(CountDownLatch latch, List<ListItem> combined) {
         latch.countDown();
         if (latch.getCount() == 0) {
-            SpotifyImageAdapter arrayAdapter = new SpotifyImageAdapter(ACT, combined, mSpotifyAppRemote);
+            SpotifyImageAdapter arrayAdapter = new SpotifyImageAdapter(getContext(), combined, mSpotifyAppRemote);
             playlistView.setAdapter(arrayAdapter);
 
             playlistView.setOnItemClickListener((adapterView, view, i, l) -> {

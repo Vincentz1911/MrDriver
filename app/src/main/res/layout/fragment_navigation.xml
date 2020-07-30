@@ -29,12 +29,6 @@
             android:src="@drawable/ic_baseline_navigation_24"/>
     </TableRow>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchbox"
-        android:visibility="gone"/>
-
     <ListView
         android:id="@+id/listview_locations"
         android:layout_width="match_parent"

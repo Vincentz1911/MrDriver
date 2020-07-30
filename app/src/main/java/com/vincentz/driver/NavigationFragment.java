@@ -38,7 +38,7 @@ import static com.vincentz.driver.Tools.*;
 
 public class NavigationFragment extends Fragment {
 
-    private ImageView SearchButton;
+    private ImageView SearchButton, SavedLocButton, RouteButton;
     ListView LocationsListView;
     EditText Searchbox;
     TextView txt_Destination;
@@ -55,33 +55,43 @@ public class NavigationFragment extends Fragment {
     private void init(View view) {
 
         SearchButton = view.findViewById(R.id.search_destination);
-        Searchbox = view.getRootView().findViewById(R.id.searchbox);
+        SavedLocButton = view.findViewById(R.id.saved_destinations);
+        RouteButton = view.findViewById(R.id.route_to_destination);
+        Searchbox = getActivity().findViewById(R.id.searchbox);
         LocationsListView = view.findViewById(R.id.listview_locations);
-        txt_Destination = view.getRootView().findViewById(R.id.txt_destination);
+        txt_Destination = getActivity().findViewById(R.id.txt_destination);
+
+        LocationsListView.setVisibility(View.VISIBLE);
+        fillSearchListView(loadLocations());
+
+        SavedLocButton.setOnClickListener(v -> {
+            LocationsListView.setVisibility(View.VISIBLE);
+            fillSearchListView(loadLocations());
+        });
+
+        Searchbox.addTextChangedListener(requestAutoComplete());
+        Searchbox.setOnClickListener(v2 -> {
+            if (!Searchbox.isFocused()) Searchbox.setSelection(Searchbox.getText().length());
+        });
 
         SearchButton.setOnClickListener(v -> {
             if (Searchbox.getVisibility() == View.GONE) {
                 Searchbox.setVisibility(View.VISIBLE);
                 LocationsListView.setVisibility(View.VISIBLE);
-                fillSearchListView(loadLocations());
+               // fillSearchListView(loadLocations());
             } else {
                 hideKeyboard();
                 Searchbox.setVisibility(View.GONE);
-                LocationsListView.setVisibility(View.GONE);
+                //LocationsListView.setVisibility(View.GONE);
             }
-        });
-        SearchButton.setOnLongClickListener(v -> {
-            if (destination != null) {
-                routing(destination.latLng);
-                return true;
-            }
-            return false;
         });
 
-        Searchbox.addTextChangedListener(requestAutoComplete());
-        Searchbox.setOnClickListener(v -> {
-            if (!Searchbox.isFocused()) Searchbox.setSelection(Searchbox.getText().length());
+        RouteButton.setOnClickListener(v -> {
+            if (destination != null) routing(destination.latLng);
         });
+
+
+
 //        txt_Destination.setOnClickListener(v -> routing(destination.latLng));
 //        txt_Destination.setOnLongClickListener(v -> {
 //            saveLocation(destination);
@@ -92,16 +102,9 @@ public class NavigationFragment extends Fragment {
     }
 
     private void fillSearchListView(ArrayList<LocationModel> list) {
-        ArrayList<String> nameList = new ArrayList<>();
-        for (LocationModel lm : list) {
-            if (lm.saved) {
+        NavigationListAdapter arrayAdapter = new NavigationListAdapter(getContext(), list);
+        LocationsListView.setAdapter(arrayAdapter);
 
-                nameList.add("Saved\n" + lm.name + "\n" + lm.area);
-            }
-            else nameList.add(lm.distance + "km\n" + lm.name + "\n" + lm.area);
-        }
-
-        LocationsListView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.adapter_maps_listview, nameList));
         LocationsListView.setOnItemLongClickListener((adapterView, view, i, l) -> {
             if (list.get(i).saved) {
                 deleteLocation(list, i);
@@ -109,6 +112,7 @@ public class NavigationFragment extends Fragment {
             } else saveLocation(list.get(i));
             return true;
         });
+
         LocationsListView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
     }
 
@@ -268,8 +272,9 @@ public class NavigationFragment extends Fragment {
                         ? prop.getString("neighbourhood") : prop.getString("localadmin");
 
                 list.add(new LocationModel(
-                        area,
                         prop.getString("name"),
+                        prop.getString("street"),
+                        area,
                         new LatLng(geom.getDouble(1), geom.getDouble(0)),
                         ((int) (prop.getDouble("distance") * 10)) / 10f,
                         false));

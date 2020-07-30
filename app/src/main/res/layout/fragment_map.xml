@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".MapFragment">
 
-<!--    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"-->
-<!--        android:id="@+id/map"-->
-<!--        android:name="com.google.android.gms.maps.SupportMapFragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        map:mapType="hybrid" />-->
+    <!--    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"-->
+    <!--        android:id="@+id/map"-->
+    <!--        android:name="com.google.android.gms.maps.SupportMapFragment"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        map:mapType="hybrid" />-->
 
     <NumberPicker
         android:id="@+id/np_zoom"
@@ -65,21 +65,21 @@
         android:textColor="?colorAccent"
         android:textSize="@dimen/h3" />
 
-    <ImageView
-        android:id="@+id/img_directions"
-        android:layout_width="@dimen/big_icon"
-        android:layout_height="@dimen/big_icon"
-        android:layout_margin="20dp"
-        android:contentDescription="@string/directions"
-        android:src="@drawable/mic_directions_200dp" />
+    <!--    <ImageView-->
+    <!--        android:id="@+id/img_directions"-->
+    <!--        android:layout_width="@dimen/big_icon"-->
+    <!--        android:layout_height="@dimen/big_icon"-->
+    <!--        android:layout_margin="20dp"-->
+    <!--        android:contentDescription="@string/directions"-->
+    <!--        android:src="@drawable/mic_directions_200dp" />-->
 
     <LinearLayout
         android:id="@+id/btn_compass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/btn_speed"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/margin"
+        android:layout_toEndOf="@id/btn_speed"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -111,9 +111,9 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/btn_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_speed"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/margin"
         android:orientation="vertical">
@@ -142,19 +142,20 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+
+        android:layout_margin="@dimen/padding"
         android:background="@drawable/mic_roadsign"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:paddingBottom="5dp"
-        android:layout_margin="@dimen/padding"
         android:textColor="@android:color/white"
         android:textSize="@dimen/h3" />
 
     <EditText
-        android:id="@+id/searchBox"
+        android:id="@+id/searchbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txt_destination"
+        android:layout_below="@+id/txt_destination"
         android:background="@drawable/draw_rounded_corners"
         android:gravity="center"
         android:hint="@string/destination"
@@ -162,19 +163,6 @@
         android:importantForAutofill="no"
         android:inputType="textImeMultiLine"
         android:padding="@dimen/padding"
-        android:textSize="@dimen/h3" />
-
-    <ListView
-        android:id="@+id/listview_locations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/searchBox"
-        android:background="@drawable/draw_rounded_corners"
-        android:visibility="gone" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchbox"
-        android:visibility="visible"/>
+        android:textSize="@dimen/h3"
+        android:visibility="gone"/>
 </RelativeLayout>

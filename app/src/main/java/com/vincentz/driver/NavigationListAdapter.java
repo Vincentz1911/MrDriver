@@ -17,43 +17,46 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NavigationListAdapter extends ArrayAdapter<LocationModel>{
+public class NavigationListAdapter extends ArrayAdapter<LocationModel> {
 
 
-        private List<LocationModel> list;
+    private List<LocationModel> list;
 
     NavigationListAdapter(@NonNull Context context, ArrayList<LocationModel> list) {
-            super(context, 0, list);
-            this.list = list;
+        super(context, 0, list);
+        this.list = list;
+    }
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View listItem = convertView;
+
+        if (listItem == null)
+            listItem = LayoutInflater.from(getContext()).inflate(R.layout.adapter_maps_listview, parent, false);
+
+        LocationModel location = list.get(position);
+
+        TextView name = listItem.findViewById(R.id.txt_name);
+        name.setText(location.name);
+
+        TextView street = listItem.findViewById(R.id.txt_address);
+        street.setText(location.street);
+
+        TextView city = listItem.findViewById(R.id.txt_city);
+        city.setText(location.area);
+
+        final ImageView save = listItem.findViewById(R.id.save_button);
+        final ImageView edit = listItem.findViewById(R.id.edit_button);
+        final ImageView delete = listItem.findViewById(R.id.delete_button);
+
+        if (!location.saved)
+        {
+            edit.setVisibility(View.GONE);
+            delete.setVisibility(View.GONE);
+        } else {
+            save.setVisibility(View.GONE);
         }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View listItem = convertView;
-
-            if (listItem == null)
-                listItem = LayoutInflater.from(getContext()).inflate(R.layout.adapter_maps_listview, parent, false);
-
-            LocationModel alarm = list.get(position);
-
-            TextView date = listItem.findViewById(R.id.txt_date);
-            date.setText(MainActivity.datetime.format(alarm.getDate()));
-
-            ImageView imageRepeat = listItem.findViewById(R.id.listImageRepeat);
-            if (alarm.getRepeat() == 0) {
-                if (alarm.getDate().before(new Date()))
-                    imageRepeat.setImageResource(R.drawable.ic_timer_off_36dp);
-                else imageRepeat.setImageResource(R.drawable.ic_timer_36dp);
-            } else imageRepeat.setImageResource(R.drawable.ic_autorenew_36p);
-
-            ImageView imageView = listItem.findViewById(R.id.listImage);
-            imageView.setImageResource(alarm.getIcon());
-
-            TextView date = listItem.findViewById(R.id.txt_date);
-            date.setText(MainActivity.datetime.format(alarm.getDate()));
-
-            return listItem;
-        }
-
+        return listItem;
+    }
 }

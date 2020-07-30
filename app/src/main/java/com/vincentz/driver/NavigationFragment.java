@@ -19,8 +19,6 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,13 +34,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.vincentz.driver.Tools.ACT;
-import static com.vincentz.driver.Tools.IO;
-import static com.vincentz.driver.Tools.LOC;
-import static com.vincentz.driver.Tools.RQ;
-import static com.vincentz.driver.Tools.fullscreen;
-import static com.vincentz.driver.Tools.hideKeyboard;
-import static com.vincentz.driver.Tools.msg;
+import static com.vincentz.driver.Tools.*;
 
 public class NavigationFragment extends Fragment {
 
@@ -109,7 +101,6 @@ public class NavigationFragment extends Fragment {
             else nameList.add(lm.distance + "km\n" + lm.name + "\n" + lm.area);
         }
 
-        //ListView listView = getView().getRootView().findViewById(R.id.listview_locations);
         LocationsListView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.adapter_maps_listview, nameList));
         LocationsListView.setOnItemLongClickListener((adapterView, view, i, l) -> {
             if (list.get(i).saved) {

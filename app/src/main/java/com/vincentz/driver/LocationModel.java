@@ -2,7 +2,7 @@ package com.vincentz.driver;
 
 import com.google.android.gms.maps.model.LatLng;
 
-class LocationModel {
+public class LocationModel {
 
     String area;
     String name;

@@ -173,29 +173,27 @@ public class SpotifyFragment extends Fragment {
     }
 
     private void connected() {
+        //GET RECOMMENDED ITEMS. SHOW IN LISTVIEW WHEN BUTTON IS CLICKED
+        mSpotifyAppRemote
+                .getContentApi()
+                .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
+                .setResultCallback(this::recommendedContentCallBack)
+                .setErrorCallback(mErrorCallback);
+
         // Play a playlist
         mSpotifyAppRemote.getPlayerApi().resume();
         // Subscribe to PlayerState
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
             track = playerState.track;
 
-            //GET RECOMMENDED ITEMS. SHOW IN LISTVIEW WHEN BUTTON IS CLICKED
-            mSpotifyAppRemote
-                    .getContentApi()
-                    .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
-                    .setResultCallback(this::recommendedContentCallBack)
-                    .setErrorCallback(mErrorCallback);
-
             if (track != null) {
                 // Invalidate play / pause
                 if (playerState.isPaused) {
                     PlayButton.setImageResource(R.drawable.sic_play_48dp);
-                    mSeekBar.setThumb(getResources()
-                            .getDrawable(R.drawable.sic_pause_button, ACT.getTheme()));
+                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_pause_button, ACT.getTheme()));
                 } else {
                     PlayButton.setImageResource(R.drawable.sic_pause_48dp);
-                    mSeekBar.setThumb(getResources()
-                            .getDrawable(R.drawable.sic_play_button, ACT.getTheme()));
+                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_play_button, ACT.getTheme()));
                 }
 
                 //Sets ICON for shuffling
@@ -240,8 +238,7 @@ public class SpotifyFragment extends Fragment {
 
                 //CHECKS IF SONG IS LIKED AND SETS ICON
                 mSpotifyAppRemote.getUserApi().getLibraryState(track.uri).setResultCallback(libraryState -> {
-                    if (libraryState.isAdded)
-                        LikeButton.setImageResource(R.drawable.sic_baseline_favorite_24);
+                    if (libraryState.isAdded) LikeButton.setImageResource(R.drawable.sic_baseline_favorite_24);
                     else LikeButton.setImageResource(R.drawable.sic_baseline_favorite_border_24);
                 });
 

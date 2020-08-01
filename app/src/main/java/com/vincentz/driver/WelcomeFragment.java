@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import static com.vincentz.driver.Tools.ACT;
-
 public class WelcomeFragment extends Fragment {
 
     @Override
@@ -17,7 +15,7 @@ public class WelcomeFragment extends Fragment {
         View root = li.inflate(R.layout.fragment_welcome, vg, false);
         Button welcomeButton;
         welcomeButton = root.findViewById(R.id.btn_welcome);
-        welcomeButton.setOnClickListener(view -> ((MainActivity) ACT).setupView());
+        welcomeButton.setOnClickListener(view -> ((MainActivity) getActivity()).setupView());
         return root;
     }
 }

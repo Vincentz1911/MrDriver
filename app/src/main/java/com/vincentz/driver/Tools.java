@@ -15,7 +15,6 @@ import com.android.volley.RequestQueue;
 class Tools {
 
     static Activity ACT;
-    static FragmentManager FM;
     static RequestQueue RQ;
     static GPSLocationModel LOC;
     static SharedPreferences IO;

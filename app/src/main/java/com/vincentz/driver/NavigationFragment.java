@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,6 +18,8 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,11 +35,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.vincentz.driver.MapFragment.map;
 import static com.vincentz.driver.Tools.*;
 
 public class NavigationFragment extends Fragment {
 
-    private ImageView SearchButton, SavedLocButton, RouteButton;
     ListView LocationsListView;
     EditText Searchbox;
     TextView txt_Destination;
@@ -54,9 +55,9 @@ public class NavigationFragment extends Fragment {
 
     private void init(View view) {
 
-        SearchButton = view.findViewById(R.id.search_destination);
-        SavedLocButton = view.findViewById(R.id.saved_destinations);
-        RouteButton = view.findViewById(R.id.route_to_destination);
+        ImageView searchButton = view.findViewById(R.id.search_destination);
+        ImageView savedLocButton = view.findViewById(R.id.saved_destinations);
+        ImageView routeButton = view.findViewById(R.id.route_to_destination);
         Searchbox = getActivity().findViewById(R.id.searchbox);
         LocationsListView = view.findViewById(R.id.listview_locations);
         txt_Destination = getActivity().findViewById(R.id.txt_destination);
@@ -64,7 +65,7 @@ public class NavigationFragment extends Fragment {
         LocationsListView.setVisibility(View.VISIBLE);
         fillSearchListView(loadLocations());
 
-        SavedLocButton.setOnClickListener(v -> {
+        savedLocButton.setOnClickListener(v -> {
             LocationsListView.setVisibility(View.VISIBLE);
             fillSearchListView(loadLocations());
         });
@@ -74,7 +75,7 @@ public class NavigationFragment extends Fragment {
             if (!Searchbox.isFocused()) Searchbox.setSelection(Searchbox.getText().length());
         });
 
-        SearchButton.setOnClickListener(v -> {
+        searchButton.setOnClickListener(v -> {
             if (Searchbox.getVisibility() == View.GONE) {
                 Searchbox.setVisibility(View.VISIBLE);
                 LocationsListView.setVisibility(View.VISIBLE);
@@ -86,7 +87,7 @@ public class NavigationFragment extends Fragment {
             }
         });
 
-        RouteButton.setOnClickListener(v -> {
+        routeButton.setOnClickListener(v -> {
             if (destination != null) routing(destination.latLng);
         });
 
@@ -105,6 +106,8 @@ public class NavigationFragment extends Fragment {
         NavigationListAdapter arrayAdapter = new NavigationListAdapter(getContext(), list);
         LocationsListView.setAdapter(arrayAdapter);
 
+        LocationsListView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
+
         LocationsListView.setOnItemLongClickListener((adapterView, view, i, l) -> {
             if (list.get(i).saved) {
                 deleteLocation(list, i);
@@ -113,7 +116,32 @@ public class NavigationFragment extends Fragment {
             return true;
         });
 
-        LocationsListView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
+    }
+
+    private void onClickListViewItem(LocationModel location) {
+        destination = location;
+        txt_Destination.setText(destination.name);
+        MapFragment.isCamLock = false;
+        map.setPadding(0, 0, 0, 0);
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                .target(destination.latLng).zoom(17).bearing(0).tilt(0).build()));
+
+        if (!location.saved)
+        {
+            Searchbox.setText(destination.name + " ");
+            Searchbox.setSelection(Searchbox.getText().length());
+            Searchbox.setOnEditorActionListener((textView, i1, keyEvent) -> {
+                if (i1 == EditorInfo.IME_ACTION_DONE) {
+                    Searchbox.setVisibility(View.GONE);
+                    // LocationsListView.setVisibility(View.GONE);
+                    routing(destination.latLng);
+                    return true;
+                }
+                return false;
+            });
+
+        }
+        hideKeyboard();
     }
 
     private TextWatcher requestAutoComplete() {
@@ -150,28 +178,7 @@ public class NavigationFragment extends Fragment {
         };
     }
 
-    private void onClickListViewItem(LocationModel location) {
-        destination = location;
 
-        txt_Destination.setText(destination.name);
-//        isCamLock = false;
-//        map.setPadding(0, 0, 0, 0);
-//        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-//                .target(destination.latLng).zoom(17).bearing(0).tilt(0).build()));
-
-        Searchbox.setText(destination.name + " ");
-        Searchbox.setSelection(Searchbox.getText().length());
-        Searchbox.setOnEditorActionListener((textView, i1, keyEvent) -> {
-            if (i1 == EditorInfo.IME_ACTION_DONE) {
-                Searchbox.setVisibility(View.GONE);
-               // LocationsListView.setVisibility(View.GONE);
-                routing(destination.latLng);
-                return true;
-            }
-            return false;
-        });
-        hideKeyboard();
-    }
 
     private ArrayList<LocationModel> loadLocations() {
         Type type = new TypeToken<ArrayList<LocationModel>>() {

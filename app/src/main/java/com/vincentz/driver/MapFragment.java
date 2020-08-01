@@ -56,14 +56,16 @@ import static com.vincentz.driver.Tools.*;
 
 public class MapFragment extends Fragment implements Observer, OnMapReadyCallback {
     //TODO http://www.overpass-api.de/api/xapi?*[maxspeed=*][bbox=12.4831598,55.682295,12.4842598,55.683395]
-    private GoogleMap map;
+
+    public static GoogleMap map;
+    public static boolean isCamLock = true;
     private GeoJsonLayer route;
     LocationModel destination;
     private Thread markerThread;
     private Timer camTimer;
 
     private int counter = 0, zoom = 18, tilt = 4;
-    private boolean haveLocation, isTraffic, isHybrid = true, isCamLock = true;
+    private boolean haveLocation, isTraffic, isHybrid = true;
 
     private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Destination;
     private ImageView img_Compass, img_directions;
@@ -85,8 +87,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         //region INIT UI
         View root = li.inflate(R.layout.fragment_map, vg, false);
-        Objects.requireNonNull((SupportMapFragment) getFragmentManager()
-                .findFragmentById(R.id.map)).getMapAsync(this);
+        ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
 //        input = root.findViewById(R.id.searchbox);
 //        input.setVisibility(View.GONE);

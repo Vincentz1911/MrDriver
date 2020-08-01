@@ -11,10 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.vincentz.driver.LocationModel;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class NavigationListAdapter extends ArrayAdapter<LocationModel> {
@@ -29,7 +27,7 @@ public class NavigationListAdapter extends ArrayAdapter<LocationModel> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View listItem = convertView;
 
         if (listItem == null)

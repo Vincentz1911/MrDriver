@@ -59,7 +59,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     public static GoogleMap map;
     public static boolean isCamLock = true;
-    private GeoJsonLayer route;
+    public static GeoJsonLayer route;
     LocationModel destination;
     private Thread markerThread;
     private Timer camTimer;
@@ -67,12 +67,10 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private int counter = 0, zoom = 18, tilt = 4;
     private boolean haveLocation, isTraffic, isHybrid = true;
 
-    private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Destination;
-    private ImageView img_Compass, img_directions;
+    private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt;
+    private ImageView img_Compass;
     private NumberPicker np_Tilt, np_Zoom;
     private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
-//    private EditText input;
-//    private ListView listView;
 
     @Override
     public void onDestroy() {
@@ -89,20 +87,13 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         View root = li.inflate(R.layout.fragment_map, vg, false);
         ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
-//        input = root.findViewById(R.id.searchbox);
-//        input.setVisibility(View.GONE);
-//        listView = root.findViewById(R.id.listview_locations);
-//        listView.setVisibility(View.GONE);
-
         txt_Zoom = root.findViewById(R.id.txt_zoom);
         txt_Tilt = root.findViewById(R.id.txt_tilt);
         txt_Bearing = root.findViewById(R.id.txt_bearing);
         txt_Compass = root.findViewById(R.id.txt_compass);
         btn_Compass = root.findViewById(R.id.btn_compass);
-        txt_Destination = root.findViewById(R.id.txt_destination);
         txt_Speed = root.findViewById(R.id.txt_speed);
         btn_Speed = root.findViewById(R.id.btn_speed);
-        //img_directions = root.findViewById(R.id.img_directions);
         img_Compass = root.findViewById(R.id.img_compass);
 
         v_Zoom = root.findViewById(R.id.v_zoom);
@@ -114,7 +105,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         np_Zoom = root.findViewById(R.id.np_zoom);
         np_Zoom.setMinValue(0);
         np_Zoom.setMaxValue(8);
-        np_Zoom.setValue((zoom - 10) / 2);
+        np_Zoom.setValue((zoom - 5) / 2);
         //endregion
         LOC.addObserver(this);
         return root;
@@ -126,7 +117,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         counter = 0;
         if (!haveLocation && map != null && LOC.now() != null && LOC.last() != null) {
             haveLocation = true;
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LOC.latlng(), 15));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LOC.latlng(), 10));
             Marker marker = map.addMarker(new MarkerOptions()
                     .icon(SVG2Bitmap(R.drawable.mic_navigation_black_24dp))
                     .anchor(0.5f, 0.5f).rotation(LOC.bearing()).flat(true)
@@ -157,6 +148,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+
         if (isHybrid) map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.setTrafficEnabled(isTraffic);
@@ -167,7 +159,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private void initOnClick() {
         np_Zoom.setOnValueChangedListener((numberPicker, oldVal, newVal) -> {
             if (!isCamLock) {
-                map.animateCamera(CameraUpdateFactory.zoomTo(newVal * 2 + 10));
+                map.animateCamera(CameraUpdateFactory.zoomTo(newVal * 2 + 5));
             }
         });
 
@@ -259,7 +251,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             } else {
                 isCamLock = false;
                 zoom = 16;
-                np_Zoom.setValue((zoom - 10) / 2);
+                np_Zoom.setValue((zoom - 5) / 2);
                 tilt = 0;
                 np_Tilt.setValue(tilt);
                 map.setPadding(0, 0, 0, 0);
@@ -336,7 +328,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     //TODO make zoom and tilt compatible with native gmap zoom and tilt
     private void updateCamera(int camTime) {
         ACT.runOnUiThread(() -> {
-            zoom = np_Zoom.getValue() * 2 + 10;
+            zoom = np_Zoom.getValue() * 2 + 5;
             tilt = np_Tilt.getValue() * 10;
             if (isCamLock) {
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()

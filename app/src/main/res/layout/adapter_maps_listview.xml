@@ -8,7 +8,7 @@
 
     <TableLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1">
 
         <TextView
@@ -16,10 +16,10 @@
             android:text="Name"
             android:textSize="@dimen/h4" />
 
-        <TextView
-            android:id="@+id/txt_address"
-            android:text="Address"
-            android:textSize="@dimen/h4" />
+<!--        <TextView-->
+<!--            android:id="@+id/txt_address"-->
+<!--            android:text="Address"-->
+<!--            android:textSize="@dimen/h4" />-->
 
         <TextView
             android:id="@+id/txt_city"
@@ -27,38 +27,21 @@
             android:textSize="@dimen/h4" />
     </TableLayout>
 
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+<!--    <TableLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <ImageView
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_baseline_save_24" />
+<!--        <ImageView-->
+<!--            android:id="@+id/save_button"-->
+<!--            android:src="@drawable/ic_baseline_save_24" />-->
 
-        <ImageView
-            android:id="@+id/edit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:src="@drawable/nic_outline_edit_24" />
+<!--        <ImageView-->
+<!--            android:id="@+id/edit_button"-->
+<!--            android:src="@drawable/nic_outline_edit_24" />-->
 
-        <ImageView
-            android:id="@+id/delete_button"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:src="@drawable/nic_delete_200dp" />
+<!--        <ImageView-->
+<!--            android:id="@+id/delete_button"-->
+<!--            android:src="@drawable/nic_delete_200dp" />-->
 
-    </TableLayout>
+<!--    </TableLayout>-->
 </LinearLayout>
-
-
-    <!--    <?xml version="1.0" encoding="utf-8"?>-->
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textSize="@dimen/h4"-->
-    <!--android:padding="@dimen/padding"-->
-    <!--android:maxLines="3"-->
-    <!--android:ellipsize="end"-->
-    <!--android:drawableEnd="@drawable/nic_delete_200dp"/>-->

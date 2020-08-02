@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -27,9 +26,9 @@ import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
 
-    FrameLayout fl_leftWindow, fl_spotify, fl_weather, fl_navigation, fl_camera, fl_obd2;
-    ImageView btn_fullscreen;
-    FrameLayout activeFrame;
+    private FrameLayout fl_leftWindow, fl_spotify, fl_weather, fl_navigation, fl_camera, fl_obd2;
+    private ImageView btn_fullscreen;
+    private FrameLayout activeFrame;
     boolean isFullscreen;
 
     @Override
@@ -61,7 +60,7 @@ public class MainActivity extends FragmentActivity {
         else setTheme(R.style.AppTheme_Night);
     }
 
-    void init() {
+    private void init() {
         ACT = this;
         LOC = new GPSLocationModel();
         RQ = Volley.newRequestQueue(this);
@@ -94,33 +93,15 @@ public class MainActivity extends FragmentActivity {
             else showFrameLayout(activeFrame);
         });
 
-        findViewById(R.id.btn_navigation).setOnClickListener(v -> {
-            hideAllFrameLayouts();
-            showFrameLayout(fl_navigation);
-        });
-
-        findViewById(R.id.btn_spotify).setOnClickListener(v -> {
-            hideAllFrameLayouts();
-            showFrameLayout(fl_spotify);
-        });
-
-        findViewById(R.id.btn_weather).setOnClickListener(v -> {
-            hideAllFrameLayouts();
-            showFrameLayout(fl_weather);
-        });
-
-        findViewById(R.id.btn_obd2).setOnClickListener(v -> {
-            hideAllFrameLayouts();
-            showFrameLayout(fl_obd2);
-        });
-
-        findViewById(R.id.btn_camera).setOnClickListener(v -> {
-            hideAllFrameLayouts();
-            showFrameLayout(fl_camera);
-        });
+        findViewById(R.id.btn_navigation).setOnClickListener(v -> showFrameLayout(fl_navigation));
+        findViewById(R.id.btn_spotify).setOnClickListener(v -> showFrameLayout(fl_spotify));
+        findViewById(R.id.btn_weather).setOnClickListener(v -> showFrameLayout(fl_weather));
+        findViewById(R.id.btn_obd2).setOnClickListener(v -> showFrameLayout(fl_obd2));
+        findViewById(R.id.btn_camera).setOnClickListener(v -> showFrameLayout(fl_camera));
     }
 
     private void showFrameLayout(FrameLayout fl) {
+        hideAllFrameLayouts();
         isFullscreen = false;
         activeFrame = fl;
         fl.setVisibility(View.VISIBLE);
@@ -227,8 +208,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
+        public void onStatusChanged(String provider, int status, Bundle extras) { }
 
         @Override
         public void onProviderEnabled(String provider) {

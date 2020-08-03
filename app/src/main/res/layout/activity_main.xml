@@ -121,35 +121,4 @@
         android:background="@drawable/draw_rounded_corners"
         android:padding="@dimen/padding" />
 
-
-
-<!--    <TextView-->
-<!--        android:id="@+id/txt_destination"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_toEndOf="@+id/fl_left_window"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        -->
-<!--        android:background="@drawable/mic_roadsign"-->
-<!--        android:paddingStart="10dp"-->
-<!--        android:paddingEnd="10dp"-->
-<!--        android:paddingBottom="5dp"-->
-<!--        android:layout_margin="@dimen/padding"-->
-<!--        android:textColor="@android:color/white"-->
-<!--        android:textSize="@dimen/h3" />-->
-<!--    -->
-<!--    <EditText-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/searchbox"-->
-<!--        android:layout_toEndOf="@+id/fl_left_window"-->
-<!--        android:background="@drawable/draw_rounded_corners"-->
-<!--        android:gravity="center"-->
-<!--        android:hint="@string/destination"-->
-<!--        android:imeOptions="actionDone"-->
-<!--        android:importantForAutofill="no"-->
-<!--        android:inputType="textImeMultiLine"-->
-<!--        android:padding="@dimen/padding"-->
-<!--        android:textSize="@dimen/h3" />-->
 </RelativeLayout>

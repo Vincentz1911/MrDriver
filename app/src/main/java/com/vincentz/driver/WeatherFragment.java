@@ -16,11 +16,18 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.vincentz.driver.weather.WeatherDailyModel;
+import com.vincentz.driver.weather.WeatherHourlyModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Observable;
@@ -61,7 +68,10 @@ public class WeatherFragment extends Fragment implements Observer {
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.schedule(new TimerTask() {
             @Override
-            public void run() { requestWeather(); }}, 0, 60 * 1000);
+            public void run() {
+                requestWeather();
+            }
+        }, 0, 60 * 1000);
     }
 
     @Override
@@ -74,16 +84,42 @@ public class WeatherFragment extends Fragment implements Observer {
     }
 
     private void requestWeather() {
-        String url = "https://api.openweathermap.org/data/2.5/weather?lat="
-                + LOC.now().getLatitude() + "&lon="
-                + LOC.now().getLongitude()
+//        String url = "https://api.openweathermap.org/data/2.5/weather?"
+        String url = "https://api.openweathermap.org/data/2.5/onecall?units=metric&exclude=minutely"
+                + "&lat=" + LOC.now().getLatitude() + "&lon=" + LOC.now().getLongitude()
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
 
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> ACT.runOnUiThread(() -> updateUI(response)),
+                response -> ACT.runOnUiThread(() -> json2object(response)),
+//                response -> ACT.runOnUiThread(() -> updateUI(response)),
                 error -> msg("Volley Weather Error")));
     }
+
+    private void json2object(JSONObject response){
+        try {
+            //GET THE CURRENT WEATHER
+            JSONObject Jcurrent = (JSONObject) response.getJSONObject("current");
+            WeatherHourlyModel current = new Gson().fromJson(Jcurrent.toString(), WeatherHourlyModel.class);
+
+            //GET HOURLY
+            JSONArray Jhourly = (JSONArray) response.getJSONArray("hourly");
+            Type Htype = new TypeToken<ArrayList<WeatherHourlyModel>>() {}.getType();
+            ArrayList<WeatherHourlyModel> hourlyList = new Gson().fromJson(Jhourly.toString(), Htype);
+
+            //GET DAILY
+            JSONArray Jdaily = (JSONArray) response.getJSONArray("daily");
+            Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {}.getType();
+            ArrayList<WeatherDailyModel> dailyList = new Gson().fromJson(Jdaily.toString(), Dtype);
+
+            int a=10;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     private void updateUI(JSONObject response) {
         try {
@@ -125,7 +161,7 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //UPDATES VIEW WITH DATA
             weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
-            txt_clouds.setText(clouds+"% " + description);
+            txt_clouds.setText(clouds + "% " + description);
             txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
             txt_wind.setText(getString(R.string.wind, windspeed, dir));
             txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));

@@ -13,20 +13,23 @@
         <ImageView
             android:id="@+id/saved_destinations"
             android:layout_weight="1"
+            android:layout_height="@dimen/big_icon"
             android:text="Saved"
-            android:src="@drawable/ic_baseline_location_on_24"/>
+            android:src="@drawable/nic_baseline_location_on_24"/>
 
         <ImageView
             android:id="@+id/search_destination"
             android:layout_weight="1"
+            android:layout_height="@dimen/big_icon"
             android:text="Search"
-            android:src="@drawable/ic_baseline_search_24"/>
+            android:src="@drawable/nic_baseline_search_24"/>
 
         <ImageView
             android:id="@+id/route_to_destination"
             android:layout_weight="1"
+            android:layout_height="@dimen/big_icon"
             android:text="Go"
-            android:src="@drawable/ic_baseline_navigation_24"/>
+            android:src="@drawable/nic_baseline_navigation_24"/>
     </TableRow>
 
     <ListView

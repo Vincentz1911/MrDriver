@@ -5,13 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".MapFragment">
 
-    <!--    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"-->
-    <!--        android:id="@+id/map"-->
-    <!--        android:name="com.google.android.gms.maps.SupportMapFragment"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        map:mapType="hybrid" />-->
-
     <NumberPicker
         android:id="@+id/np_zoom"
         android:layout_width="@dimen/medium_icon"
@@ -64,14 +57,6 @@
         android:drawableTop="@drawable/mic_tilt"
         android:textColor="?colorAccent"
         android:textSize="@dimen/h3" />
-
-    <!--    <ImageView-->
-    <!--        android:id="@+id/img_directions"-->
-    <!--        android:layout_width="@dimen/big_icon"-->
-    <!--        android:layout_height="@dimen/big_icon"-->
-    <!--        android:layout_margin="20dp"-->
-    <!--        android:contentDescription="@string/directions"-->
-    <!--        android:src="@drawable/mic_directions_200dp" />-->
 
     <LinearLayout
         android:id="@+id/btn_compass"
@@ -164,5 +149,5 @@
         android:inputType="textImeMultiLine"
         android:padding="@dimen/padding"
         android:textSize="@dimen/h3"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

@@ -70,13 +70,13 @@ public class SpotifyFragment extends Fragment {
         SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
-                msg("Connected to Spotify");
+                msg(getActivity(),"Connected to Spotify");
                 connected();
             }
 
             public void onFailure(Throwable throwable) {
                 Log.e(TAG, throwable.getMessage(), throwable);
-                msg("Failed to Connect to Spotify");
+                msg(getActivity(),"Failed to Connect to Spotify");
             }
         });
     }
@@ -111,12 +111,12 @@ public class SpotifyFragment extends Fragment {
                 .getPlayerState().setResultCallback(playerState -> {
                     if (playerState.isPaused) {
                         mSpotifyAppRemote.getPlayerApi().resume().setResultCallback(empty ->
-                                msg(getString(R.string.command_feedback, "play")))
+                                msg(getActivity(),getString(R.string.command_feedback, "play")))
                                 .setErrorCallback(mErrorCallback);
 
                     } else {
                         mSpotifyAppRemote.getPlayerApi().pause().setResultCallback(empty ->
-                                msg(getString(R.string.command_feedback, "pause")))
+                                msg(getActivity(),getString(R.string.command_feedback, "pause")))
                                 .setErrorCallback(mErrorCallback);
                     }
                 }));
@@ -138,12 +138,12 @@ public class SpotifyFragment extends Fragment {
 
         AlbumButton.setOnClickListener(view -> {
             mSpotifyAppRemote.getPlayerApi().play(track.album.uri);
-            msg("Playing Album: " + track.album.name);
+            msg(getActivity(),"Playing Album: " + track.album.name);
         });
 
         ArtistButton.setOnClickListener(view -> {
             mSpotifyAppRemote.getPlayerApi().play(track.artist.uri);
-            msg("Playing Artist: " + track.artist.name);
+            msg(getActivity(),"Playing Artist: " + track.artist.name);
         });
 
         PlaylistButton.setOnClickListener(view -> {
@@ -154,12 +154,12 @@ public class SpotifyFragment extends Fragment {
 
         NextButton.setOnClickListener(v -> mSpotifyAppRemote.getPlayerApi()
                 .skipNext()
-                .setResultCallback(data -> msg(getString(R.string.command_feedback, "skip next")))
+                .setResultCallback(data -> msg(getActivity(),getString(R.string.command_feedback, "skip next")))
                 .setErrorCallback(mErrorCallback));
 
         PrevButton.setOnClickListener(v -> mSpotifyAppRemote.getPlayerApi()
                 .skipPrevious()
-                .setResultCallback(empty -> msg(getString(R.string.command_feedback, "skip previous")))
+                .setResultCallback(empty -> msg(getActivity(),getString(R.string.command_feedback, "skip previous")))
                 .setErrorCallback(mErrorCallback));
         ShuffleButton.setOnClickListener(view -> mSpotifyAppRemote.getPlayerApi()
                 .toggleShuffle()
@@ -275,7 +275,7 @@ public class SpotifyFragment extends Fragment {
 
             playlistView.setOnItemClickListener((adapterView, view, i, l) -> {
                 mSpotifyAppRemote.getPlayerApi().play(combined.get(i).uri);
-                msg("Playing: " + combined.get(i).title);
+                msg(getActivity(),"Playing: " + combined.get(i).title);
                 playlistView.setVisibility(View.GONE);
             });
         }

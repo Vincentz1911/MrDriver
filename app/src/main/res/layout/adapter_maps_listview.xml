@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:orientation="horizontal"
     android:padding="@dimen/padding">
 
-    <TableLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+<!--    <TableLayout-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_weight="1">-->
 
         <TextView
             android:id="@+id/txt_name"
-            android:text="Name"
             android:textSize="@dimen/h4" />
 
 <!--        <TextView-->
@@ -23,9 +22,8 @@
 
         <TextView
             android:id="@+id/txt_city"
-            android:text="City"
             android:textSize="@dimen/h4" />
-    </TableLayout>
+<!--    </TableLayout>-->
 
 <!--    <TableLayout-->
 <!--        android:layout_width="wrap_content"-->
@@ -50,7 +48,7 @@
 <!--            android:src="@drawable/nic_delete_200dp" />-->
 
 <!--    </TableLayout>-->
-</LinearLayout>
+</TableLayout>
 
 
     <!--    <?xml version="1.0" encoding="utf-8"?>-->

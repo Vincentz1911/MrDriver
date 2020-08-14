@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".NavigationFragment">
+    tools:context=".navigation.NavigationFragment">
 
     <TableRow
         android:layout_width="match_parent"
@@ -13,29 +12,29 @@
         <ImageView
             android:id="@+id/saved_destinations"
             android:layout_weight="1"
-            android:layout_height="@dimen/big_icon"
-            android:text="Saved"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:src="@drawable/nic_baseline_location_on_24"/>
 
         <ImageView
             android:id="@+id/search_destination"
             android:layout_weight="1"
-            android:layout_height="@dimen/big_icon"
-            android:text="Search"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:src="@drawable/nic_baseline_search_24"/>
 
         <ImageView
             android:id="@+id/route_to_destination"
             android:layout_weight="1"
-            android:layout_height="@dimen/big_icon"
-            android:text="Go"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:src="@drawable/nic_baseline_navigation_24"/>
     </TableRow>
 
     <ListView
-        android:id="@+id/listview_locations"
+        android:id="@+id/listview_navigation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/draw_rounded_corners" />
 
-</LinearLayout>
+</TableLayout>

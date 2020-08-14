@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/iconbar"
+    android:layout_width="@dimen/big_icon"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/btn_navigation"
+        android:layout_weight="1"
+        android:scaleType="fitStart"
+        android:src="@drawable/mic_directions_200dp" />
+
+    <ImageView
+        android:id="@+id/btn_weather"
+        android:layout_weight="1"
+        android:scaleType="fitStart"
+        android:src="@drawable/fic_weather_200dp" />
+
+    <ImageView
+        android:id="@+id/btn_obd2"
+        android:layout_weight="1"
+        android:scaleType="fitStart"
+        android:src="@drawable/fic_engine_200dp" />
+
+    <ImageView
+        android:id="@+id/btn_spotify"
+        android:layout_weight="1"
+        android:scaleType="fitStart"
+        android:src="@drawable/fic_spotify_logo_200dp" />
+
+    <ImageView
+        android:id="@+id/btn_phone"
+        android:layout_weight="1"
+        android:scaleType="fitStart"
+        android:src="@drawable/fic_phone_bluetooth_200dp" />
+
+    <ImageView
+        android:id="@+id/btn_camera"
+        android:layout_weight="1"
+        android:scaleType="fitStart"
+        android:src="@drawable/fic_videocam_200dp" />
+
+    <ImageView
+        android:id="@+id/img_fullscreen"
+        android:layout_weight="1"
+        android:contentDescription="@string/fullscreen"
+        android:src="@drawable/mic_fullscreen_100dp" />
+
+</TableLayout>

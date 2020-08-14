@@ -1,4 +1,4 @@
-package com.vincentz.driver;
+package com.vincentz.driver.weather;
 
 import androidx.fragment.app.Fragment;
 
@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vincentz.driver.R;
 import com.vincentz.driver.weather.WeatherDailyModel;
 import com.vincentz.driver.weather.WeatherHourlyModel;
 
@@ -40,6 +41,7 @@ import static com.vincentz.driver.Tools.*;
 public class WeatherFragment extends Fragment implements Observer {
 
     private Timer weatherTimer;
+    public WeatherModel weatherModel;
     private ImageView weather_icon;
     private TextView txt_temp, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
     private boolean startup;
@@ -91,35 +93,34 @@ public class WeatherFragment extends Fragment implements Observer {
 
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> ACT.runOnUiThread(() -> json2object(response)),
+                response -> getActivity().runOnUiThread(() -> json2object(response)),
 //                response -> ACT.runOnUiThread(() -> updateUI(response)),
-                error -> msg("Volley Weather Error")));
+                error -> msg(getActivity(), "Volley Weather Error")));
     }
 
-    private void json2object(JSONObject response){
+
+    private void json2object(JSONObject response) {
         try {
             //GET THE CURRENT WEATHER
-            JSONObject Jcurrent = (JSONObject) response.getJSONObject("current");
+            JSONObject Jcurrent = response.getJSONObject("current");
             WeatherHourlyModel current = new Gson().fromJson(Jcurrent.toString(), WeatherHourlyModel.class);
 
             //GET HOURLY
-            JSONArray Jhourly = (JSONArray) response.getJSONArray("hourly");
+            JSONArray Jhourly = response.getJSONArray("hourly");
             Type Htype = new TypeToken<ArrayList<WeatherHourlyModel>>() {}.getType();
             ArrayList<WeatherHourlyModel> hourlyList = new Gson().fromJson(Jhourly.toString(), Htype);
 
             //GET DAILY
-            JSONArray Jdaily = (JSONArray) response.getJSONArray("daily");
+            JSONArray Jdaily = response.getJSONArray("daily");
             Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {}.getType();
             ArrayList<WeatherDailyModel> dailyList = new Gson().fromJson(Jdaily.toString(), Dtype);
 
-            int a=10;
+            weatherModel = new WeatherModel(current = current, hourlyList = hourlyList, dailyList = dailyList);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
-
 
     private void updateUI(JSONObject response) {
         try {
@@ -150,8 +151,8 @@ public class WeatherFragment extends Fragment implements Observer {
             int humidity = (int) main.getDouble("humidity");
             long sunrise = sys.getInt("sunrise") * 1000L;
             long sunset = sys.getInt("sunset") * 1000L;
-            ACT.getPreferences(Context.MODE_PRIVATE).edit().putLong("Sunrise", sunrise).apply();
-            ACT.getPreferences(Context.MODE_PRIVATE).edit().putLong("Sunset", sunset).apply();
+            IO.edit().putLong("Sunrise", sunrise).apply();
+            IO.edit().putLong("Sunset", sunset).apply();
             int clouds = response.getJSONObject("clouds").getInt("all");
             int visibility = 0;
             if (response.has("visibility"))
@@ -172,7 +173,7 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //msg("WeatherPos: " + response.getString("name"));
         } catch (JSONException e) {
-            msg("JSON Weather Error!");
+            msg(getActivity(), "JSON Weather Error!");
         }
     }
 

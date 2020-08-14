@@ -1,4 +1,4 @@
-package com.vincentz.driver;
+package com.vincentz.driver.navigation;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.vincentz.driver.R;
+
 
 public class NavigationListAdapter extends ArrayAdapter<LocationModel> {
 

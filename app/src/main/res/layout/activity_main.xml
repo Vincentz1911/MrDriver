@@ -6,119 +6,26 @@
     android:background="@drawable/draw_gradient"
     tools:context=".MainActivity">
 
-    <TableLayout
-        android:id="@+id/fk_sidebar"
-        android:layout_width="@dimen/big_icon"
-        android:layout_height="match_parent"
-        android:gravity="center">
+    <include layout="@layout/layout_iconbar" />
 
-        <ImageView
-            android:id="@+id/btn_navigation"
-            android:layout_weight="1"
-            android:scaleType="fitStart"
-            android:src="@drawable/mic_directions_200dp" />
-
-        <ImageView
-            android:id="@+id/btn_weather"
-            android:layout_weight="1"
-            android:scaleType="fitStart"
-            android:src="@drawable/fic_weather_200dp" />
-
-        <ImageView
-            android:id="@+id/btn_obd2"
-            android:layout_weight="1"
-            android:scaleType="fitStart"
-            android:src="@drawable/fic_engine_200dp" />
-
-        <ImageView
-            android:id="@+id/btn_spotify"
-            android:layout_weight="1"
-            android:scaleType="fitStart"
-            android:src="@drawable/fic_spotify_logo_200dp" />
-
-        <ImageView
-            android:id="@+id/btn_phone"
-            android:layout_weight="1"
-            android:scaleType="fitStart"
-            android:src="@drawable/fic_phone_bluetooth_200dp" />
-
-        <ImageView
-            android:id="@+id/btn_camera"
-            android:layout_weight="1"
-            android:scaleType="fitStart"
-            android:src="@drawable/fic_videocam_200dp" />
-
-        <ImageView
-            android:id="@+id/img_fullscreen"
-            android:layout_weight="1"
-            android:contentDescription="@string/fullscreen"
-            android:src="@drawable/mic_fullscreen_100dp" />
-
-    </TableLayout>
-
-    <FrameLayout
-        android:id="@+id/fl_spotify"
+    <include
+        layout="@layout/layout_sidebars"
+        android:id="@+id/sidebar"
         android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="invisible" />
-
-    <FrameLayout
-        android:id="@+id/fl_weather"
-        android:layout_width="@dimen/big_element"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="invisible" />
-
-    <FrameLayout
-        android:id="@+id/fl_navigation"
-        android:layout_width="@dimen/big_element"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="invisible" />
-
-    <FrameLayout
-        android:id="@+id/fl_camera"
-        android:layout_width="@dimen/big_element"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="invisible" />
-
-    <FrameLayout
-        android:id="@+id/fl_obd2"
-        android:layout_width="@dimen/big_element"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="invisible" />
-
-    <FrameLayout
-        android:id="@+id/fl_left_window"
-        android:layout_width="@dimen/big_element"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fk_sidebar"
-        android:visibility="gone" />
+        android:layout_toEndOf="@id/iconbar" />
 
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fl_left_window"
+        android:layout_toEndOf="@id/sidebar"
         map:mapType="hybrid" />
 
     <FrameLayout
         android:id="@+id/fl_map_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@id/fl_left_window" />
-
-    <FrameLayout
-        android:id="@+id/fl_dateAndTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/draw_rounded_corners"
-        android:padding="@dimen/padding" />
-
+        android:layout_toEndOf="@id/sidebar" />
 </RelativeLayout>

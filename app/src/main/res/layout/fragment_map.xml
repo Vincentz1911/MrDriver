@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapFragment">
+    tools:context=".navigation.MapFragment">
 
     <NumberPicker
         android:id="@+id/np_zoom"
@@ -83,7 +83,7 @@
                 android:layout_width="@dimen/big_icon"
                 android:layout_height="@dimen/big_icon"
                 android:gravity="center"
-                android:textSize="@dimen/h3" />
+                android:textSize="@dimen/h4" />
         </RelativeLayout>
 
         <TextView
@@ -126,10 +126,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-
+        android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/padding"
         android:background="@drawable/mic_roadsign"
+        android:paddingStart="10dp"
+        android:text="No Destination"
+        android:paddingEnd="10dp"
+        android:paddingBottom="5dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/h3" />
+
+    <TextView
+        android:id="@+id/txt_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/padding"
+        android:background="@drawable/mic_roadsign"
+
+        android:text="No Route"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:paddingBottom="5dp"
@@ -150,4 +165,12 @@
         android:padding="@dimen/padding"
         android:textSize="@dimen/h3"
         android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/fl_dateAndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/margin"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

@@ -153,9 +153,19 @@ public class Routing {
                 JSONObject prop = searchResults.getJSONObject(i).getJSONObject("properties");
                 JSONArray geom = searchResults.getJSONObject(i).getJSONObject("geometry").
                         getJSONArray("coordinates");
+                String area;
 
-                String area = (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
-                        ? prop.getString("neighbourhood") : prop.getString("localadmin");
+                if (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
+                    area = prop.getString("neighbourhood");
+                else if (prop.has("localadmin") && prop.getString("localadmin") != null)
+                    area = prop.getString("localadmin");
+                else if (prop.has("county") && prop.getString("county") != null)
+                    area = prop.getString("county");
+                else area = prop.getString("country");
+//                String area = (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
+//                        ? prop.getString("neighbourhood") : prop.getString("localadmin");
+
+
 
                 String street = (prop.has("street")
                         ? street = prop.getString("street") : prop.getString("region"));

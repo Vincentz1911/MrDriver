@@ -15,4 +15,5 @@ public class WeatherHourlyModel { //"current":
     double wind_speed; //"wind_speed": 2.6,
     int wind_deg; //"wind_deg": 280,
     double pop; //"pop": 0
+    WeatherDescriptionModel[] weather;
 }

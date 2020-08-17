@@ -3,11 +3,10 @@ package com.vincentz.driver.weather;
 import java.util.ArrayList;
 
 public class WeatherModel {
+
     WeatherHourlyModel current;
     ArrayList<WeatherHourlyModel> hourlyList;
     ArrayList<WeatherDailyModel> dailyList;
-
-
 
     public WeatherModel(WeatherHourlyModel current, ArrayList<WeatherHourlyModel> hourlyList, ArrayList<WeatherDailyModel> dailyList) {
         this.current = current;
@@ -15,6 +14,10 @@ public class WeatherModel {
         this.dailyList = dailyList;
     }
 
+//    	            "lat": 55.73,
+//                "lon": 12.34,
+//                "timezone": "Europe/Copenhagen",
+//                "timezone_offset": 7200,
 
 //    int id; //"id": 802,
 //    String main; //"main": "Clouds",

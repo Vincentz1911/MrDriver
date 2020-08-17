@@ -41,9 +41,9 @@ import static com.vincentz.driver.Tools.*;
 public class WeatherFragment extends Fragment implements Observer {
 
     private Timer weatherTimer;
-    public WeatherModel weatherModel;
+    public WeatherModel wm;
     private ImageView weather_icon;
-    private TextView txt_temp, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
+    private TextView txt_temp, txt_feels_like, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
     private boolean startup;
 
     @Override
@@ -52,6 +52,7 @@ public class WeatherFragment extends Fragment implements Observer {
         View root = li.inflate(R.layout.fragment_weather, vg, false);
         weather_icon = root.findViewById(R.id.img_weather);
         txt_temp = root.findViewById(R.id.txt_temp);
+        txt_feels_like = root.findViewById(R.id.txt_feels_like);
         txt_clouds = root.findViewById(R.id.txt_clouds);
         txt_wind = root.findViewById(R.id.txt_wind);
         txt_minmax = root.findViewById(R.id.txt_low_high_temp);
@@ -107,74 +108,90 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //GET HOURLY
             JSONArray Jhourly = response.getJSONArray("hourly");
-            Type Htype = new TypeToken<ArrayList<WeatherHourlyModel>>() {}.getType();
+            Type Htype = new TypeToken<ArrayList<WeatherHourlyModel>>() {
+            }.getType();
             ArrayList<WeatherHourlyModel> hourlyList = new Gson().fromJson(Jhourly.toString(), Htype);
 
             //GET DAILY
             JSONArray Jdaily = response.getJSONArray("daily");
-            Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {}.getType();
+            Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {
+            }.getType();
             ArrayList<WeatherDailyModel> dailyList = new Gson().fromJson(Jdaily.toString(), Dtype);
 
-            weatherModel = new WeatherModel(current = current, hourlyList = hourlyList, dailyList = dailyList);
+            wm = new WeatherModel(current = current, hourlyList = hourlyList, dailyList = dailyList);
 
+            updateUI();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void updateUI(JSONObject response) {
-        try {
-            //SPLITS JSONRESPONSE INTO JSONOBJECTS
-            JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
-            JSONObject main = response.getJSONObject("main");
-            JSONObject wind = response.getJSONObject("wind");
-            JSONObject sys = response.getJSONObject("sys");
+    private void updateUI() {
+        //SPLITS JSONRESPONSE INTO JSONOBJECTS
+//            JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
+//            JSONObject main = response.getJSONObject("main");
+//            JSONObject wind = response.getJSONObject("wind");
+//            JSONObject sys = response.getJSONObject("sys");
 
-            //CREATES A SPANNABLE STRING FOR LOC, TEMP AND FEELS
-            String location = response.getString("name").split(" ")[0];
-            String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
-            String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
-            SpannableString span1 = new SpannableString(location);
-            SpannableString span2 = new SpannableString(temp);
-            SpannableString span3 = new SpannableString(feels);
-            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
-            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, temp.length(), 0);
-            span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, feels.length(), 0);
+        //CREATES A SPANNABLE STRING FOR LOC, TEMP AND FEELS
+//            String location = response.getString("name").split(" ")[0];
+//            String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
+//            String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
+//            SpannableString span1 = new SpannableString(location);
+//            SpannableString span2 = new SpannableString(temp);
+//            SpannableString span3 = new SpannableString(feels);
+//            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
+//            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, temp.length(), 0);
+//            span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, feels.length(), 0);
 
-            //SETS DATA FROM JSON OBJECTS
-            String dir = "NA";
-            if (wind.has("deg")) dir = getCompassDirection((float) wind.getDouble("deg"));
-            double windspeed = wind.getDouble("speed");
-            double maxTemp = main.getDouble("temp_max") - 273.15;
-            double minTemp = main.getDouble("temp_min") - 273.15;
-            int pressure = (int) main.getDouble("pressure");
-            int humidity = (int) main.getDouble("humidity");
-            long sunrise = sys.getInt("sunrise") * 1000L;
-            long sunset = sys.getInt("sunset") * 1000L;
-            IO.edit().putLong("Sunrise", sunrise).apply();
-            IO.edit().putLong("Sunset", sunset).apply();
-            int clouds = response.getJSONObject("clouds").getInt("all");
-            int visibility = 0;
-            if (response.has("visibility"))
-                visibility = response.getInt("visibility") / 1000;
-            String description = weather.getString("description");
-            description = description.substring(0, 1).toUpperCase() + description.substring(1);
+        //CREATES A SPANNABLE STRING FOR LOC, TEMP AND FEELS
+        //           String location = response.getString("name").split(" ")[0];
+        String temp = getString(R.string.temperature, (int) wm.current.temp);
+        //String temp = wm.current.temp);
+        String feels = getString(R.string.feels_temp, (int) wm.current.feels_like);
+        //SpannableString span1 = new SpannableString(location);
+        SpannableString span2 = new SpannableString(temp);
+        SpannableString span3 = new SpannableString(feels);
+        //span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
+        span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, span2.length(), 0);
+        span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, span3.length(), 0);
 
-            //UPDATES VIEW WITH DATA
-            weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
-            txt_clouds.setText(clouds + "% " + description);
-            txt_temp.setText(TextUtils.concat(span1, "\n", span2, "\n", span3));
-            txt_wind.setText(getString(R.string.wind, windspeed, dir));
-            txt_minmax.setText(getString(R.string.minmax_temp, maxTemp, minTemp));
-            txt_press_humid.setText(getString(R.string.press_humid, pressure, humidity));
-            SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset,
-                    time.format(new Date(sunrise)), time.format(new Date(sunset))));
+        //SETS DATA FROM JSON OBJECTS
+//            String dir = "NA";
+//            if (wind.has("deg")) dir = getCompassDirection((float) wind.getDouble("deg"));
+//            double windspeed = wind.getDouble("speed");
+//            double maxTemp = main.getDouble("temp_max") - 273.15;
+//            double minTemp = main.getDouble("temp_min") - 273.15;
+//            int pressure = (int) main.getDouble("pressure");
+//            int humidity = (int) main.getDouble("humidity");
+//            long sunrise = sys.getInt("sunrise") * 1000L;
+//            long sunset = sys.getInt("sunset") * 1000L;
+//            IO.edit().putLong("Sunrise", sunrise).apply();
+//            IO.edit().putLong("Sunset", sunset).apply();
+//            int clouds = response.getJSONObject("clouds").getInt("all");
+//            int visibility = 0;
+//            if (response.has("visibility"))
+//                visibility = response.getInt("visibility") / 1000;
+//            String description = weather.getString("description");
+//            description = description.substring(0, 1).toUpperCase() + description.substring(1);
 
-            //msg("WeatherPos: " + response.getString("name"));
-        } catch (JSONException e) {
-            msg(getActivity(), "JSON Weather Error!");
-        }
+        //UPDATES VIEW WITH DATA
+
+//            weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
+        weather_icon.setImageDrawable(getWeatherIcon(wm.current.weather[0].icon));
+        txt_clouds.setText(wm.current.clouds + "% " + wm.current.weather[0].description);
+        txt_temp.setText(getString(R.string.temperature, (int) wm.current.temp));
+        txt_feels_like.setText(getString(R.string.feels_temp, (int) wm.current.feels_like));
+        txt_wind.setText(getString(R.string.wind, wm.current.wind_speed, wm.current.wind_deg));
+        txt_minmax.setText(getString(R.string.minmax_temp, wm.dailyList.get(0).temp.max, wm.dailyList.get(0).temp.min));
+        txt_press_humid.setText(getString(R.string.press_humid, wm.current.pressure, wm.current.humidity));
+
+        SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset,
+                time.format(new Date(wm.dailyList.get(0).sunrise)),
+                time.format(new Date(wm.dailyList.get(0).sunset))));
+
+        //msg("WeatherPos: " + response.getString("name"));
     }
 
     private Drawable getWeatherIcon(String icon) {

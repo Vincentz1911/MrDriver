@@ -7,25 +7,25 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import com.android.volley.RequestQueue;
+import com.vincentz.driver.navigation.GPSLocationModel;
+import com.vincentz.driver.navigation.LocationModel;
+import com.vincentz.driver.navigation.NavigationModel;
 
-class Tools {
-
-    static Activity ACT;
-    static RequestQueue RQ;
-    static GPSLocationModel LOC;
-    static SharedPreferences IO;
+public class Tools {
+    public static RequestQueue RQ;
+    public static GPSLocationModel LOC;
+    public static LocationModel DEST;
+    public static NavigationModel NAV;
+    public static SharedPreferences IO;
     static boolean[] PERMISSIONS;
 
-    static void msg(final String text) {
-        ACT.runOnUiThread(() -> Toast.makeText(ACT, text, Toast.LENGTH_LONG).show());
+    public static void msg(Activity activity, final String text) {
+        activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
     }
 
-    static void fullscreen() {
-        ACT.getWindow().getDecorView().setSystemUiVisibility(
+    public static void fullscreen(Activity activity) {
+        activity.getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -35,23 +35,19 @@ class Tools {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    static void hideKeyboard() {
-        ACT.findViewById(R.id.map).requestFocus();
+    public static void hideKeyboard(Activity activity) {
+        activity.findViewById(R.id.map).requestFocus();
         InputMethodManager imm = (InputMethodManager)
-                ACT.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm != null) {
-            if (ACT.getCurrentFocus() != null) {
-                IBinder ib = ACT.getCurrentFocus().getWindowToken();
+            if (activity.getCurrentFocus() != null) {
+                IBinder ib = activity.getCurrentFocus().getWindowToken();
                 imm.hideSoftInputFromWindow(ib, 0);
             }
         }
     }
 
-    //static Fragment FRAGMENTS =
-
-    //static int[] Images =
-
-    static String getCompassDirection(float b) {
+    public static String getCompassDirection(float b) {
         b -= 11.5;
         if (b <= 0 || b > 337.5) return "N";
         else if (b <= 22.5) return "NNE";

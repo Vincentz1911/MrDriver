@@ -30,8 +30,8 @@ public class InfoFragment extends Fragment {
         timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                if (ACT == null) return;
-                ACT.runOnUiThread(() -> {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
                     Date dateNow = new Date();
                     time.setText(new SimpleDateFormat("HH:mm:ss",
                             Locale.getDefault()).format(dateNow));

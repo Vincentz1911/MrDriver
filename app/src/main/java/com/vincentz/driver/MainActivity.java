@@ -13,16 +13,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONObject;
+import com.vincentz.driver.navigation.GPSLocationModel;
+import com.vincentz.driver.navigation.MapFragment;
+import com.vincentz.driver.navigation.NavigationFragment;
+import com.vincentz.driver.weather.WeatherFragment;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -31,24 +30,19 @@ import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
 
-    private FrameLayout fl_leftWindow, fl_spotify, fl_weather, fl_navigation, fl_camera, fl_obd2;
-    private ImageView btn_fullscreen;
+    private FrameLayout fl_navigation, fl_weather, fl_obd2, fl_spotify, fl_camera;
     private FrameLayout activeFrame;
-    boolean isFullscreen;
+    private View sidebar;
+    private ImageView btn_fullscreen;
+    private boolean isFullscreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        IO = getPreferences(MODE_PRIVATE);
         setThemeBasedOnTimeOfDay();
         super.onCreate(savedInstanceState);
         init();
     }
-
-//    @Override
-//    protected void onResume() {
-//        setThemeBasedOnTimeOfDay();
-//        super.onResume();
-//        init();
-//    }
 
     //SETS THEME BASED ON SUNRISE AND SUNSET.
     private void setThemeBasedOnTimeOfDay() {
@@ -56,24 +50,24 @@ public class MainActivity extends FragmentActivity {
         Calendar sunUp = Calendar.getInstance();
         Calendar sunDown = Calendar.getInstance();
 
-        sunUp.setTimeInMillis(getPreferences(Context.MODE_PRIVATE).getLong("Sunrise", 0));
+        sunUp.setTimeInMillis(IO.getLong("Sunrise", 0));
         sunUp.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-        sunDown.setTimeInMillis(getPreferences(Context.MODE_PRIVATE).getLong("Sunset", 0));
+        sunDown.setTimeInMillis(IO.getLong("Sunset", 0));
         sunDown.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
-        if (now.after(sunUp) && now.before(sunDown)) setTheme(R.style.AppTheme_Day);
-        else setTheme(R.style.AppTheme_Night);
+        if (now.after(sunDown) && now.before(sunUp)) setTheme(R.style.AppTheme_Night);
+        else setTheme(R.style.AppTheme_Day);
     }
 
     private void init() {
-        ACT = this;
+        //ACT = this;
         LOC = new GPSLocationModel();
         RQ = Volley.newRequestQueue(this);
         IO = getPreferences(MODE_PRIVATE);
 
         setContentView(R.layout.activity_main);
-        fullscreen();
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen());
+        fullscreen(this);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen(this));
         checkPermissions();
 
         //IF APP NEVER RUN BEFORE, MAKE WELCOMESCREEN SO PERMISSIONS DOESNT F.UP
@@ -85,12 +79,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initButtons() {
+        sidebar = findViewById(R.id.sidebar);
         fl_navigation = findViewById(R.id.fl_navigation);
         fl_spotify = findViewById(R.id.fl_spotify);
         fl_weather = findViewById(R.id.fl_weather);
         fl_camera = findViewById(R.id.fl_camera);
         fl_obd2 = findViewById(R.id.fl_obd2);
-        fl_leftWindow = findViewById(R.id.fl_left_window);
+        activeFrame = fl_navigation;
 
         btn_fullscreen = findViewById(R.id.img_fullscreen);
         btn_fullscreen.setOnClickListener(view -> {
@@ -109,14 +104,14 @@ public class MainActivity extends FragmentActivity {
         hideAllFrameLayouts();
         isFullscreen = false;
         activeFrame = fl;
-        fl.setVisibility(View.VISIBLE);
-        fl_leftWindow.setVisibility(View.VISIBLE);
+        activeFrame.setVisibility(View.VISIBLE);
+        sidebar.setVisibility(View.VISIBLE);
         btn_fullscreen.setImageResource(R.drawable.mic_fullscreen_100dp);
     }
 
     private void hideAllFrameLayouts() {
         isFullscreen = true;
-        fl_leftWindow.setVisibility(View.GONE);
+        sidebar.setVisibility(View.GONE);
         fl_spotify.setVisibility(View.GONE);
         fl_weather.setVisibility(View.GONE);
         fl_navigation.setVisibility(View.GONE);
@@ -126,8 +121,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     void setupView() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
-        else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
         IO.edit().putBoolean("HaveRun", true).apply();
         FragmentManager FM = getSupportFragmentManager();
         FM.beginTransaction().replace(R.id.fl_map_overlay, new MapFragment(), "").commit();
@@ -193,9 +187,9 @@ public class MainActivity extends FragmentActivity {
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
-        if (provider != null) msg("Best Location Provider: " + provider);
+        if (provider != null) msg(this,"Best Location Provider: " + provider);
         else {
-            msg("No Location provider found");
+            msg(this, "No Location provider found");
             return;
         }
         lm.requestLocationUpdates(provider, 0, 0, LocationListener);
@@ -217,12 +211,12 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public void onProviderEnabled(String provider) {
-            msg("LOC enabled: " + provider);
+            msg(getParent(),"LOC enabled: " + provider);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            msg("LOC disabled: " + provider);
+            msg(getParent(), "LOC disabled: " + provider);
         }
     };
     //endregion

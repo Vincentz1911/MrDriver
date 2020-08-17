@@ -29,7 +29,8 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/SplashTheme"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

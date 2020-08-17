@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
 
-import static com.vincentz.driver.Tools.ACT;
+//import static com.vincentz.driver.Tools.ACT;
 import static com.vincentz.driver.Tools.msg;
 
 public class CameraFragment extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
@@ -48,7 +48,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
         } catch (Exception e) {
             Log.d(TAG, "initRecorder: " + e.getMessage());
-            msg("No audio or video device found");
+            msg(getActivity(),"No audio or video device found");
 
         }
 
@@ -99,6 +99,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Su
             recording = false;
         }
         recorder.release();
-        ACT.finish();
+        getActivity().finish();
     }
 }

@@ -111,8 +111,7 @@ public class WeatherFragment extends Fragment implements Observer {
             JSONArray Jdaily = (JSONArray) response.getJSONArray("daily");
             Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {}.getType();
             ArrayList<WeatherDailyModel> dailyList = new Gson().fromJson(Jdaily.toString(), Dtype);
-
-            int a=10;
+            
         } catch (JSONException e) {
             e.printStackTrace();
         }

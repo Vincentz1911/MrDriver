@@ -2,16 +2,13 @@ package com.vincentz.driver.weather;
 
 import androidx.fragment.app.Fragment;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -19,8 +16,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vincentz.driver.R;
-import com.vincentz.driver.weather.WeatherDailyModel;
-import com.vincentz.driver.weather.WeatherHourlyModel;
+import com.vincentz.driver.Tools;
+import com.vincentz.driver.navigation.NavigationListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,23 +41,44 @@ public class WeatherFragment extends Fragment implements Observer {
     public WeatherModel wm;
     private ImageView weather_icon;
     private TextView txt_temp, txt_feels_like, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
+    private View current_weather_data;
+    private ListView hourly_weather_data, daily_weather_data;
     private boolean startup;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         //region INIT UI
-        View root = li.inflate(R.layout.fragment_weather, vg, false);
-        weather_icon = root.findViewById(R.id.img_weather);
-        txt_temp = root.findViewById(R.id.txt_temp);
-        txt_feels_like = root.findViewById(R.id.txt_feels_like);
-        txt_clouds = root.findViewById(R.id.txt_clouds);
-        txt_wind = root.findViewById(R.id.txt_wind);
-        txt_minmax = root.findViewById(R.id.txt_low_high_temp);
-        txt_press_humid = root.findViewById(R.id.txt_pressure_humidity);
-        txt_sunrise_sunset = root.findViewById(R.id.txt_sunrise_sunset);
+        View view = li.inflate(R.layout.fragment_weather, vg, false);
+        current_weather_data = view.findViewById(R.id.current_weather_data);
+        hourly_weather_data = view.findViewById(R.id.hourly_weather_data);
+        daily_weather_data = view.findViewById(R.id.daily_weather_data);
+        ImageView weather_now = view.findViewById(R.id.weather_now);
+        ImageView weather_hourly = view.findViewById(R.id.weather_hourly);
+        ImageView weather_daily = view.findViewById(R.id.weather_daily);
+        weather_icon = view.findViewById(R.id.img_weather);
+        txt_temp = view.findViewById(R.id.txt_temp);
+        txt_feels_like = view.findViewById(R.id.txt_feels_like);
+        txt_clouds = view.findViewById(R.id.txt_clouds);
+        txt_wind = view.findViewById(R.id.txt_wind);
+        txt_minmax = view.findViewById(R.id.txt_low_high_temp);
+        txt_press_humid = view.findViewById(R.id.txt_pressure_humidity);
+        txt_sunrise_sunset = view.findViewById(R.id.txt_sunrise_sunset);
         //endregion
         LOC.addObserver(this); //Add Observer on GPSLocationModel in MainActivity
-        return root;
+        weather_now.setOnClickListener(v -> showWeather(0));
+        weather_hourly.setOnClickListener(v -> showWeather(1));
+        weather_daily.setOnClickListener(v -> showWeather(2));
+
+        return view;
+    }
+
+    private void showWeather(int type) {
+        current_weather_data.setVisibility(View.GONE);
+        hourly_weather_data.setVisibility(View.GONE);
+        daily_weather_data.setVisibility(View.GONE);
+        if (type == 0) current_weather_data.setVisibility(View.VISIBLE);
+        if (type == 1) hourly_weather_data.setVisibility(View.VISIBLE);
+        if (type == 2) daily_weather_data.setVisibility(View.VISIBLE);
     }
 
     public void update(Observable locModel, Object loc) {
@@ -87,7 +105,6 @@ public class WeatherFragment extends Fragment implements Observer {
     }
 
     private void requestWeather() {
-//        String url = "https://api.openweathermap.org/data/2.5/weather?"
         String url = "https://api.openweathermap.org/data/2.5/onecall?units=metric&exclude=minutely"
                 + "&lat=" + LOC.now().getLatitude() + "&lon=" + LOC.now().getLongitude()
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
@@ -95,10 +112,8 @@ public class WeatherFragment extends Fragment implements Observer {
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> getActivity().runOnUiThread(() -> json2object(response)),
-//                response -> ACT.runOnUiThread(() -> updateUI(response)),
                 error -> msg(getActivity(), "Volley Weather Error")));
     }
-
 
     private void json2object(JSONObject response) {
         try {
@@ -127,130 +142,33 @@ public class WeatherFragment extends Fragment implements Observer {
     }
 
     private void updateUI() {
-        //SPLITS JSONRESPONSE INTO JSONOBJECTS
-//            JSONObject weather = (JSONObject) response.getJSONArray("weather").get(0);
-//            JSONObject main = response.getJSONObject("main");
-//            JSONObject wind = response.getJSONObject("wind");
-//            JSONObject sys = response.getJSONObject("sys");
-
-        //CREATES A SPANNABLE STRING FOR LOC, TEMP AND FEELS
-//            String location = response.getString("name").split(" ")[0];
-//            String temp = getString(R.string.temperature, (int) main.getDouble("temp") - 273);
-//            String feels = getString(R.string.feels_temp, main.getDouble("feels_like") - 273.15);
-//            SpannableString span1 = new SpannableString(location);
-//            SpannableString span2 = new SpannableString(temp);
-//            SpannableString span3 = new SpannableString(feels);
-//            span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
-//            span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, temp.length(), 0);
-//            span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, feels.length(), 0);
-
-        //CREATES A SPANNABLE STRING FOR LOC, TEMP AND FEELS
-        //           String location = response.getString("name").split(" ")[0];
-        String temp = getString(R.string.temperature, (int) wm.current.temp);
-        //String temp = wm.current.temp);
-        String feels = getString(R.string.feels_temp, (int) wm.current.feels_like);
-        //SpannableString span1 = new SpannableString(location);
-        SpannableString span2 = new SpannableString(temp);
-        SpannableString span3 = new SpannableString(feels);
-        //span1.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, location.length(), 0);
-        span2.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h1)), 0, span2.length(), 0);
-        span3.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.h5)), 0, span3.length(), 0);
-
-        //SETS DATA FROM JSON OBJECTS
-//            String dir = "NA";
-//            if (wind.has("deg")) dir = getCompassDirection((float) wind.getDouble("deg"));
-//            double windspeed = wind.getDouble("speed");
-//            double maxTemp = main.getDouble("temp_max") - 273.15;
-//            double minTemp = main.getDouble("temp_min") - 273.15;
-//            int pressure = (int) main.getDouble("pressure");
-//            int humidity = (int) main.getDouble("humidity");
-//            long sunrise = sys.getInt("sunrise") * 1000L;
-//            long sunset = sys.getInt("sunset") * 1000L;
-//            IO.edit().putLong("Sunrise", sunrise).apply();
-//            IO.edit().putLong("Sunset", sunset).apply();
-//            int clouds = response.getJSONObject("clouds").getInt("all");
-//            int visibility = 0;
-//            if (response.has("visibility"))
-//                visibility = response.getInt("visibility") / 1000;
-//            String description = weather.getString("description");
-//            description = description.substring(0, 1).toUpperCase() + description.substring(1);
-
-        //UPDATES VIEW WITH DATA
-
-//            weather_icon.setImageDrawable(getWeatherIcon(weather.getString("icon")));
-        weather_icon.setImageDrawable(getWeatherIcon(wm.current.weather[0].icon));
+        weather_icon.setImageDrawable(Tools.getWeatherIcon(getActivity(), wm.current.weather[0].icon));
         txt_clouds.setText(wm.current.clouds + "% " + wm.current.weather[0].description);
         txt_temp.setText(getString(R.string.temperature, (int) wm.current.temp));
         txt_feels_like.setText(getString(R.string.feels_temp, (int) wm.current.feels_like));
-        txt_wind.setText(getString(R.string.wind, wm.current.wind_speed, wm.current.wind_deg));
-        txt_minmax.setText(getString(R.string.minmax_temp, wm.dailyList.get(0).temp.max, wm.dailyList.get(0).temp.min));
-        txt_press_humid.setText(getString(R.string.press_humid, wm.current.pressure, wm.current.humidity));
 
         SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
         txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset,
-                time.format(new Date(wm.dailyList.get(0).sunrise)),
-                time.format(new Date(wm.dailyList.get(0).sunset))));
+                time.format(new Date(wm.current.sunrise * 1000)),
+                time.format(new Date(wm.current.sunset * 1000)),
+                wm.current.uvi));
+        txt_wind.setText(getString(R.string.wind,
+                wm.current.wind_speed,
+                wm.current.wind_deg,
+                getCompassDirection(wm.current.wind_deg)));
+        txt_minmax.setText(getString(R.string.minmax_temp,
+                wm.dailyList.get(0).temp.max,
+                wm.dailyList.get(0).temp.min));
+        txt_press_humid.setText(getString(R.string.press_humid,
+                wm.current.pressure,
+                wm.current.humidity,
+                (int) wm.current.dew_point
+        ));
 
-        //msg("WeatherPos: " + response.getString("name"));
-    }
+        ArrayAdapter dailyAdapter = new DailyAdapter(getContext(), wm.dailyList);
+        daily_weather_data.setVisibility(View.VISIBLE);
+        daily_weather_data.setAdapter(dailyAdapter);
+        daily_weather_data.setOnItemClickListener((parent, view, position, id) -> {});
 
-    private Drawable getWeatherIcon(String icon) {
-        //PICKS ICON DEPENDING ON ICON CODE IN JSONRESPONSE
-        switch (icon) {
-            case "01d":
-                return getResources().getDrawable(R.drawable.wic_01d_day_clear, null);
-            case "01n":
-                return getResources().getDrawable(R.drawable.wic_01n_night_clear, null);
-            case "02d":
-                return getResources().getDrawable(R.drawable.wic_02d_day_partial_cloud, null);
-            case "02n":
-                return getResources().getDrawable(R.drawable.wic_02n_night_partial_cloud, null);
-            case "03d":
-                return getResources().getDrawable(R.drawable.wic_03_cloudy, null);
-            case "03n":
-                return getResources().getDrawable(R.drawable.wic_03_cloudy, null);
-            case "04d":
-                return getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
-            case "04n":
-                return getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
-            case "09d":
-                return getResources().getDrawable(R.drawable.wic_09_rain, null);
-            case "09n":
-                return getResources().getDrawable(R.drawable.wic_09_rain, null);
-            case "10d":
-                return getResources().getDrawable(R.drawable.wic_10d_day_rain, null);
-            case "10n":
-                return getResources().getDrawable(R.drawable.wic_10n_night_rain, null);
-            case "11d":
-                return getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
-            case "11n":
-                return getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
-            case "13d":
-                return getResources().getDrawable(R.drawable.wic_13_snow, null);
-            case "13n":
-                return getResources().getDrawable(R.drawable.wic_13_snow, null);
-            case "50d":
-                return getResources().getDrawable(R.drawable.wic_50_fog, null);
-            case "50n":
-                return getResources().getDrawable(R.drawable.wic_50_fog, null);
-            default:
-                return getResources().getDrawable(R.drawable.wic_11d_day_rain_thunder, null);
-        }
     }
 }
-
-//WEATHER NOW
-//{"coord":{"lon":12.48,"lat":55.68},
-// "weather":[{"id":500,"main":"Rain","description":"light rain","icon":"10n"}],
-// "base":"stations",
-// "main":{"temp":280.81,"feels_like":277.04,"temp_min":280.15,"temp_max":281.15,"pressure":991,"humidity":100},
-// "visibility":9000,
-// "wind":{"speed":4.6,"deg":240,"gust":11.3},
-// "clouds":{"all":100},
-// "dt":1583863378,
-// "sys":{"type":1,"id":9710,"country":"DK","sunrise":1583818656,"sunset":1583859790},
-// "timezone":3600,
-// "id":2614600,
-// "name":"Rødovre Municipality",
-// "cod":200}
-

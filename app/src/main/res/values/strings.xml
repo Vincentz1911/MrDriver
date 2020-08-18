@@ -27,10 +27,10 @@
     <string name="weather_icon">Weather Icon</string>
     <string name="temperature">%d°</string>
     <string name="feels_temp">Feels %d°</string>
-    <string name="wind">%.1fms\n%d</string>
+    <string name="wind">%.1fms\n%d°\n%s</string>
     <string name="minmax_temp">%1$.1f°\n%2$.1f°</string>
-    <string name="press_humid">%1$d\n%2$d%%</string>
-    <string name="sunrise_sunset">%1$s\n%2$s</string>
+    <string name="press_humid">P %1$d\nH %2$d%%\nD %3$d°</string>
+    <string name="sunrise_sunset">%s\n%s\nUV %.1f</string>
     <!--    OBD2    -->
     <string name="speed">Speed: %s km/h</string>
     <string name="rpm">RPM: %s</string>

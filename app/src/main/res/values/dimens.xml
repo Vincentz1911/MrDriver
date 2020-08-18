@@ -8,6 +8,7 @@
     <dimen name="h1">48sp</dimen>
     <dimen name="padding">3dp</dimen>
     <dimen name="margin">10dp</dimen>
+    <dimen name="huge_icon">64dp</dimen>
     <dimen name="big_icon">48dp</dimen>
     <dimen name="medium_icon">32dp</dimen>
     <dimen name="small_icon">24dp</dimen>

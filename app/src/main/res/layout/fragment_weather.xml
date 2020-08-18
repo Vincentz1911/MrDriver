@@ -6,7 +6,6 @@
     android:orientation="vertical"
     tools:context=".weather.WeatherFragment">
 
-
     <!--BUTTOM BAR-->
     <TableRow
         android:id="@+id/bottom_bar"
@@ -37,21 +36,11 @@
     </TableRow>
 
     <TableLayout
+        android:id="@+id/temp_weather"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/bottom_bar"
-        android:layout_alignParentTop="true">
-
-
+        android:layout_height="wrap_content">
 
         <TableRow>
-
-            <TextView
-                android:id="@+id/txt_temp"
-                android:layout_weight="1"
-                android:background="@color/faded"
-                android:text="32*"
-                android:textSize="@dimen/h1" />
 
             <ImageView
                 android:id="@+id/img_weather"
@@ -62,111 +51,58 @@
                 android:contentDescription="@string/weather_icon"
                 android:scaleType="fitCenter"
                 android:src="@drawable/wic_11d_day_rain_thunder" />
-        </TableRow>
-
-        <TableRow
-            >
 
             <TextView
-                android:id="@+id/txt_feels_like"
+                android:id="@+id/txt_temp"
                 android:layout_weight="1"
-                android:text="feels like 100*"
-                android:textSize="@dimen/h4" />
+                android:gravity="center"
+                android:text="32°"
+                android:textSize="@dimen/h1" />
+        </TableRow>
+
+        <TableRow android:gravity="center">
 
             <TextView
                 android:id="@+id/txt_clouds"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:scaleType="fitCenter"
-                android:text="kjlasd sdjfkl jkldsaf"
                 android:textSize="@dimen/h5" />
-        </TableRow>
 
-        <TableRow
-            android:layout_weight="1">
-            <RelativeLayout android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/wind"
-                    android:src="@drawable/wic_windflag_64dp" />
-
-                <TextView
-                    android:id="@+id/txt_wind"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="@dimen/h3" />
-
-            </RelativeLayout>
-
-            <RelativeLayout android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/press_humid"
-                    android:src="@drawable/wic_humiditypressure_64dp" />
-
-                <TextView
-                    android:id="@+id/txt_pressure_humidity"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="@dimen/h3" />
-            </RelativeLayout>
-        </TableRow>
-
-        <!--ADVANCED WEATHER 2nd ROW-->
-        <TableRow
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <RelativeLayout android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/minmax_temp"
-                    android:src="@drawable/wic_tempminmax_64dp" />
-
-                <TextView
-                    android:id="@+id/txt_low_high_temp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="@dimen/h3" />
-            </RelativeLayout>
-
-            <RelativeLayout android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/sunrise_sunset"
-                    android:src="@drawable/wic_sunrise_dawn_64dp" />
-
-                <TextView
-                    android:id="@+id/txt_sunrise_sunset"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="@dimen/h3" />
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/txt_feels_like"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="@dimen/h4" />
         </TableRow>
     </TableLayout>
 
-    <!--BASIC WEATHER-->
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_bar"
+        android:layout_below="@id/temp_weather"
+        android:orientation="vertical"
+        android:background="@drawable/draw_rounded_corners">
 
-        <!--ADVANCED WEATHER-->
+        <include
+            android:id="@+id/current_weather_data"
+            layout="@layout/layout_weather_current"
+            android:visibility="gone"/>
 
-    </TableLayout>
+        <ListView
+            android:id="@+id/hourly_weather_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding"
+            android:visibility="visible"/>
 
+        <ListView
+            android:id="@+id/daily_weather_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding"
+            android:visibility="visible"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

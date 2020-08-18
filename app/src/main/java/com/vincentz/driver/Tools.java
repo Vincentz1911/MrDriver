@@ -2,6 +2,7 @@ package com.vincentz.driver;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -66,5 +67,49 @@ public class Tools {
         else if (b <= 315) return "NW";
         else if (b <= 337.5) return "NNW";
         else return "";
+    }
+
+    //PICKS ICON DEPENDING ON ICON CODE IN JSONRESPONSE
+    public static Drawable getWeatherIcon(Activity act, String icon) {
+        switch (icon) {
+            case "01d":
+                return act.getResources().getDrawable(R.drawable.wic_01d_day_clear, null);
+            case "01n":
+                return act.getResources().getDrawable(R.drawable.wic_01n_night_clear, null);
+            case "02d":
+                return act.getResources().getDrawable(R.drawable.wic_02d_day_partial_cloud, null);
+            case "02n":
+                return act.getResources().getDrawable(R.drawable.wic_02n_night_partial_cloud, null);
+            case "03d":
+                return act.getResources().getDrawable(R.drawable.wic_03_cloudy, null);
+            case "03n":
+                return act.getResources().getDrawable(R.drawable.wic_03_cloudy, null);
+            case "04d":
+                return act.getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
+            case "04n":
+                return act.getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
+            case "09d":
+                return act.getResources().getDrawable(R.drawable.wic_09_rain, null);
+            case "09n":
+                return act.getResources().getDrawable(R.drawable.wic_09_rain, null);
+            case "10d":
+                return act.getResources().getDrawable(R.drawable.wic_10d_day_rain, null);
+            case "10n":
+                return act.getResources().getDrawable(R.drawable.wic_10n_night_rain, null);
+            case "11d":
+                return act.getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
+            case "11n":
+                return act.getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
+            case "13d":
+                return act.getResources().getDrawable(R.drawable.wic_13_snow, null);
+            case "13n":
+                return act.getResources().getDrawable(R.drawable.wic_13_snow, null);
+            case "50d":
+                return act.getResources().getDrawable(R.drawable.wic_50_fog, null);
+            case "50n":
+                return act.getResources().getDrawable(R.drawable.wic_50_fog, null);
+            default:
+                return act.getResources().getDrawable(R.drawable.wic_11d_day_rain_thunder, null);
+        }
     }
 }

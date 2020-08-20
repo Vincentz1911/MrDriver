@@ -16,4 +16,7 @@ public class WeatherHourlyModel { //"current":
     int wind_deg; //"wind_deg": 280,
     double pop; //"pop": 0
     WeatherDescriptionModel[] weather;
+    RainModel rain = new RainModel(); //    "rain": {"1h": 2.93}
+
+
 }

@@ -1,5 +1,6 @@
 package com.vincentz.driver.navigation;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,7 +20,6 @@ import android.widget.TextView;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -30,8 +30,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vincentz.driver.R;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,11 +47,14 @@ public class NavigationFragment extends Fragment {
     Routing routing;
     //LocationModel destination;
     NavigationListAdapter arrayAdapter;
+    Activity act;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_navigation, vg, false);
-        routing = new Routing(getActivity());
+        act = getActivity();
+        //if (getActivity() != null) act = act;
+        routing = new Routing(act);
         init(view);
         return view;
     }
@@ -60,20 +63,21 @@ public class NavigationFragment extends Fragment {
         ImageView searchButton = view.findViewById(R.id.search_destination);
         ImageView savedLocButton = view.findViewById(R.id.saved_destinations);
         ImageView routeButton = view.findViewById(R.id.route_to_destination);
-        Searchbox = getActivity().findViewById(R.id.searchbox);
+        Searchbox = act.findViewById(R.id.searchbox);
         LocationsListView = view.findViewById(R.id.listview_navigation);
-        txt_Destination = getActivity().findViewById(R.id.txt_destination);
+        txt_Destination = act.findViewById(R.id.txt_destination);
 
-        fillSearchListView(loadLocations());
+        //fillSearchListView(loadLocations());
+        getLocationsFromAPI(1);
 
         savedLocButton.setOnClickListener(v -> {
-            hideKeyboard(getActivity());
+            hideKeyboard(act);
             Searchbox.setVisibility(View.GONE);
             fillSearchListView(loadLocations());
         });
 
         savedLocButton.setOnLongClickListener(v -> {
-            hideKeyboard(getActivity());
+            hideKeyboard(act);
             Searchbox.setVisibility(View.GONE);
             getLocationsFromAPI(1);
             return true;
@@ -85,7 +89,7 @@ public class NavigationFragment extends Fragment {
                 arrayAdapter.clear();
                 arrayAdapter.notifyDataSetChanged();
             } else {
-                hideKeyboard(getActivity());
+                hideKeyboard(act);
                 Searchbox.setVisibility(View.GONE);
             }
         });
@@ -129,7 +133,7 @@ public class NavigationFragment extends Fragment {
             });
 
         }
-        hideKeyboard(getActivity());
+        hideKeyboard(act);
     }
 
     TimerTask task;
@@ -163,13 +167,12 @@ public class NavigationFragment extends Fragment {
                     }.getType();
                     ArrayList<LocationModel> LocationList = new Gson().fromJson(response.toString(), type);
                     fillSearchListView(LocationList);
-                    arrayAdapter.notifyDataSetChanged();
                 },
-                error -> msg(getActivity(),"Volley AutoComplete Error")));
+                error -> msg(act,"Volley AutoComplete Error")));
     }
 
     private void searchRequest(Editable editable) {
-        getActivity().runOnUiThread(() -> {
+        act.runOnUiThread(() -> {
             //LatLng mapPos = map.getCameraPosition().target;
             String url = "https://api.openrouteservice.org/geocode/search" +
                     "?api_key=5b3ce3597851110001cf6248acf21fffcf174a02b63b9c6dde867c62"
@@ -185,7 +188,7 @@ public class NavigationFragment extends Fragment {
             //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
             RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> fillSearchListView(routing.JSONsearchToModel(response)),
-                    error -> msg(getActivity(),"Volley AutoComplete Error")));
+                    error -> msg(act,"Volley AutoComplete Error")));
         });
     }
 
@@ -196,7 +199,7 @@ public class NavigationFragment extends Fragment {
             arrayAdapter.notifyDataSetChanged();
         }
 
-        arrayAdapter = new NavigationListAdapter(getContext(), list);
+        arrayAdapter = new NavigationListAdapter(act, list);
         LocationsListView.setVisibility(View.VISIBLE);
         LocationsListView.setAdapter(arrayAdapter);
         LocationsListView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
@@ -224,7 +227,7 @@ public class NavigationFragment extends Fragment {
         ArrayList<LocationModel> list = loadLocations();
         location.stored = 1;
         list.add(location);
-        msg(getActivity(),"Saved Location: " + location.name);
+        msg(act,"Saved Location: " + location.name);
         IO.edit().putString("locations", new Gson().toJson(list)).apply();
 
         uploadLocation(location);
@@ -243,12 +246,7 @@ public class NavigationFragment extends Fragment {
 
             @Override
             public byte[] getBody() {
-                try {
-                    return requestBody == null ? null : requestBody.getBytes("utf-8");
-                } catch (UnsupportedEncodingException uee) {
-                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                    return null;
-                }
+                return requestBody == null ? null : requestBody.getBytes(StandardCharsets.UTF_8);
             }
 
             @Override
@@ -258,6 +256,7 @@ public class NavigationFragment extends Fragment {
                     responseString = String.valueOf(response.statusCode);
                     // can get more details such as response.headers
                 }
+                assert response != null;
                 return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
             }
         };
@@ -267,7 +266,7 @@ public class NavigationFragment extends Fragment {
 
     private void deleteLocation(ArrayList<LocationModel> list, int i) {
 //        ArrayList<LocationModel> list = loadLocations();
-        msg(getActivity(),"Deleted Location: " + list.get(i).name);
+        msg(act,"Deleted Location: " + list.get(i).name);
         list.remove(i);
         IO.edit().putString("locations", new Gson().toJson(list)).apply();
     }

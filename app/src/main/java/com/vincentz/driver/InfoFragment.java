@@ -35,7 +35,7 @@ public class InfoFragment extends Fragment {
                     Date dateNow = new Date();
                     time.setText(new SimpleDateFormat("HH:mm:ss",
                             Locale.getDefault()).format(dateNow));
-                    date.setText(new SimpleDateFormat("EEEE d. MMMM",
+                    date.setText(new SimpleDateFormat("EEE d. MMM",
                             Locale.getDefault()).format(dateNow));
                     week.setText(getString(R.string.week, new SimpleDateFormat("w - yyyy",
                             Locale.getDefault()).format(dateNow)));

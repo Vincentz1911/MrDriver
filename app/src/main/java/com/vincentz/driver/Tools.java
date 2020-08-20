@@ -77,17 +77,17 @@ public class Tools {
             case "01n":
                 return act.getResources().getDrawable(R.drawable.wic_01n_night_clear, null);
             case "02d":
-                return act.getResources().getDrawable(R.drawable.wic_02d_day_partial_cloud, null);
+                return act.getResources().getDrawable(R.drawable.wic_02d_day_clear, null);
             case "02n":
-                return act.getResources().getDrawable(R.drawable.wic_02n_night_partial_cloud, null);
+                return act.getResources().getDrawable(R.drawable.wic_02n_night_clear, null);
             case "03d":
-                return act.getResources().getDrawable(R.drawable.wic_03_cloudy, null);
+                return act.getResources().getDrawable(R.drawable.wic_03d_day_partial_cloud, null);
             case "03n":
-                return act.getResources().getDrawable(R.drawable.wic_03_cloudy, null);
+                return act.getResources().getDrawable(R.drawable.wic_03n_night_partial_cloud, null);
             case "04d":
-                return act.getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
+                return act.getResources().getDrawable(R.drawable.wic_04_cloudy, null);
             case "04n":
-                return act.getResources().getDrawable(R.drawable.wic_04_angry_clouds, null);
+                return act.getResources().getDrawable(R.drawable.wic_04_cloudy, null);
             case "09d":
                 return act.getResources().getDrawable(R.drawable.wic_09_rain, null);
             case "09n":
@@ -111,5 +111,21 @@ public class Tools {
             default:
                 return act.getResources().getDrawable(R.drawable.wic_11d_day_rain_thunder, null);
         }
+    }
+
+    public static String windDescription(double wind) {
+        if (wind < 0.3) return "Calm";
+        if (wind < 1.5) return "Light air";
+        if (wind < 3.3) return "Light breeze";
+        if (wind < 5.5) return "Gentle breeze";
+        if (wind < 8.0) return "Moderate breeze";
+        if (wind < 10.8) return "Fresh breeze";
+        if (wind < 13.9) return "Strong breeze";
+        if (wind < 17.2) return "High wind";
+        if (wind < 20.7) return "Fresh Gale";
+        if (wind < 24.5) return "Strong Gale";
+        if (wind < 28.4) return "Storm";
+        if (wind < 32.6) return "Violent storm";
+        return "Hurricane";
     }
 }

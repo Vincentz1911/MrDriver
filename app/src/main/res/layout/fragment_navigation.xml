@@ -1,40 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".navigation.NavigationFragment">
 
     <TableRow
+        android:id="@+id/nav_icons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
         <ImageView
             android:id="@+id/saved_destinations"
             android:layout_weight="1"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:src="@drawable/nic_baseline_location_on_24"/>
+            android:src="@drawable/nic_baseline_location_on_24"
+            android:contentDescription="@string/locations" />
 
         <ImageView
             android:id="@+id/search_destination"
             android:layout_weight="1"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:src="@drawable/nic_baseline_search_24"/>
+            android:src="@drawable/nic_baseline_search_24"
+            android:contentDescription="@string/search" />
 
         <ImageView
             android:id="@+id/route_to_destination"
             android:layout_weight="1"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:src="@drawable/nic_baseline_navigation_24"/>
+            android:src="@drawable/nic_baseline_navigation_24"
+            android:contentDescription="@string/route" />
     </TableRow>
 
     <ListView
         android:id="@+id/listview_navigation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
+        android:layout_above="@id/nav_icons"
         android:background="@drawable/draw_rounded_corners" />
 
-</TableLayout>
+
+</RelativeLayout>

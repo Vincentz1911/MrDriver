@@ -106,7 +106,7 @@ public class MainActivity extends FragmentActivity {
         activeFrame = fl;
         activeFrame.setVisibility(View.VISIBLE);
         sidebar.setVisibility(View.VISIBLE);
-        btn_fullscreen.setImageResource(R.drawable.mic_fullscreen_100dp);
+        btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_100dp);
     }
 
     private void hideAllFrameLayouts() {
@@ -117,7 +117,7 @@ public class MainActivity extends FragmentActivity {
         fl_navigation.setVisibility(View.GONE);
         fl_obd2.setVisibility(View.GONE);
         fl_camera.setVisibility(View.GONE);
-        btn_fullscreen.setImageResource(R.drawable.mic_fullscreen_exit_100dp);
+        btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_exit_100dp);
     }
 
     void setupView() {

@@ -7,13 +7,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.geojson.GeoJsonFeature;
@@ -26,11 +24,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
 
 import static com.vincentz.driver.Tools.*;
 
@@ -39,10 +37,10 @@ import static com.vincentz.driver.navigation.MapFragment.route;
 
 public class Routing {
 
-    Activity activity;
+    Activity act;
 
-    public Routing(Activity activity) {
-        this.activity = activity;
+    public Routing(Activity act) {
+        this.act = act;
     }
 
     void routing(LatLng target) {
@@ -55,7 +53,7 @@ public class Routing {
                 response -> {
                     geoLocationReversed(target);
                     handleRouteResponse(target, response);
-                }, error -> msg(activity,"Volley Routing Error")));
+                }, error -> msg(act,"Volley Routing Error")));
     }
 
     private void handleRouteResponse(LatLng target, JSONObject response) {
@@ -68,21 +66,26 @@ public class Routing {
 
         route = new GeoJsonLayer(map, response);
         GeoJsonLineStringStyle lineStringStyle = route.getDefaultLineStringStyle();
-        lineStringStyle.setColor(activity.getResources().getColor(R.color.colorRouteDay, activity.getTheme()));
+        lineStringStyle.setColor(act.getResources().getColor(R.color.colorRouteDay, act.getTheme()));
         lineStringStyle.setWidth(12);
         route.addLayerToMap();
 
-        hideKeyboard(activity);
-        fullscreen(activity);
+        hideKeyboard(act);
+        fullscreen(act);
 
-        EditText Searchbox = activity.findViewById(R.id.searchbox);
-
+        EditText Searchbox = act.findViewById(R.id.searchbox);
         Searchbox.setVisibility(View.GONE);
         MapFragment.isCamLock = false;
-        map.setPadding(50, 50, 50, 200);
+        map.setPadding(50, 100, 50, 200);
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(route.getBoundingBox(), 0));
         String[] arr = getDistanceAndTime();
-        msg(activity, "Distance: " + arr[0] + " Time: " + arr[1]);
+        msg(act, "Distance: " + arr[0] + " Time: " + arr[1]);
+
+        TimerTask task = new TimerTask() {public void run() { MapFragment.isCamLock = true; }};
+        new Timer().schedule(task, 10000L);
+
+
+        //MapFragment.isCamLock = true;
     }
 
     private void parseJSONRoute(JSONObject response) throws JSONException {
@@ -105,8 +108,8 @@ public class Routing {
         NAV.stepsList = new Gson().fromJson(String.valueOf(steps), new TypeToken<ArrayList<StepsModel>>() {}.getType());
 
         //ADDS STEPS TO LISTVIEW WITH NEW ADAPTER
-        StepsListAdapter stepsListAdapter = new StepsListAdapter(activity, NAV.stepsList);
-        ListView LocationsListView = activity.findViewById(R.id.listview_navigation);
+        StepsListAdapter stepsListAdapter = new StepsListAdapter(act, NAV.stepsList);
+        ListView LocationsListView = act.findViewById(R.id.listview_navigation);
         LocationsListView.setAdapter(stepsListAdapter);
     }
 
@@ -136,10 +139,10 @@ public class Routing {
         RQ.add(new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             if (JSONsearchToModel(response) != null) {
                 DEST = JSONsearchToModel(response).get(0);
-                TextView txt_Destination = activity.findViewById(R.id.txt_destination);
+                TextView txt_Destination = act.findViewById(R.id.txt_destination);
                 txt_Destination.setText(DEST.name);
             }
-        }, error -> msg(activity,"Volley GeoLocation Error")
+        }, error -> msg(act,"Volley GeoLocation Error")
         ));
     }
 

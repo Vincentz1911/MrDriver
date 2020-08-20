@@ -13,13 +13,15 @@ import androidx.annotation.NonNull;
 
 import com.vincentz.driver.R;
 import com.vincentz.driver.Tools;
-import com.vincentz.driver.navigation.StepsModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static com.vincentz.driver.Tools.getCompassDirection;
+import static com.vincentz.driver.Tools.windDescription;
 
 public class DailyAdapter extends ArrayAdapter<WeatherDailyModel> {
 
@@ -40,14 +42,18 @@ public class DailyAdapter extends ArrayAdapter<WeatherDailyModel> {
 
         WeatherDailyModel day = list.get(position);
         TextView date = listItem.findViewById(R.id.txt_date);
-
-        //String dateAsText = new SimpleDateFormat("d mmm MM-dd").format(new Date(day.dt * 1000L));
-        date.setText(new SimpleDateFormat("EEE d. MMMM", Locale.getDefault()).format(new Date(day.dt * 1000L)));
+        date.setText(new SimpleDateFormat("EEE d. MMM", Locale.getDefault()).format(new Date(day.dt * 1000L)));
 
         ImageView icon = listItem.findViewById(R.id.img_weather);
         icon.setImageDrawable(Tools.getWeatherIcon((Activity) getContext(), day.weather[0].icon));
         TextView highLow = listItem.findViewById(R.id.txt_low_high_temp);
-        highLow.setText(getContext().getString(R.string.minmax_temp, day.temp.max, day.temp.min));
+        highLow.setText(getContext().getString(R.string.minmax_daily, day.temp.min, day.temp.max));
+        TextView wind = listItem.findViewById(R.id.txt_wind);
+        wind.setText(getContext().getString(R.string.wind_daily,
+                windDescription(day.wind_speed),
+                getCompassDirection(day.wind_deg)));
+        TextView pop = listItem.findViewById(R.id.txt_pop);
+        pop.setText((int)(day.pop * 100) + "%");
 
         return listItem;
     }

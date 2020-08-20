@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,7 +16,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vincentz.driver.R;
 import com.vincentz.driver.Tools;
-import com.vincentz.driver.navigation.NavigationListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,53 +36,52 @@ import static com.vincentz.driver.Tools.*;
 public class WeatherFragment extends Fragment implements Observer {
 
     private Timer weatherTimer;
-    public WeatherModel wm;
     private ImageView weather_icon;
-    private TextView txt_temp, txt_feels_like, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
-    private View current_weather_data;
-    private ListView hourly_weather_data, daily_weather_data;
-    private boolean startup;
+    private TextView txt_temp, txt_feels, txt_clouds, txt_wind, txt_minmax, txt_press_humid, txt_sunrise_sunset;
+    private View currentView;
+    private ListView hourlyListView, dailyListView;
+    private boolean isStarted;
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
+        LOC.addObserver(this); //Add Observer on GPSLocationModel in MainActivity
         //region INIT UI
         View view = li.inflate(R.layout.fragment_weather, vg, false);
-        current_weather_data = view.findViewById(R.id.current_weather_data);
-        hourly_weather_data = view.findViewById(R.id.hourly_weather_data);
-        daily_weather_data = view.findViewById(R.id.daily_weather_data);
-        ImageView weather_now = view.findViewById(R.id.weather_now);
-        ImageView weather_hourly = view.findViewById(R.id.weather_hourly);
-        ImageView weather_daily = view.findViewById(R.id.weather_daily);
+        currentView = view.findViewById(R.id.current_weather_data);
+        hourlyListView = view.findViewById(R.id.hourly_weather_data);
+        dailyListView = view.findViewById(R.id.daily_weather_data);
         weather_icon = view.findViewById(R.id.img_weather);
         txt_temp = view.findViewById(R.id.txt_temp);
-        txt_feels_like = view.findViewById(R.id.txt_feels_like);
+        txt_feels = view.findViewById(R.id.txt_feels_like);
         txt_clouds = view.findViewById(R.id.txt_clouds);
         txt_wind = view.findViewById(R.id.txt_wind);
         txt_minmax = view.findViewById(R.id.txt_low_high_temp);
         txt_press_humid = view.findViewById(R.id.txt_pressure_humidity);
         txt_sunrise_sunset = view.findViewById(R.id.txt_sunrise_sunset);
-        //endregion
-        LOC.addObserver(this); //Add Observer on GPSLocationModel in MainActivity
+
+        ImageView weather_now = view.findViewById(R.id.weather_now);
+        ImageView weather_hourly = view.findViewById(R.id.weather_hourly);
+        ImageView weather_daily = view.findViewById(R.id.weather_daily);
         weather_now.setOnClickListener(v -> showWeather(0));
         weather_hourly.setOnClickListener(v -> showWeather(1));
         weather_daily.setOnClickListener(v -> showWeather(2));
-
         return view;
+        //endregion
     }
 
     private void showWeather(int type) {
-        current_weather_data.setVisibility(View.GONE);
-        hourly_weather_data.setVisibility(View.GONE);
-        daily_weather_data.setVisibility(View.GONE);
-        if (type == 0) current_weather_data.setVisibility(View.VISIBLE);
-        if (type == 1) hourly_weather_data.setVisibility(View.VISIBLE);
-        if (type == 2) daily_weather_data.setVisibility(View.VISIBLE);
+        currentView.setVisibility(View.GONE);
+        hourlyListView.setVisibility(View.GONE);
+        dailyListView.setVisibility(View.GONE);
+        if (type == 0) currentView.setVisibility(View.VISIBLE);
+        if (type == 1) hourlyListView.setVisibility(View.VISIBLE);
+        if (type == 2) dailyListView.setVisibility(View.VISIBLE);
     }
 
     public void update(Observable locModel, Object loc) {
         //Listener for GPSLocationModel Observable.
-        if (loc == null || startup) return;
-        startup = true;
+        if (loc == null || isStarted) return;
+        isStarted = true;
         LOC.deleteObserver(this);
         weatherTimer = new Timer("WeatherTimer");
         weatherTimer.schedule(new TimerTask() {
@@ -92,7 +89,7 @@ public class WeatherFragment extends Fragment implements Observer {
             public void run() {
                 requestWeather();
             }
-        }, 0, 60 * 1000);
+        }, 0, 10 * 60 * 1000);
     }
 
     @Override
@@ -109,10 +106,12 @@ public class WeatherFragment extends Fragment implements Observer {
                 + "&lat=" + LOC.now().getLatitude() + "&lon=" + LOC.now().getLongitude()
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
 
-        //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
-        RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> getActivity().runOnUiThread(() -> json2object(response)),
-                error -> msg(getActivity(), "Volley Weather Error")));
+        //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE, PARSE THEN UPDATE UI
+        if (getActivity() != null) {
+            RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
+                    response -> getActivity().runOnUiThread(() -> json2object(response)),
+                    error -> msg(getActivity(), "Weather API Error")));
+        }
     }
 
     private void json2object(JSONObject response) {
@@ -123,29 +122,25 @@ public class WeatherFragment extends Fragment implements Observer {
 
             //GET HOURLY
             JSONArray Jhourly = response.getJSONArray("hourly");
-            Type Htype = new TypeToken<ArrayList<WeatherHourlyModel>>() {
-            }.getType();
+            Type Htype = new TypeToken<ArrayList<WeatherHourlyModel>>() {}.getType();
             ArrayList<WeatherHourlyModel> hourlyList = new Gson().fromJson(Jhourly.toString(), Htype);
 
             //GET DAILY
             JSONArray Jdaily = response.getJSONArray("daily");
-            Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {
-            }.getType();
+            Type Dtype = new TypeToken<ArrayList<WeatherDailyModel>>() {}.getType();
             ArrayList<WeatherDailyModel> dailyList = new Gson().fromJson(Jdaily.toString(), Dtype);
 
-            wm = new WeatherModel(current = current, hourlyList = hourlyList, dailyList = dailyList);
-
-            updateUI();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            updateUI(new WeatherModel(current, hourlyList, dailyList));
+        } catch (JSONException e) { e.printStackTrace(); }
     }
 
-    private void updateUI() {
+    private void updateUI(WeatherModel wm) {
+        if (getContext() == null) return;
         weather_icon.setImageDrawable(Tools.getWeatherIcon(getActivity(), wm.current.weather[0].icon));
-        txt_clouds.setText(wm.current.clouds + "% " + wm.current.weather[0].description);
+        txt_clouds.setText(getString(R.string.clouds,
+                wm.current.clouds, wm.current.weather[0].description));
         txt_temp.setText(getString(R.string.temperature, (int) wm.current.temp));
-        txt_feels_like.setText(getString(R.string.feels_temp, (int) wm.current.feels_like));
+        txt_feels.setText(getString(R.string.feels_temp, (int) wm.current.feels_like));
 
         SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
         txt_sunrise_sunset.setText(getString(R.string.sunrise_sunset,
@@ -155,20 +150,21 @@ public class WeatherFragment extends Fragment implements Observer {
         txt_wind.setText(getString(R.string.wind,
                 wm.current.wind_speed,
                 wm.current.wind_deg,
-                getCompassDirection(wm.current.wind_deg)));
+                getCompassDirection(wm.current.wind_deg),
+                windDescription(wm.current.wind_speed)));
         txt_minmax.setText(getString(R.string.minmax_temp,
                 wm.dailyList.get(0).temp.max,
-                wm.dailyList.get(0).temp.min));
+                wm.dailyList.get(0).temp.min,
+                wm.current.rain._1h));
         txt_press_humid.setText(getString(R.string.press_humid,
                 wm.current.pressure,
                 wm.current.humidity,
                 (int) wm.current.dew_point
         ));
 
-        ArrayAdapter dailyAdapter = new DailyAdapter(getContext(), wm.dailyList);
-        daily_weather_data.setVisibility(View.VISIBLE);
-        daily_weather_data.setAdapter(dailyAdapter);
-        daily_weather_data.setOnItemClickListener((parent, view, position, id) -> {});
-
+        dailyListView.setAdapter(new DailyAdapter(getContext(), wm.dailyList));
+        dailyListView.setOnItemClickListener((parent, view, position, id) -> { });
+        hourlyListView.setAdapter(new HourlyAdapter(getContext(), wm.hourlyList));
+        hourlyListView.setOnItemClickListener((parent, view, position, id) -> { });
     }
 }

@@ -272,6 +272,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //            timer = new Timer();
 //            timer.schedule(timerTask, 1000);
 
+    String oldDirections;
     //TODO DELETE LOCATION
     //TODO interpolate() – Returns the latitude/longitude coordinates of a point that lies a given fraction of the distance between two given points. You can use this to animate a marker between two points, for example.
     private void moveMarker(Marker marker) {
@@ -296,6 +297,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                     marker.setRotation(LOC.bearing());
                     if (DEST == null) txt_Destination.setText("No Destination");
                     txt_Steps.setText(directions);
+                    if (directions != oldDirections) speakWords(directions);
+                    oldDirections = directions;
 //                    if (isOnRoute) txt_Steps.setText(NAV.stepsList.get(step).instruction);
 //                    else txt_Steps.setText("No Route");
 
@@ -322,7 +325,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
         //IS LOCATION ON ROUTE THEN CANCEL TIMER
         if (PolyUtil.isLocationOnPath(LOC.latlng(), stepCoords, false, 10.0f)) {
-            directions = NAV.stepsList.get(step +1).instruction;
+            directions = NAV.stepsList.get(step).instruction;
             //isOnRoute = true;
             timer.cancel();
             timer = new Timer();
@@ -353,7 +356,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         step = 0;
                         new Routing(getActivity()).routing(DEST.latLng);
                     }
-                }, 3000L);
+                }, 1000L);
             }
         }
     }

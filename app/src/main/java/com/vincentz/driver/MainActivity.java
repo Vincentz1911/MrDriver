@@ -7,12 +7,15 @@ import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -24,24 +27,53 @@ import com.vincentz.driver.navigation.NavigationFragment;
 import com.vincentz.driver.weather.WeatherFragment;
 
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
 
     private FrameLayout fl_navigation, fl_weather, fl_obd2, fl_spotify, fl_camera;
-    private FrameLayout activeFrame;
-    private View sidebar;
+    private FrameLayout sidebar, activeFrame;
     private ImageView btn_fullscreen;
     private boolean isFullscreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         IO = getPreferences(MODE_PRIVATE);
+        LOC = new GPSLocationModel();
+        RQ = Volley.newRequestQueue(this);
         setThemeBasedOnTimeOfDay();
         super.onCreate(savedInstanceState);
-        init();
+        setContentView(R.layout.activity_main);
+        fullscreen(this);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen(this));
+        checkPermissions();
+        initButtons();
+
+        //CREATES A NEW TEXT TO SPEECH INSTANTIATION
+        TTS = new TextToSpeech(getApplicationContext(), status -> {
+            if (status != TextToSpeech.ERROR) {
+                TTS.setLanguage(Locale.US);
+                Set<Voice> voices = TTS.getVoices();
+                int i = voices.size();
+            }
+        });
+
+        //IF APP NEVER RUN BEFORE, MAKE WELCOMESCREEN SO PERMISSIONS DOESNT F.UP
+        if (IO.getBoolean("HaveRun", false)) setupView();
+        else getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_map_overlay, new WelcomeFragment(), "").commit();
+    }
+
+    public void onPause(){
+        if(TTS !=null){
+            TTS.stop();
+            TTS.shutdown();
+        }
+        super.onPause();
     }
 
     //SETS THEME BASED ON SUNRISE AND SUNSET.
@@ -57,25 +89,6 @@ public class MainActivity extends FragmentActivity {
 
         if (now.after(sunDown) && now.before(sunUp)) setTheme(R.style.AppTheme_Night);
         else setTheme(R.style.AppTheme_Day);
-    }
-
-    private void init() {
-        //ACT = this;
-        LOC = new GPSLocationModel();
-        RQ = Volley.newRequestQueue(this);
-        IO = getPreferences(MODE_PRIVATE);
-
-        setContentView(R.layout.activity_main);
-        fullscreen(this);
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen(this));
-        checkPermissions();
-
-        //IF APP NEVER RUN BEFORE, MAKE WELCOMESCREEN SO PERMISSIONS DOESNT F.UP
-        if (IO.getBoolean("HaveRun", false)) setupView();
-        else getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_map_overlay, new WelcomeFragment(), "").commit();
-
-        initButtons();
     }
 
     private void initButtons() {
@@ -98,6 +111,8 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.btn_weather).setOnClickListener(v -> showFrameLayout(fl_weather));
         findViewById(R.id.btn_obd2).setOnClickListener(v -> showFrameLayout(fl_obd2));
         findViewById(R.id.btn_camera).setOnClickListener(v -> showFrameLayout(fl_camera));
+        findViewById(R.id.btn_phone).setOnClickListener(v ->
+                startActivity(new Intent(this, TextToSpeechActivity.class)));
     }
 
     private void showFrameLayout(FrameLayout fl) {
@@ -121,7 +136,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     void setupView() {
-        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation(); else checkPermissions();
+        if (PERMISSIONS[0] || PERMISSIONS[1]) getLocation();
+        else checkPermissions();
         IO.edit().putBoolean("HaveRun", true).apply();
         FragmentManager FM = getSupportFragmentManager();
         FM.beginTransaction().replace(R.id.fl_map_overlay, new MapFragment(), "").commit();
@@ -187,7 +203,7 @@ public class MainActivity extends FragmentActivity {
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
-        if (provider != null) msg(this,"Best Location Provider: " + provider);
+        if (provider != null) msg(this, "Best Location Provider: " + provider);
         else {
             msg(this, "No Location provider found");
             return;
@@ -198,7 +214,7 @@ public class MainActivity extends FragmentActivity {
             LOC.setNow(lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
     }
 
-    public LocationListener LocationListener = new LocationListener() {
+    LocationListener LocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             if (!location.hasSpeed() || !location.hasBearing()) return;
@@ -207,11 +223,12 @@ public class MainActivity extends FragmentActivity {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) { }
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
 
         @Override
         public void onProviderEnabled(String provider) {
-            msg(getParent(),"LOC enabled: " + provider);
+            msg(getParent(), "LOC enabled: " + provider);
         }
 
         @Override

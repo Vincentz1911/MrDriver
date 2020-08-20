@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -19,10 +20,15 @@ public class Tools {
     public static LocationModel DEST;
     public static NavigationModel NAV;
     public static SharedPreferences IO;
+    public static TextToSpeech TTS;
     static boolean[] PERMISSIONS;
 
     public static void msg(Activity activity, final String text) {
         activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
+    }
+
+    public static void speakWords(String speech) {
+        TTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
     public static void fullscreen(Activity activity) {
@@ -113,7 +119,7 @@ public class Tools {
         }
     }
 
-    public static String windDescription(double wind) {
+    public static String getWindDescription(double wind) {
         if (wind < 0.3) return "Calm";
         if (wind < 1.5) return "Light air";
         if (wind < 3.3) return "Light breeze";

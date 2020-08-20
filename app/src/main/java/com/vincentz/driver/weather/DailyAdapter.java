@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.vincentz.driver.Tools.getCompassDirection;
-import static com.vincentz.driver.Tools.windDescription;
+import static com.vincentz.driver.Tools.getWindDescription;
 
 public class DailyAdapter extends ArrayAdapter<WeatherDailyModel> {
 
@@ -50,7 +50,7 @@ public class DailyAdapter extends ArrayAdapter<WeatherDailyModel> {
         highLow.setText(getContext().getString(R.string.minmax_daily, day.temp.min, day.temp.max));
         TextView wind = listItem.findViewById(R.id.txt_wind);
         wind.setText(getContext().getString(R.string.wind_daily,
-                windDescription(day.wind_speed),
+                getWindDescription(day.wind_speed),
                 getCompassDirection(day.wind_deg)));
         TextView pop = listItem.findViewById(R.id.txt_pop);
         pop.setText((int)(day.pop * 100) + "%");

@@ -14,6 +14,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vincentz.driver.MainActivity;
 import com.vincentz.driver.R;
 import com.vincentz.driver.Tools;
 
@@ -151,7 +152,7 @@ public class WeatherFragment extends Fragment implements Observer {
                 wm.current.wind_speed,
                 wm.current.wind_deg,
                 getCompassDirection(wm.current.wind_deg),
-                windDescription(wm.current.wind_speed)));
+                getWindDescription(wm.current.wind_speed)));
         txt_minmax.setText(getString(R.string.minmax_temp,
                 wm.dailyList.get(0).temp.max,
                 wm.dailyList.get(0).temp.min,
@@ -166,5 +167,7 @@ public class WeatherFragment extends Fragment implements Observer {
         dailyListView.setOnItemClickListener((parent, view, position, id) -> { });
         hourlyListView.setAdapter(new HourlyAdapter(getContext(), wm.hourlyList));
         hourlyListView.setOnItemClickListener((parent, view, position, id) -> { });
+
+        speakWords("The weather report!");
     }
 }

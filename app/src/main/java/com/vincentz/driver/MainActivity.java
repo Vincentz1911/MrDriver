@@ -19,6 +19,7 @@ import android.speech.tts.Voice;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Switch;
 
 import com.android.volley.toolbox.Volley;
 import com.vincentz.driver.navigation.GPSLocationModel;
@@ -35,7 +36,7 @@ import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
 
-    private FrameLayout fl_navigation, fl_weather, fl_obd2, fl_spotify, fl_camera;
+    private FrameLayout fl_navigation, fl_weather, fl_obd2, fl_spotify, fl_camera, fl_settings;
     private FrameLayout sidebar, activeFrame;
     private ImageView btn_fullscreen;
     private boolean isFullscreen;
@@ -45,7 +46,9 @@ public class MainActivity extends FragmentActivity {
         IO = getPreferences(MODE_PRIVATE);
         LOC = new GPSLocationModel();
         RQ = Volley.newRequestQueue(this);
-        setThemeBasedOnTimeOfDay();
+
+        theme();
+        //setThemeBasedOnTimeOfDay();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fullscreen(this);
@@ -56,9 +59,11 @@ public class MainActivity extends FragmentActivity {
         //CREATES A NEW TEXT TO SPEECH INSTANTIATION
         TTS = new TextToSpeech(getApplicationContext(), status -> {
             if (status != TextToSpeech.ERROR) {
-                TTS.setLanguage(Locale.US);
+                TTS.setLanguage(Locale.ENGLISH);
+
                 Set<Voice> voices = TTS.getVoices();
                 int i = voices.size();
+                msg(this,"Voices : " + i);
             }
         });
 
@@ -66,10 +71,36 @@ public class MainActivity extends FragmentActivity {
         if (IO.getBoolean("HaveRun", false)) setupView();
         else getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_map_overlay, new WelcomeFragment(), "").commit();
+        showFrameLayout(fl_settings);
     }
 
-    public void onPause(){
-        if(TTS !=null){
+    private void theme() {
+        switch (IO.getInt("Theme", 0)){
+            case 0:
+                setTheme(R.style.AppTheme_Air);
+                IO.edit().putInt("Mapstyle", R.raw.mapstyle_night);
+                break;
+            case 1:
+                setTheme(R.style.AppTheme_Blue);
+                IO.edit().putInt("Mapstyle", R.raw.mapstyle_day);
+                break;
+            case 2:
+                setTheme(R.style.AppTheme_Day);
+                IO.edit().putInt("Mapstyle", R.raw.mapstyle_day);
+                break;
+            case 3:
+                setTheme(R.style.AppTheme_Night);
+                IO.edit().putInt("Mapstyle", R.raw.mapstyle_night);
+                break;
+            default:
+                setTheme(R.style.AppTheme_Day);
+                IO.edit().putInt("Mapstyle", R.raw.mapstyle_day);
+        }
+
+    }
+
+    public void onPause() {
+        if (TTS != null) {
             TTS.stop();
             TTS.shutdown();
         }
@@ -88,7 +119,7 @@ public class MainActivity extends FragmentActivity {
         sunDown.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
         if (now.after(sunDown) && now.before(sunUp)) setTheme(R.style.AppTheme_Night);
-        else setTheme(R.style.AppTheme_Day);
+        else setTheme(R.style.AppTheme_Night);
     }
 
     private void initButtons() {
@@ -98,6 +129,7 @@ public class MainActivity extends FragmentActivity {
         fl_weather = findViewById(R.id.fl_weather);
         fl_camera = findViewById(R.id.fl_camera);
         fl_obd2 = findViewById(R.id.fl_obd2);
+        fl_settings = findViewById(R.id.fl_settings);
         activeFrame = fl_navigation;
 
         btn_fullscreen = findViewById(R.id.img_fullscreen);
@@ -111,8 +143,8 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.btn_weather).setOnClickListener(v -> showFrameLayout(fl_weather));
         findViewById(R.id.btn_obd2).setOnClickListener(v -> showFrameLayout(fl_obd2));
         findViewById(R.id.btn_camera).setOnClickListener(v -> showFrameLayout(fl_camera));
-        findViewById(R.id.btn_phone).setOnClickListener(v ->
-                startActivity(new Intent(this, TextToSpeechActivity.class)));
+        findViewById(R.id.btn_settings).setOnClickListener(v -> showFrameLayout(fl_settings));
+        findViewById(R.id.btn_phone).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL)));
     }
 
     private void showFrameLayout(FrameLayout fl) {
@@ -132,6 +164,7 @@ public class MainActivity extends FragmentActivity {
         fl_navigation.setVisibility(View.GONE);
         fl_obd2.setVisibility(View.GONE);
         fl_camera.setVisibility(View.GONE);
+        fl_settings.setVisibility(View.GONE);
         btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_exit_100dp);
     }
 
@@ -146,6 +179,7 @@ public class MainActivity extends FragmentActivity {
         FM.beginTransaction().replace(R.id.fl_spotify, new SpotifyFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_weather, new WeatherFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_obd2, new OBD2Fragment(), "").commit();
+        FM.beginTransaction().replace(R.id.fl_settings, new SettingsFragment(), "").commit();
         //FM.beginTransaction().replace(R.id.fl_camera, new CameraFragment(), "").commit();
     }
 

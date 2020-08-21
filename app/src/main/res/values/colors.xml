@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <color name="colorPrimaryDay">#8baad4</color>-->
-<!--    <color name="colorPrimaryDarkDay">#677fac</color>-->
-<!--    <color name="colorFadedDarkDay">#88677fac</color>-->
-<!--    <color name="colorFadedDay">#888baad4</color>-->
-<!--    <color name="colorAccentDay">#FF8C00</color>-->
-<!--    <color name="colorTextDay">#2c3949</color>-->
+    <color name="colorPrimary_Air">#8baad4</color>
+    <color name="colorPrimaryDark_Air">#677fac</color>
+    <color name="colorFadedDark_Air">#88677fac</color>
+    <color name="colorFaded_Air">#888baad4</color>
+    <color name="colorAccent_Air">#FF8C00</color>
+    <color name="colorText_Air">#2c3949</color>
 
     <color name="colorPrimaryDay">#e8efcd</color>
     <color name="colorPrimaryDarkDay">#c5c96b</color>
@@ -26,8 +26,16 @@
     <color name="colorSign">#009900</color>
     <color name="faded">#99000000</color>
     <color name="ic_launcher_background">#EEEEEE</color>
+
 <!--    <color name="colorPrimaryDay">#FFEDB7</color>-->
 <!--    <color name="colorPrimaryDarkDay">#FFD351</color>-->
 <!--    <color name="colorAccentDay">#FF8C00</color>-->
 <!--    <color name="colorTextDay">#000000</color>-->
+
+    <color name="colorPrimaryBlue">#3EAAFF</color>
+    <color name="colorPrimaryDarkBlue">#2A79B4</color>
+    <color name="colorAccentBlue">#64FF00</color>
+    <color name="colorTextBlue">#25316B</color>
+    <color name="colorFadedDarkBlue">#8036C8F4</color>
+    <color name="colorFadedBlue">#3B36E4F4</color>
 </resources>

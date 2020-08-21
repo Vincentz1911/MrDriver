@@ -1,5 +1,6 @@
 package com.vincentz.driver.navigation;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,6 +43,7 @@ import static com.vincentz.driver.Tools.*;
 public class MapFragment extends Fragment implements Observer, OnMapReadyCallback {
     //TODO http://www.overpass-api.de/api/xapi?*[maxspeed=*][bbox=12.4831598,55.682295,12.4842598,55.683395]
 
+    Activity act;
     private String TAG = "MAP";
     public static GoogleMap map;
     public static boolean isCamLock = true;
@@ -56,18 +59,23 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private NumberPicker np_Tilt, np_Zoom;
     private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        markerThread.interrupt();
-        camTimer.purge();
-        camTimer.cancel();
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//
+//        if (markerThread != null) markerThread.interrupt();
+//        if (camTimer != null){
+//            camTimer.purge();
+//            camTimer.cancel();
+//        }
+//
+//    }
 
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         //region INIT UI
+        if (getActivity() != null) act = getActivity();
+
         View view = li.inflate(R.layout.fragment_map, vg, false);
         ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
@@ -139,7 +147,9 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.setTrafficEnabled(isTraffic);
         map.getUiSettings().setCompassEnabled(false);
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.mapstyle_day));
+        int mapstyle = IO.getInt("Mapstyle", R.raw.mapstyle_day);
+        //if (getActivity() != null)
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, mapstyle));
     }
 
     private void initOnClick() {
@@ -292,12 +302,12 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         LOC.now().getLongitude() + (LOC.now().getLongitude()
                                 - LOC.last().getLongitude()) * counter / 10);
 
-                getActivity().runOnUiThread(() -> {
+                act.runOnUiThread(() -> {
                     marker.setPosition(markerLoc);
                     marker.setRotation(LOC.bearing());
                     if (DEST == null) txt_Destination.setText("No Destination");
                     txt_Steps.setText(directions);
-                    if (directions != oldDirections) speakWords(directions);
+                    if (!directions.equals(oldDirections)) speakWords(directions);
                     oldDirections = directions;
 //                    if (isOnRoute) txt_Steps.setText(NAV.stepsList.get(step).instruction);
 //                    else txt_Steps.setText("No Route");
@@ -364,7 +374,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     //TODO make zoom and tilt compatible with native gmap zoom and tilt
     private void updateCamera(int camTime) {
-        getActivity().runOnUiThread(() -> {
+        act.runOnUiThread(() -> {
             zoom = np_Zoom.getValue() * 2 + 5;
             tilt = np_Tilt.getValue() * 10;
             if (isCamLock) {
@@ -394,7 +404,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     }
 
     private BitmapDescriptor SVG2Bitmap(int vectorResId) {
-        Drawable icon = getActivity().getDrawable(vectorResId);
+        Drawable icon = ContextCompat.getDrawable(act, vectorResId);
         if (icon == null) return null;
         icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(

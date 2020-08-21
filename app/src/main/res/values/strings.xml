@@ -48,4 +48,6 @@
     <string name="oilTemp">Oil Temp: %s</string>
     <string name="fuelLevel">Fuel: %s</string>
     <string name="consumption">Consumption: %s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

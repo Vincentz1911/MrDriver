@@ -6,21 +6,20 @@
     android:gravity="center">
 
     <ImageView
-        android:id="@+id/btn_camera"
+        android:id="@+id/btn_settings"
         android:layout_weight="1"
-
         android:adjustViewBounds="true"
         android:contentDescription="@string/dashcam"
         android:scaleType="fitCenter"
-        android:src="@drawable/fic_videocam_200dp" />
+        android:src="@drawable/fic_settings" />
 
     <ImageView
-        android:id="@+id/btn_obd2"
+        android:id="@+id/btn_camera"
         android:layout_weight="1"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/obd2"
+        android:contentDescription="@string/dashcam"
         android:scaleType="fitCenter"
-        android:src="@drawable/fic_engine_200dp" />
+        android:src="@drawable/fic_camera" />
 
     <ImageView
         android:id="@+id/btn_phone"
@@ -28,7 +27,15 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/phone"
         android:scaleType="fitCenter"
-        android:src="@drawable/fic_phone_bluetooth_200dp" />
+        android:src="@drawable/fic_phone" />
+
+    <ImageView
+        android:id="@+id/btn_obd2"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/obd2"
+        android:scaleType="fitCenter"
+        android:src="@drawable/fic_obd2" />
 
     <ImageView
         android:id="@+id/btn_spotify"
@@ -36,7 +43,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/spotify"
         android:scaleType="fitCenter"
-        android:src="@drawable/fic_spotify_logo_200dp" />
+        android:src="@drawable/fic_music" />
 
     <ImageView
         android:id="@+id/btn_weather"
@@ -44,7 +51,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/weather"
         android:scaleType="fitCenter"
-        android:src="@drawable/fic_weather_200dp" />
+        android:src="@drawable/fic_sunny" />
 
     <ImageView
         android:id="@+id/btn_navigation"
@@ -52,7 +59,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/navigation"
         android:scaleType="fitCenter"
-        android:src="@drawable/fic_directions_200dp" />
+        android:src="@drawable/fic_navigation" />
 
     <ImageView
         android:id="@+id/img_fullscreen"

@@ -18,6 +18,34 @@
         <item name="android:shadowRadius">2</item>
     </style>
 
+    <style name="AppTheme_Blue" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
+        <item name="colorAccent">@color/colorAccentBlue</item>
+        <item name="colorFadedDark">@color/colorFadedDarkBlue</item>
+        <item name="colorFaded">@color/colorFadedBlue</item>
+        <item name="android:textColor">@color/colorTextBlue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#AAA</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">5</item>
+    </style>
+
+    <style name="AppTheme_Air" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary_Air</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_Air</item>
+        <item name="colorAccent">@color/colorAccent_Air</item>
+        <item name="colorFadedDark">@color/colorFadedDark_Air</item>
+        <item name="colorFaded">@color/colorFaded_Air</item>
+        <item name="android:textColor">@color/colorText_Air</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#AAA</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">5</item>
+    </style>
+
     <style name="AppTheme_Night" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryNight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
@@ -53,5 +81,6 @@
         <item name="android:layout_height">2dp</item>
         <item name="android:background">?android:attr/listDivider</item>
     </style>
+
 
 </resources>

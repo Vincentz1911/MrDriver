@@ -75,7 +75,7 @@ public class SpotifyFragment extends Fragment {
             }
 
             public void onFailure(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage(), throwable);
+                //Log.e(TAG, throwable.getMessage(), throwable);
                 msg(getActivity(),"Failed to Connect to Spotify");
             }
         });

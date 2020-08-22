@@ -14,7 +14,6 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.vincentz.driver.MainActivity;
 import com.vincentz.driver.R;
 import com.vincentz.driver.Tools;
 
@@ -168,6 +167,6 @@ public class WeatherFragment extends Fragment implements Observer {
         hourlyListView.setAdapter(new HourlyAdapter(getContext(), wm.hourlyList));
         hourlyListView.setOnItemClickListener((parent, view, position, id) -> { });
 
-        speakWords("The weather report!");
+        say("The weather report!");
     }
 }

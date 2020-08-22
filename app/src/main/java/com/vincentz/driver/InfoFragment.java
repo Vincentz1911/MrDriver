@@ -8,13 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.vincentz.driver.Tools.*;
+import static com.vincentz.driver.Tools.formatDate;
 
 public class InfoFragment extends Fragment {
 
@@ -30,31 +28,20 @@ public class InfoFragment extends Fragment {
         timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                if (getActivity() == null) return;
+                if (getActivity() == null)
+                {
+                    timer.cancel();
+                    return;
+                }
                 getActivity().runOnUiThread(() -> {
                     Date dateNow = new Date();
-                    time.setText(new SimpleDateFormat("HH:mm:ss",
-                            Locale.getDefault()).format(dateNow));
-                    date.setText(new SimpleDateFormat("EEE d. MMM",
-                            Locale.getDefault()).format(dateNow));
-                    week.setText(getString(R.string.week, new SimpleDateFormat("w - yyyy",
-                            Locale.getDefault()).format(dateNow)));
+                    time.setText(formatDate("HH:mm:ss", dateNow));
+                    date.setText(formatDate("EEE d. MMM", dateNow));
+                    week.setText(getString(R.string.week, formatDate("w - yyyy", dateNow)));
                 });
             }
         }, 1000, 1000);
 
         return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        timer.cancel();
-        timer.purge();
     }
 }

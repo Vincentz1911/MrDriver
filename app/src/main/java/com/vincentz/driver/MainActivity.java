@@ -19,7 +19,6 @@ import android.speech.tts.Voice;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Switch;
 
 import com.android.volley.toolbox.Volley;
 import com.vincentz.driver.navigation.GPSLocationModel;
@@ -36,20 +35,19 @@ import static com.vincentz.driver.Tools.*;
 
 public class MainActivity extends FragmentActivity {
 
-    private FrameLayout fl_navigation, fl_weather, fl_obd2, fl_spotify, fl_camera, fl_settings;
-    private FrameLayout sidebar, activeFrame;
+    private FrameLayout[] frames;
+    private FrameLayout activeFrame;
     private ImageView btn_fullscreen;
     private boolean isFullscreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //setThemeBasedOnTimeOfDay();
+        super.onCreate(savedInstanceState);
         IO = getPreferences(MODE_PRIVATE);
         LOC = new GPSLocationModel();
         RQ = Volley.newRequestQueue(this);
-
         theme();
-        //setThemeBasedOnTimeOfDay();
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fullscreen(this);
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen(this));
@@ -63,7 +61,7 @@ public class MainActivity extends FragmentActivity {
 
                 Set<Voice> voices = TTS.getVoices();
                 int i = voices.size();
-                msg(this,"Voices : " + i);
+                msg(this, "Voices : " + i);
             }
         });
 
@@ -71,40 +69,25 @@ public class MainActivity extends FragmentActivity {
         if (IO.getBoolean("HaveRun", false)) setupView();
         else getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_map_overlay, new WelcomeFragment(), "").commit();
-        showFrameLayout(fl_settings);
     }
 
     private void theme() {
-        switch (IO.getInt("Theme", 0)){
+        switch (IO.getInt("Theme", 0)) {
             case 0:
                 setTheme(R.style.AppTheme_Air);
-                IO.edit().putInt("Mapstyle", R.raw.mapstyle_night);
                 break;
             case 1:
                 setTheme(R.style.AppTheme_Blue);
-                IO.edit().putInt("Mapstyle", R.raw.mapstyle_day);
                 break;
             case 2:
                 setTheme(R.style.AppTheme_Day);
-                IO.edit().putInt("Mapstyle", R.raw.mapstyle_day);
                 break;
             case 3:
                 setTheme(R.style.AppTheme_Night);
-                IO.edit().putInt("Mapstyle", R.raw.mapstyle_night);
                 break;
             default:
                 setTheme(R.style.AppTheme_Day);
-                IO.edit().putInt("Mapstyle", R.raw.mapstyle_day);
         }
-
-    }
-
-    public void onPause() {
-        if (TTS != null) {
-            TTS.stop();
-            TTS.shutdown();
-        }
-        super.onPause();
     }
 
     //SETS THEME BASED ON SUNRISE AND SUNSET.
@@ -123,49 +106,47 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initButtons() {
-        sidebar = findViewById(R.id.sidebar);
-        fl_navigation = findViewById(R.id.fl_navigation);
-        fl_spotify = findViewById(R.id.fl_spotify);
-        fl_weather = findViewById(R.id.fl_weather);
-        fl_camera = findViewById(R.id.fl_camera);
-        fl_obd2 = findViewById(R.id.fl_obd2);
-        fl_settings = findViewById(R.id.fl_settings);
-        activeFrame = fl_navigation;
+        FrameLayout sidebar = findViewById(R.id.sidebar);
+        FrameLayout fl_navigation = findViewById(R.id.fl_navigation);
+        FrameLayout fl_spotify = findViewById(R.id.fl_spotify);
+        FrameLayout fl_weather = findViewById(R.id.fl_weather);
+        FrameLayout fl_camera = findViewById(R.id.fl_camera);
+        FrameLayout fl_obd2 = findViewById(R.id.fl_obd2);
+        FrameLayout fl_settings = findViewById(R.id.fl_settings);
+        frames = new FrameLayout[]{sidebar, fl_navigation, fl_spotify, fl_weather, fl_camera, fl_obd2, fl_settings};
+
+        findViewById(R.id.btn_navigation).setOnClickListener(v -> showFrame(fl_navigation));
+        findViewById(R.id.btn_spotify).setOnClickListener(v -> showFrame(fl_spotify));
+        findViewById(R.id.btn_weather).setOnClickListener(v -> showFrame(fl_weather));
+        findViewById(R.id.btn_obd2).setOnClickListener(v -> showFrame(fl_obd2));
+        findViewById(R.id.btn_camera).setOnClickListener(v -> showFrame(fl_camera));
+        findViewById(R.id.btn_settings).setOnClickListener(v -> showFrame(fl_settings));
+        findViewById(R.id.btn_phone).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL)));
 
         btn_fullscreen = findViewById(R.id.img_fullscreen);
         btn_fullscreen.setOnClickListener(view -> {
-            if (!isFullscreen) hideAllFrameLayouts();
-            else showFrameLayout(activeFrame);
+            if (!isFullscreen) isFullscreen = hideAllFrames();
+            else isFullscreen = showFrame(activeFrame);
         });
 
-        findViewById(R.id.btn_navigation).setOnClickListener(v -> showFrameLayout(fl_navigation));
-        findViewById(R.id.btn_spotify).setOnClickListener(v -> showFrameLayout(fl_spotify));
-        findViewById(R.id.btn_weather).setOnClickListener(v -> showFrameLayout(fl_weather));
-        findViewById(R.id.btn_obd2).setOnClickListener(v -> showFrameLayout(fl_obd2));
-        findViewById(R.id.btn_camera).setOnClickListener(v -> showFrameLayout(fl_camera));
-        findViewById(R.id.btn_settings).setOnClickListener(v -> showFrameLayout(fl_settings));
-        findViewById(R.id.btn_phone).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL)));
+        showFrame(frames[0]);
     }
 
-    private void showFrameLayout(FrameLayout fl) {
-        hideAllFrameLayouts();
-        isFullscreen = false;
+    private boolean showFrame(FrameLayout fl) {
+        hideAllFrames();
+        //isFullscreen = false;
         activeFrame = fl;
         activeFrame.setVisibility(View.VISIBLE);
-        sidebar.setVisibility(View.VISIBLE);
+        frames[0].setVisibility(View.VISIBLE);
         btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_100dp);
+        return false;
     }
 
-    private void hideAllFrameLayouts() {
-        isFullscreen = true;
-        sidebar.setVisibility(View.GONE);
-        fl_spotify.setVisibility(View.GONE);
-        fl_weather.setVisibility(View.GONE);
-        fl_navigation.setVisibility(View.GONE);
-        fl_obd2.setVisibility(View.GONE);
-        fl_camera.setVisibility(View.GONE);
-        fl_settings.setVisibility(View.GONE);
+    private boolean hideAllFrames() {
+        //isFullscreen = true;
+        for (FrameLayout fl : frames) fl.setVisibility(View.GONE);
         btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_exit_100dp);
+        return true;
     }
 
     void setupView() {

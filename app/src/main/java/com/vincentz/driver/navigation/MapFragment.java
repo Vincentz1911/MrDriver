@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -28,7 +29,6 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.PolyUtil;
-import com.google.maps.android.geojson.GeoJsonFeature;
 import com.google.maps.android.geojson.GeoJsonLayer;
 import com.vincentz.driver.R;
 
@@ -43,7 +43,7 @@ import static com.vincentz.driver.Tools.*;
 public class MapFragment extends Fragment implements Observer, OnMapReadyCallback {
     //TODO http://www.overpass-api.de/api/xapi?*[maxspeed=*][bbox=12.4831598,55.682295,12.4842598,55.683395]
 
-    Activity act;
+    private Activity act;
     private String TAG = "MAP";
     public static GoogleMap map;
     public static boolean isCamLock = true;
@@ -52,27 +52,29 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private Timer camTimer;
 
     private int counter = 0, zoom = 18, tilt = 4;
-    private boolean haveLocation, isTraffic, isHybrid = false;
+    private boolean haveLocation, isTraffic, isHybrid;
 
     private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Steps, txt_Destination;
     private ImageView img_Compass;
     private NumberPicker np_Tilt, np_Zoom;
     private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//
-//        if (markerThread != null) markerThread.interrupt();
-//        if (camTimer != null){
-//            camTimer.purge();
-//            camTimer.cancel();
-//        }
-//
-//    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (markerThread != null) {
+            markerThread.interrupt();
+        }
+        if (camTimer != null){
+            camTimer.purge();
+            camTimer.cancel();
+        }
+
+    }
 
     @Override
-    public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         //region INIT UI
         if (getActivity() != null) act = getActivity();
 
@@ -94,11 +96,11 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         v_Tilt = view.findViewById(R.id.v_tilt);
         np_Tilt = view.findViewById(R.id.np_tilt);
         np_Tilt.setMinValue(0);
-        np_Tilt.setMaxValue(8);
+        np_Tilt.setMaxValue(9);
         np_Tilt.setValue(tilt);
         np_Zoom = view.findViewById(R.id.np_zoom);
         np_Zoom.setMinValue(0);
-        np_Zoom.setMaxValue(8);
+        np_Zoom.setMaxValue(9);
         np_Zoom.setValue((zoom - 5) / 2);
         //endregion
         LOC.addObserver(this);
@@ -147,9 +149,28 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         else map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.setTrafficEnabled(isTraffic);
         map.getUiSettings().setCompassEnabled(false);
-        int mapstyle = IO.getInt("Mapstyle", R.raw.mapstyle_day);
+        int mapstyle;
+
+        switch (IO.getInt("Theme", 0)){
+            case 0:
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, R.raw.mapstyle_day));
+                break;
+            case 1:
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, R.raw.mapstyle_night));
+                break;
+            case 2:
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, R.raw.mapstyle_day));
+                break;
+            case 3:
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, R.raw.mapstyle_night));
+                break;
+            default:
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, R.raw.mapstyle_day));
+        }
+
+
         //if (getActivity() != null)
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, mapstyle));
+        //map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, mapstyle));
     }
 
     private void initOnClick() {
@@ -278,9 +299,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         map.setOnMapLongClickListener(target -> new Routing(getActivity()).routing(target));
     }
 
-//
-//            timer = new Timer();
-//            timer.schedule(timerTask, 1000);
 
     String oldDirections;
     //TODO DELETE LOCATION
@@ -307,7 +325,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                     marker.setRotation(LOC.bearing());
                     if (DEST == null) txt_Destination.setText("No Destination");
                     txt_Steps.setText(directions);
-                    if (!directions.equals(oldDirections)) speakWords(directions);
+                    if (!directions.equals(oldDirections)) say(directions);
                     oldDirections = directions;
 //                    if (isOnRoute) txt_Steps.setText(NAV.stepsList.get(step).instruction);
 //                    else txt_Steps.setText("No Route");
@@ -336,7 +354,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         //IS LOCATION ON ROUTE THEN CANCEL TIMER
         if (PolyUtil.isLocationOnPath(LOC.latlng(), stepCoords, false, 10.0f)) {
             directions = NAV.stepsList.get(step).instruction;
-            //isOnRoute = true;
             timer.cancel();
             timer = new Timer();
 
@@ -355,7 +372,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 timer = new Timer();
             } else {
                 //START TIMER TO RECALCULATE ROUTE.
-                //isOnRoute = false;
                 timer.cancel();
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -399,7 +415,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             txt_Speed.setText(String.valueOf((int) (LOC.speed() * 3.6)));
             txt_Bearing.setText((int) LOC.bearing() + "\u00B0");
             txt_Compass.setText(getCompassDirection(map.getCameraPosition().bearing));
-            img_Compass.setRotation(map.getCameraPosition().bearing);
+            img_Compass.setRotation(-map.getCameraPosition().bearing);
         });
     }
 

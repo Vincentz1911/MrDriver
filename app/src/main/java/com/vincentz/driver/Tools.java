@@ -9,10 +9,19 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import com.android.volley.RequestQueue;
 import com.vincentz.driver.navigation.GPSLocationModel;
 import com.vincentz.driver.navigation.LocationModel;
 import com.vincentz.driver.navigation.NavigationModel;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class Tools {
     public static RequestQueue RQ;
@@ -23,16 +32,27 @@ public class Tools {
     public static TextToSpeech TTS;
     static boolean[] PERMISSIONS;
 
-    public static void msg(Activity activity, final String text) {
-        activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
+    public static List<Locale> LANG = new ArrayList<>(Arrays.asList(Locale.ENGLISH,
+            Locale.GERMAN, Locale.FRENCH, Locale.ITALIAN));
+
+    public static String formatDate(String format, Date date){
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
-    public static void speakWords(String speech) {
+    public static void msg(Activity act, final String text) {
+        act.runOnUiThread(() -> Toast.makeText(act, text, Toast.LENGTH_LONG).show());
+    }
+
+    public static void say(String speech) {
         TTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
-    public static void fullscreen(Activity activity) {
-        activity.getWindow().getDecorView().setSystemUiVisibility(
+    public static Drawable getDrawable(Activity act, int id) {
+        return ResourcesCompat.getDrawable(act.getResources(), id, null);
+    }
+
+    public static void fullscreen(Activity act) {
+        act.getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -79,43 +99,43 @@ public class Tools {
     public static Drawable getWeatherIcon(Activity act, String icon) {
         switch (icon) {
             case "01d":
-                return act.getResources().getDrawable(R.drawable.wic_01d_day_clear, null);
+                return getDrawable(act, R.drawable.wic_01d_day_clear);
             case "01n":
-                return act.getResources().getDrawable(R.drawable.wic_01n_night_clear, null);
+                return getDrawable(act, R.drawable.wic_01n_night_clear);
             case "02d":
-                return act.getResources().getDrawable(R.drawable.wic_02d_day_clear, null);
+                return getDrawable(act, R.drawable.wic_02d_day_clear);
             case "02n":
-                return act.getResources().getDrawable(R.drawable.wic_02n_night_clear, null);
+                return getDrawable(act, R.drawable.wic_02n_night_clear);
             case "03d":
-                return act.getResources().getDrawable(R.drawable.wic_03d_day_partial_cloud, null);
+                return getDrawable(act, R.drawable.wic_03d_day_partial_cloud);
             case "03n":
-                return act.getResources().getDrawable(R.drawable.wic_03n_night_partial_cloud, null);
+                return getDrawable(act, R.drawable.wic_03n_night_partial_cloud);
             case "04d":
-                return act.getResources().getDrawable(R.drawable.wic_04_cloudy, null);
+                return getDrawable(act, R.drawable.wic_04_cloudy);
             case "04n":
-                return act.getResources().getDrawable(R.drawable.wic_04_cloudy, null);
+                return getDrawable(act, R.drawable.wic_04_cloudy);
             case "09d":
-                return act.getResources().getDrawable(R.drawable.wic_09_rain, null);
+                return getDrawable(act, R.drawable.wic_09_rain);
             case "09n":
-                return act.getResources().getDrawable(R.drawable.wic_09_rain, null);
+                return getDrawable(act, R.drawable.wic_09_rain);
             case "10d":
-                return act.getResources().getDrawable(R.drawable.wic_10d_day_rain, null);
+                return getDrawable(act, R.drawable.wic_10d_day_rain);
             case "10n":
-                return act.getResources().getDrawable(R.drawable.wic_10n_night_rain, null);
+                return getDrawable(act, R.drawable.wic_10n_night_rain);
             case "11d":
-                return act.getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
+                return getDrawable(act, R.drawable.wic_11d_rain_thunder);
             case "11n":
-                return act.getResources().getDrawable(R.drawable.wic_11d_rain_thunder, null);
+                return getDrawable(act, R.drawable.wic_11d_rain_thunder);
             case "13d":
-                return act.getResources().getDrawable(R.drawable.wic_13_snow, null);
+                return getDrawable(act, R.drawable.wic_13_snow);
             case "13n":
-                return act.getResources().getDrawable(R.drawable.wic_13_snow, null);
+                return getDrawable(act, R.drawable.wic_13_snow);
             case "50d":
-                return act.getResources().getDrawable(R.drawable.wic_50_fog, null);
+                return getDrawable(act, R.drawable.wic_50_fog);
             case "50n":
-                return act.getResources().getDrawable(R.drawable.wic_50_fog, null);
+                return getDrawable(act, R.drawable.wic_50_fog);
             default:
-                return act.getResources().getDrawable(R.drawable.wic_11d_day_rain_thunder, null);
+                return getDrawable(act, R.drawable.wic_11d_day_rain_thunder);
         }
     }
 

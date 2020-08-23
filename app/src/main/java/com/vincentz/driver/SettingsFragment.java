@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -28,6 +29,14 @@ public class SettingsFragment extends Fragment {
         View view = li.inflate(R.layout.fragment_settings, vg, false);
         if (getActivity() == null) return view;
         else act = getActivity();
+        EditText driver = view.findViewById(R.id.input_driver);
+        EditText pin = view.findViewById(R.id.input_pin);
+
+        if (DRV != null) {
+            driver.setText(DRV.driver);
+            pin.setText(DRV.pin);
+        }
+
         language(view);
         theme(view);
         return view;

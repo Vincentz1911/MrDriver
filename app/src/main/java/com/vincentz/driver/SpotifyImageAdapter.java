@@ -16,8 +16,6 @@ import com.spotify.protocol.types.ListItem;
 
 import java.util.List;
 
-import static com.vincentz.driver.Tools.msg;
-
 class SpotifyImageAdapter extends ArrayAdapter<ListItem> {
 
     private List<ListItem> list;

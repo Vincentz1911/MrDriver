@@ -369,10 +369,12 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 Log.d(TAG, "NEXT STEP IS ON ROUTE");
                 step++;
                 timer.cancel();
+                timer.purge();
                 timer = new Timer();
             } else {
                 //START TIMER TO RECALCULATE ROUTE.
                 timer.cancel();
+                timer.purge();
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
                     public void run() {
@@ -382,7 +384,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         step = 0;
                         new Routing(getActivity()).routing(DEST.latLng);
                     }
-                }, 1000L);
+                }, 3000L);
             }
         }
     }

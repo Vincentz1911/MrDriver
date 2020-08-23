@@ -1,31 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/img_weather"
         android:layout_width="@dimen/big_icon"
         android:layout_height="@dimen/big_icon"
-        android:layout_alignParentEnd="true">
-
-        <ImageView
-            android:id="@+id/img_weather"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/weather_icon"
-            android:src="@drawable/wic_11d_day_rain_thunder" />
-
-
-    </RelativeLayout>
-
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/weather_icon"
+        android:src="@drawable/wic_11d_day_rain_thunder" />
 
     <TextView
         android:id="@+id/txt_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thursday 18. Aug"
         android:textSize="@dimen/h5" />
 
     <TableRow
@@ -41,7 +30,6 @@
 
         <TextView
             android:id="@+id/txt_low_high_temp"
-            android:text="@string/temperature"
             android:textSize="@dimen/h4" />
 
     </TableRow>
@@ -60,7 +48,6 @@
 
         <TextView
             android:id="@+id/txt_pop"
-            android:text="15%"
             android:textSize="@dimen/h4" />
     </TableRow>
 
@@ -78,8 +65,6 @@
         <TextView
             android:id="@+id/txt_wind"
             android:lines="1"
-            android:text="@string/temperature"
             android:textSize="@dimen/h5" />
-
     </TableRow>
 </RelativeLayout>

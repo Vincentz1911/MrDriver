@@ -26,6 +26,7 @@ import java.util.Locale;
 public class Tools {
     public static RequestQueue RQ;
     public static GPSLocationModel LOC;
+    public static DriverModel DRV;
     public static LocationModel DEST;
     public static NavigationModel NAV;
     public static SharedPreferences IO;
@@ -44,7 +45,7 @@ public class Tools {
     }
 
     public static void say(String speech) {
-        TTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null, null);
+        TTS.speak(speech, TextToSpeech.QUEUE_ADD, null, null);
     }
 
     public static Drawable getDrawable(Activity act, int id) {

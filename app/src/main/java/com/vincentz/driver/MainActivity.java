@@ -65,10 +65,14 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        Driver d = new Driver(this);
+        d.checkDriver();
+
         //IF APP NEVER RUN BEFORE, MAKE WELCOMESCREEN SO PERMISSIONS DOESNT F.UP
         if (IO.getBoolean("HaveRun", false)) setupView();
         else getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_map_overlay, new WelcomeFragment(), "").commit();
+
     }
 
     private void theme() {
@@ -113,7 +117,6 @@ public class MainActivity extends FragmentActivity {
         FrameLayout fl_camera = findViewById(R.id.fl_camera);
         FrameLayout fl_obd2 = findViewById(R.id.fl_obd2);
         FrameLayout fl_settings = findViewById(R.id.fl_settings);
-        frames = new FrameLayout[]{sidebar, fl_navigation, fl_spotify, fl_weather, fl_camera, fl_obd2, fl_settings};
 
         findViewById(R.id.btn_navigation).setOnClickListener(v -> showFrame(fl_navigation));
         findViewById(R.id.btn_spotify).setOnClickListener(v -> showFrame(fl_spotify));
@@ -129,12 +132,12 @@ public class MainActivity extends FragmentActivity {
             else isFullscreen = showFrame(activeFrame);
         });
 
+        frames = new FrameLayout[]{sidebar, fl_navigation, fl_spotify, fl_weather, fl_camera, fl_obd2, fl_settings};
         showFrame(frames[0]);
     }
 
     private boolean showFrame(FrameLayout fl) {
         hideAllFrames();
-        //isFullscreen = false;
         activeFrame = fl;
         activeFrame.setVisibility(View.VISIBLE);
         frames[0].setVisibility(View.VISIBLE);
@@ -143,7 +146,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     private boolean hideAllFrames() {
-        //isFullscreen = true;
         for (FrameLayout fl : frames) fl.setVisibility(View.GONE);
         btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_exit_100dp);
         return true;

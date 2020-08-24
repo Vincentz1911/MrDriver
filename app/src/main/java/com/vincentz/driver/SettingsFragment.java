@@ -50,7 +50,7 @@ public class SettingsFragment extends Fragment {
         languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == IO.getInt("Language", -1)) return;
+                if (position == IO.getInt("Language", 0)) return;
                 IO.edit().putInt("Language", position).apply();
             }
 

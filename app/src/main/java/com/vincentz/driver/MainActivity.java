@@ -57,8 +57,7 @@ public class MainActivity extends FragmentActivity {
         //CREATES A NEW TEXT TO SPEECH INSTANTIATION
         TTS = new TextToSpeech(getApplicationContext(), status -> {
             if (status != TextToSpeech.ERROR) {
-                TTS.setLanguage(Locale.ENGLISH);
-
+                TTS.setLanguage(LANG.get(IO.getInt("Language", 0)));
                 Set<Voice> voices = TTS.getVoices();
                 int i = voices.size();
                 msg(this, "Voices : " + i);
@@ -106,7 +105,7 @@ public class MainActivity extends FragmentActivity {
         sunDown.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
         if (now.after(sunDown) && now.before(sunUp)) setTheme(R.style.AppTheme_Night);
-        else setTheme(R.style.AppTheme_Night);
+        else setTheme(R.style.AppTheme_Day);
     }
 
     private void initButtons() {

@@ -265,7 +265,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                 isCamLock = false;
                 map.setPadding(50, 50, 50, 100);
                 map.animateCamera(CameraUpdateFactory.newLatLngBounds(route.getBoundingBox(), 0));
-
                 msg(getActivity(), "Showing Route");
             } else {
                 isCamLock = false;

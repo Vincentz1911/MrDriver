@@ -167,6 +167,9 @@ public class WeatherFragment extends Fragment implements Observer {
         hourlyListView.setAdapter(new HourlyAdapter(getContext(), wm.hourlyList));
         hourlyListView.setOnItemClickListener((parent, view, position, id) -> { });
 
-        say("The weather report!");
+        say("Temperature is " + (int)wm.current.temp + "°, with " + wm.current.clouds
+                + "% clouds, and a " + getWindDescription(wm.current.wind_speed) +
+                ", with a "+ (int)(wm.hourlyList.get(0).pop*100) +"% chance of rain within the next hour.");
+        //say("The weather report!");
     }
 }

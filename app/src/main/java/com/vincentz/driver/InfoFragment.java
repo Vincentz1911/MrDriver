@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.vincentz.driver.Tools.formatDate;
+import static com.vincentz.driver.Tools.say;
 
 public class InfoFragment extends Fragment {
 
@@ -24,6 +25,8 @@ public class InfoFragment extends Fragment {
         TextView time = root.findViewById(R.id.txt_time);
         TextView date = root.findViewById(R.id.txt_date);
         TextView week = root.findViewById(R.id.txt_week);
+        time.setOnClickListener(v -> say("The time is " + formatDate("HH:mm", new Date())));
+        date.setOnClickListener(v -> say("The date is " + formatDate("EEEE d. MMMM", new Date())));
 
         timer = new Timer("Timer");
         timer.scheduleAtFixedRate(new TimerTask() {

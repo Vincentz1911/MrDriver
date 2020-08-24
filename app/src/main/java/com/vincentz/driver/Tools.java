@@ -36,13 +36,12 @@ public class Tools {
     public static List<Locale> LANG = new ArrayList<>(Arrays.asList(Locale.ENGLISH,
             Locale.GERMAN, Locale.FRENCH, Locale.ITALIAN));
 
-    public static String formatDate(String format, Date date){
+    public static String formatDate(String format, Date date) {
         return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
     public static void msg(Activity act, final String text) {
-        act.runOnUiThread(() -> Toast.makeText(act, text, Toast.LENGTH_LONG).show());
-    }
+        act.runOnUiThread(() -> Toast.makeText(act, text, Toast.LENGTH_LONG).show()); }
 
     public static void say(String speech) {
         TTS.speak(speech, TextToSpeech.QUEUE_ADD, null, null);
@@ -99,44 +98,25 @@ public class Tools {
     //PICKS ICON DEPENDING ON ICON CODE IN JSONRESPONSE
     public static Drawable getWeatherIcon(Activity act, String icon) {
         switch (icon) {
-            case "01d":
-                return getDrawable(act, R.drawable.wic_01d_day_clear);
-            case "01n":
-                return getDrawable(act, R.drawable.wic_01n_night_clear);
-            case "02d":
-                return getDrawable(act, R.drawable.wic_02d_day_clear);
-            case "02n":
-                return getDrawable(act, R.drawable.wic_02n_night_clear);
-            case "03d":
-                return getDrawable(act, R.drawable.wic_03d_day_partial_cloud);
-            case "03n":
-                return getDrawable(act, R.drawable.wic_03n_night_partial_cloud);
-            case "04d":
-                return getDrawable(act, R.drawable.wic_04_cloudy);
-            case "04n":
-                return getDrawable(act, R.drawable.wic_04_cloudy);
-            case "09d":
-                return getDrawable(act, R.drawable.wic_09_rain);
-            case "09n":
-                return getDrawable(act, R.drawable.wic_09_rain);
-            case "10d":
-                return getDrawable(act, R.drawable.wic_10d_day_rain);
-            case "10n":
-                return getDrawable(act, R.drawable.wic_10n_night_rain);
-            case "11d":
-                return getDrawable(act, R.drawable.wic_11d_rain_thunder);
-            case "11n":
-                return getDrawable(act, R.drawable.wic_11d_rain_thunder);
-            case "13d":
-                return getDrawable(act, R.drawable.wic_13_snow);
-            case "13n":
-                return getDrawable(act, R.drawable.wic_13_snow);
-            case "50d":
-                return getDrawable(act, R.drawable.wic_50_fog);
-            case "50n":
-                return getDrawable(act, R.drawable.wic_50_fog);
-            default:
-                return getDrawable(act, R.drawable.wic_11d_day_rain_thunder);
+            case "01d": return getDrawable(act, R.drawable.wic_01d_day_clear);
+            case "01n": return getDrawable(act, R.drawable.wic_01n_night_clear);
+            case "02d": return getDrawable(act, R.drawable.wic_02d_day_clear);
+            case "02n": return getDrawable(act, R.drawable.wic_02n_night_clear);
+            case "03d": return getDrawable(act, R.drawable.wic_03d_day_partial_cloud);
+            case "03n": return getDrawable(act, R.drawable.wic_03n_night_partial_cloud);
+            case "04d": return getDrawable(act, R.drawable.wic_04_cloudy);
+            case "04n": return getDrawable(act, R.drawable.wic_04_cloudy);
+            case "09d": return getDrawable(act, R.drawable.wic_09_rain);
+            case "09n": return getDrawable(act, R.drawable.wic_09_rain);
+            case "10d": return getDrawable(act, R.drawable.wic_10d_day_rain);
+            case "10n": return getDrawable(act, R.drawable.wic_10n_night_rain);
+            case "11d": return getDrawable(act, R.drawable.wic_11d_rain_thunder);
+            case "11n": return getDrawable(act, R.drawable.wic_11d_rain_thunder);
+            case "13d": return getDrawable(act, R.drawable.wic_13_snow);
+            case "13n": return getDrawable(act, R.drawable.wic_13_snow);
+            case "50d": return getDrawable(act, R.drawable.wic_50_fog);
+            case "50n": return getDrawable(act, R.drawable.wic_50_fog);
+            default: return getDrawable(act, R.drawable.wic_11d_day_rain_thunder);
         }
     }
 

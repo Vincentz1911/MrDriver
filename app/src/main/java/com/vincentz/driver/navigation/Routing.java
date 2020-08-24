@@ -11,7 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.geojson.GeoJsonFeature;
@@ -28,10 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Handler;
 
 import static com.vincentz.driver.Tools.*;
-
 import static com.vincentz.driver.navigation.MapFragment.map;
 import static com.vincentz.driver.navigation.MapFragment.route;
 

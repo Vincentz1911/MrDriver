@@ -86,8 +86,10 @@ public class NavigationFragment extends Fragment {
         searchButton.setOnClickListener(v -> {
             if (Searchbox.getVisibility() == View.GONE) {
                 Searchbox.setVisibility(View.VISIBLE);
-                arrayAdapter.clear();
-                arrayAdapter.notifyDataSetChanged();
+                if (arrayAdapter != null) {
+                    arrayAdapter.clear();
+                    arrayAdapter.notifyDataSetChanged();
+                }
             } else {
                 hideKeyboard(act);
                 Searchbox.setVisibility(View.GONE);
@@ -137,15 +139,18 @@ public class NavigationFragment extends Fragment {
     }
 
     TimerTask task;
+
     private TextWatcher requestAutoComplete() {
         Timer timer = new Timer("Timer");
 
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -153,14 +158,18 @@ public class NavigationFragment extends Fragment {
                 if (editable.length() < 3) return;
                 if (task != null) task.cancel();
 
-                task = new TimerTask() {public void run() { searchRequest(editable); }};
+                task = new TimerTask() {
+                    public void run() {
+                        searchRequest(editable);
+                    }
+                };
                 timer.schedule(task, 1000L);
-           }
+            }
         };
     }
 
     void getLocationsFromAPI(int id) {
-        String url = "http://vincentz.tk/api/location/" + id;
+        String url = "https://vincentz.tk/api/location/" + id;
         RQ.add(new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     Type type = new TypeToken<ArrayList<LocationModel>>() {
@@ -168,7 +177,7 @@ public class NavigationFragment extends Fragment {
                     ArrayList<LocationModel> LocationList = new Gson().fromJson(response.toString(), type);
                     fillSearchListView(LocationList);
                 },
-                error -> msg(act,"Volley AutoComplete Error")));
+                error -> msg(act, "Volley Get Locations from Server Error")));
     }
 
     private void searchRequest(Editable editable) {
@@ -188,7 +197,7 @@ public class NavigationFragment extends Fragment {
             //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE UPDATE UI
             RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> fillSearchListView(routing.JSONsearchToModel(response)),
-                    error -> msg(act,"Volley AutoComplete Error")));
+                    error -> msg(act, "Volley AutoComplete Error")));
         });
     }
 
@@ -227,22 +236,23 @@ public class NavigationFragment extends Fragment {
         ArrayList<LocationModel> list = loadLocations();
         location.stored = 1;
         list.add(location);
-        msg(act,"Saved Location: " + location.name);
+        msg(act, "Saved Location: " + location.name);
         IO.edit().putString("locations", new Gson().toJson(list)).apply();
 
         uploadLocation(location);
     }
 
     private void uploadLocation(LocationModel location) {
-        String URL = "http://vincentz.tk/api/location";
+        String URL = "https://vincentz.tk/api/location";
         final String requestBody = new Gson().toJson(location);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 response -> Log.i("VOLLEY", response),
-                error -> Log.e("VOLLEY", error.toString()))
-        {
+                error -> Log.e("VOLLEY", error.toString())) {
             @Override
-            public String getBodyContentType() { return "application/json; charset=utf-8"; }
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
 
             @Override
             public byte[] getBody() {
@@ -266,7 +276,7 @@ public class NavigationFragment extends Fragment {
 
     private void deleteLocation(ArrayList<LocationModel> list, int i) {
 //        ArrayList<LocationModel> list = loadLocations();
-        msg(act,"Deleted Location: " + list.get(i).name);
+        msg(act, "Deleted Location: " + list.get(i).name);
         list.remove(i);
         IO.edit().putString("locations", new Gson().toJson(list)).apply();
     }

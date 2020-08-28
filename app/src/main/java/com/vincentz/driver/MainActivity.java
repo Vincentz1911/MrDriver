@@ -27,7 +27,6 @@ import com.vincentz.driver.navigation.NavigationFragment;
 import com.vincentz.driver.weather.WeatherFragment;
 
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,7 +36,7 @@ public class MainActivity extends FragmentActivity {
 
     private FrameLayout[] frames;
     private FrameLayout activeFrame;
-    private ImageView btn_fullscreen;
+    private ImageView fullscreenButton;
     private boolean isFullscreen;
 
     @Override
@@ -55,17 +54,16 @@ public class MainActivity extends FragmentActivity {
         initButtons();
 
         //CREATES A NEW TEXT TO SPEECH INSTANTIATION
-        TTS = new TextToSpeech(getApplicationContext(), status -> {
+        TTS = new TextToSpeech(this, status -> {
             if (status != TextToSpeech.ERROR) {
                 TTS.setLanguage(LANG.get(IO.getInt("Language", 0)));
                 Set<Voice> voices = TTS.getVoices();
-                int i = voices.size();
-                msg(this, "Voices : " + i);
+                msg(this, "Voices : " + voices.size());
             }
         });
 
-        Driver d = new Driver(this);
-        d.checkDriver();
+        //Driver d = ;
+        new Driver().checkDriver(this);
 
         //IF APP NEVER RUN BEFORE, MAKE WELCOMESCREEN SO PERMISSIONS DOESNT F.UP
         if (IO.getBoolean("HaveRun", false)) setupView();
@@ -125,8 +123,8 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.btn_settings).setOnClickListener(v -> showFrame(fl_settings));
         findViewById(R.id.btn_phone).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL)));
 
-        btn_fullscreen = findViewById(R.id.img_fullscreen);
-        btn_fullscreen.setOnClickListener(view -> {
+        fullscreenButton = findViewById(R.id.img_fullscreen);
+        fullscreenButton.setOnClickListener(view -> {
             if (!isFullscreen) isFullscreen = hideAllFrames();
             else isFullscreen = showFrame(activeFrame);
         });
@@ -140,13 +138,13 @@ public class MainActivity extends FragmentActivity {
         activeFrame = fl;
         activeFrame.setVisibility(View.VISIBLE);
         frames[0].setVisibility(View.VISIBLE);
-        btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_100dp);
+        fullscreenButton.setImageResource(R.drawable.fic_fullscreen_100dp);
         return false;
     }
 
     private boolean hideAllFrames() {
         for (FrameLayout fl : frames) fl.setVisibility(View.GONE);
-        btn_fullscreen.setImageResource(R.drawable.fic_fullscreen_exit_100dp);
+        fullscreenButton.setImageResource(R.drawable.fic_fullscreen_exit_100dp);
         return true;
     }
 

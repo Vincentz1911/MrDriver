@@ -39,7 +39,6 @@ public class SpotifyFragment extends Fragment {
 
     private String TAG = "Spotify";
     private static final String CLIENT_ID = "4f791920ae734cd5b5bc91257acc3993";
-    private static final String REDIRECT_URI = "com.vincentz.driver://callback";
     private SpotifyAppRemote mSpotifyAppRemote;
     private Track track;
     private TrackProgressBar mTrackProgressBar;
@@ -57,15 +56,9 @@ public class SpotifyFragment extends Fragment {
         View root = li.inflate(R.layout.fragment_spotify, vg, false);
         initUI(root);
         initOnClick();
-        return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI).showAuthView(true).build();
+                .setRedirectUri("com.vincentz.driver://callback").showAuthView(true).build();
 
         SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
@@ -79,7 +72,29 @@ public class SpotifyFragment extends Fragment {
                 msg(getActivity(),"Failed to Connect to Spotify");
             }
         });
+        return root;
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+//                .setRedirectUri(REDIRECT_URI).showAuthView(true).build();
+//
+//        SpotifyAppRemote.connect(getContext(), connectionParams, new Connector.ConnectionListener() {
+//            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+//                mSpotifyAppRemote = spotifyAppRemote;
+//                msg(getActivity(),"Connected to Spotify");
+//                connected();
+//            }
+//
+//            public void onFailure(Throwable throwable) {
+//                //Log.e(TAG, throwable.getMessage(), throwable);
+//                msg(getActivity(),"Failed to Connect to Spotify");
+//            }
+//        });
+//    }
 
     @Override
     public void onStop() {
@@ -173,14 +188,6 @@ public class SpotifyFragment extends Fragment {
     }
 
     private void connected() {
-        //GET RECOMMENDED ITEMS. SHOW IN LISTVIEW WHEN BUTTON IS CLICKED
-//        mSpotifyAppRemote
-//                .getContentApi()
-//                .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
-//                .setResultCallback(this::recommendedContentCallBack)
-//                .setErrorCallback(mErrorCallback);
-
-        // Play a playlist
         mSpotifyAppRemote.getPlayerApi().resume();
         // Subscribe to PlayerState
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
@@ -241,9 +248,15 @@ public class SpotifyFragment extends Fragment {
                     if (libraryState.isAdded) LikeButton.setImageResource(R.drawable.sic_baseline_favorite_24);
                     else LikeButton.setImageResource(R.drawable.sic_baseline_favorite_border_24);
                 });
-
             }
         });
+
+        //GET RECOMMENDED ITEMS. SHOW IN LISTVIEW WHEN BUTTON IS CLICKED
+        mSpotifyAppRemote
+                .getContentApi()
+                .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
+                .setResultCallback(this::recommendedContentCallBack)
+                .setErrorCallback(mErrorCallback);
     }
 
     private void recommendedContentCallBack(ListItems listItems) {

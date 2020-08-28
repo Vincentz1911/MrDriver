@@ -2,13 +2,18 @@ package com.vincentz.driver.navigation;
 
 import android.app.Activity;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -22,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +58,40 @@ public class Routing {
                     handleRouteResponse(target, response);
                 }, error -> msg(act,"Volley Routing Error")));
     }
+
+    private void requestRoute(LocationModel location) {
+        String URL = "https://api.openrouteservice.org/v2/directions/driving-car/geojson";
+        final String requestBody = new Gson().toJson(location);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
+                response -> Log.i("VOLLEY", response),
+                error -> Log.e("VOLLEY", error.toString())) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return requestBody == null ? null : requestBody.getBytes(StandardCharsets.UTF_8);
+            }
+
+
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                String responseString = "";
+                if (response != null) {
+                    responseString = String.valueOf(response.statusCode);
+                    // can get more details such as response.headers
+                }
+                assert response != null;
+                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+            }
+        };
+        RQ.add(stringRequest);
+    }
+
 
     private void handleRouteResponse(LatLng target, JSONObject response) {
         if (route != null) route.removeLayerFromMap();
@@ -185,5 +225,4 @@ public class Routing {
         }
         return list;
     }
-
 }

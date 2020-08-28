@@ -13,6 +13,9 @@ public class WelcomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View root = li.inflate(R.layout.fragment_welcome, vg, false);
+
+
+
         Button welcomeButton;
         welcomeButton = root.findViewById(R.id.btn_welcome);
         welcomeButton.setOnClickListener(view -> ((MainActivity) getActivity()).setupView());

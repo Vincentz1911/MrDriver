@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -39,6 +40,7 @@ public class SettingsFragment extends Fragment {
 
         language(view);
         theme(view);
+        weatherReport(view);
         return view;
     }
 
@@ -78,5 +80,18 @@ public class SettingsFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void weatherReport(View view) {
+        CheckBox cb = view.findViewById(R.id.cb_weather);
+        boolean speakWeather = IO.getBoolean("WeatherReport", true);
+        if (speakWeather) cb.setChecked(true); else cb.setChecked(false);
+        cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            IO.edit().putBoolean("WeatherReport", isChecked);
+
+            //cb.setChecked(cb.isEnabled());
+        });
+
+
     }
 }

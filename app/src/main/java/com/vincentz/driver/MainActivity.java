@@ -111,7 +111,7 @@ public class MainActivity extends FragmentActivity {
         FrameLayout fl_navigation = findViewById(R.id.fl_navigation);
         FrameLayout fl_spotify = findViewById(R.id.fl_spotify);
         FrameLayout fl_weather = findViewById(R.id.fl_weather);
-        FrameLayout fl_camera = findViewById(R.id.fl_camera);
+        //FrameLayout fl_camera = findViewById(R.id.fl_camera);
         FrameLayout fl_obd2 = findViewById(R.id.fl_obd2);
         FrameLayout fl_settings = findViewById(R.id.fl_settings);
 
@@ -119,7 +119,12 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.btn_spotify).setOnClickListener(v -> showFrame(fl_spotify));
         findViewById(R.id.btn_weather).setOnClickListener(v -> showFrame(fl_weather));
         findViewById(R.id.btn_obd2).setOnClickListener(v -> showFrame(fl_obd2));
-        findViewById(R.id.btn_camera).setOnClickListener(v -> showFrame(fl_camera));
+        findViewById(R.id.btn_camera).setOnClickListener(v -> {
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.ankai.cardvr");
+            if (launchIntent != null) startActivity(launchIntent);
+            //showFrame(fl_camera);
+        });
+
         findViewById(R.id.btn_settings).setOnClickListener(v -> showFrame(fl_settings));
         findViewById(R.id.btn_phone).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL)));
 
@@ -129,7 +134,7 @@ public class MainActivity extends FragmentActivity {
             else isFullscreen = showFrame(activeFrame);
         });
 
-        frames = new FrameLayout[]{sidebar, fl_navigation, fl_spotify, fl_weather, fl_camera, fl_obd2, fl_settings};
+        frames = new FrameLayout[]{sidebar, fl_navigation, fl_spotify, fl_weather, fl_obd2, fl_settings};
         showFrame(frames[0]);
     }
 
@@ -171,8 +176,8 @@ public class MainActivity extends FragmentActivity {
                 Manifest.permission.INTERNET,
                 Manifest.permission.BLUETOOTH,
                 Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO,
+                //Manifest.permission.CAMERA,
+                //Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
         };
         PERMISSIONS = new boolean[REQUEST_PERMISSIONS.length];

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
+    android:orientation="vertical"
     tools:context=".SettingsFragment">
 
-    <TableRow android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
@@ -17,13 +21,30 @@
 
         <Spinner
             android:id="@+id/spn_language"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
-            android:layout_weight="1"
             android:background="@null" />
+    </LinearLayout>
 
-    </TableRow>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Theme"
+            android:textSize="@dimen/h4" />
+
+        <Spinner
+            android:id="@+id/spn_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:background="@null" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,7 +58,9 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/h4" />
 
-    <TableRow>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,38 +70,28 @@
 
         <EditText
             android:id="@+id/input_pin"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textSize="@dimen/h4" />
-    </TableRow>
+    </LinearLayout>
 
-    <TableRow android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Theme"
-            android:textSize="@dimen/h4" />
-
-        <Spinner
-            android:id="@+id/spn_theme"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
+            android:text="Weather"
             android:layout_weight="1"
-            android:background="@null" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:layout_weight="1"
-            android:text="Weather Report"
             android:textSize="@dimen/h4" />
+
         <CheckBox
             android:id="@+id/cb_weather"
-            />
-    </TableRow>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding"/>
+    </LinearLayout>
 
-</TableLayout>
+</LinearLayout>

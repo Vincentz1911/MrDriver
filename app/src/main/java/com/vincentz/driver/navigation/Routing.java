@@ -195,20 +195,19 @@ public class Routing {
                         getJSONArray("coordinates");
                 String area;
 
-                if (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
+                if (prop.has("neighbourhood") && !prop.getString("neighbourhood").equals(""))
                     area = prop.getString("neighbourhood");
-                else if (prop.has("localadmin") && prop.getString("localadmin") != null)
+                else if (prop.has("localadmin") && !prop.getString("localadmin").equals(""))
                     area = prop.getString("localadmin");
-                else if (prop.has("county") && prop.getString("county") != null)
+                else if (prop.has("county") && !prop.getString("county").equals(""))
                     area = prop.getString("county");
                 else area = prop.getString("country");
 //                String area = (prop.has("neighbourhood") && prop.getString("neighbourhood") != null)
 //                        ? prop.getString("neighbourhood") : prop.getString("localadmin");
 
-
-
                 String street = (prop.has("street")
-                        ? street = prop.getString("street") : prop.getString("region"));
+                        ? prop.getString("street")
+                        : prop.getString("region"));
 
                 list.add(new LocationModel(
                         1,

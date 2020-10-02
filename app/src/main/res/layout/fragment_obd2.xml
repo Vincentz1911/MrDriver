@@ -11,33 +11,36 @@
         android:id="@+id/btn_startbt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start BT" />
+        android:text="Start BT"
+        android:textSize="@dimen/h3"/>
 
     <Button
         android:id="@+id/btn_startupdates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start updates" />
+        android:text="Start updates"
+        android:textSize="@dimen/h3"/>
 
     <TextView
         android:id="@+id/txt_speed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="SPEED"
-        android:textSize="16sp" />
+        android:textSize="@dimen/h3" />
 
     <TextView
         android:id="@+id/txt_rpm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="RPM"
-        android:textSize="16sp" />
+        android:textSize="@dimen/h3" />
 
     <TextView
         android:id="@+id/txt_oiltemp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:text="OilTemp"
+        android:textSize="@dimen/h3" />
 
     <TextView
         android:id="@+id/txt_fuellevel"

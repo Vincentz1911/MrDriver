@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.vincentz.driver.obd.commands.*;
 import com.vincentz.driver.obd.commands.engine.*;
+import com.vincentz.driver.obd.commands.temperature.AmbientAirTemperatureCommand;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import static com.vincentz.driver.Tools.*;
 public class OBD2Fragment extends Fragment {
 
     private String speed = "", rpm = "", fuelLevel, oilTemp, consumption;
-    private TextView txt_speed, txt_rpm;
+    private TextView txt_speed, txt_rpm, txt_oiltemp;
     private Thread OBDDataThread;
     private BluetoothSocket socket = null;
     private boolean isOn;
@@ -41,7 +42,9 @@ public class OBD2Fragment extends Fragment {
 
         txt_speed = view.findViewById(R.id.txt_speed);
         txt_rpm = view.findViewById(R.id.txt_rpm);
+        txt_oiltemp = view.findViewById(R.id.txt_oiltemp);
 
+        //initBT();
 //        Timer update = new Timer();
 //        update.schedule(new TimerTask() {
 //            @Override
@@ -60,7 +63,7 @@ public class OBD2Fragment extends Fragment {
                     isOn = !isOn;
                     if (isOn) OBDDataThread.start();
                     else OBDDataThread.interrupt();
-                    msg(getActivity(),"Is Thread Running: " + isOn);
+                    msg(getActivity(), "Is Thread Running: " + isOn);
                 }
         );
 
@@ -74,18 +77,23 @@ public class OBD2Fragment extends Fragment {
                         SpeedCommand speedCommand = new SpeedCommand();
                         speedCommand.run(socket.getInputStream(), socket.getOutputStream());
                         speed = speedCommand.getFormattedResult();
+
                         Thread.sleep(1000);
                         RPMCommand engineRpmCommand = new RPMCommand();
                         engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
                         rpm = engineRpmCommand.getFormattedResult();
 
+                        AmbientAirTemperatureCommand command = new AmbientAirTemperatureCommand();
+                        command.run(socket.getInputStream(), socket.getOutputStream());
+                        oilTemp = command.getFormattedResult();
 
-//                            ACT.runOnUiThread(() -> {
-//                                txt_speed.setText(getString(R.string.speed, speed));
-//                                txt_rpm.setText(getString(R.string.rpm, rpm));
-//                                //updateView();
-//                            });
-                        msg(getActivity(),"Running thread");
+                        ACT.runOnUiThread(() -> {
+                            txt_speed.setText(getString(R.string.speed, speed));
+                            txt_rpm.setText(getString(R.string.rpm, rpm));
+                            txt_oiltemp.setText(getString(R.string.rpm, rpm));
+                            //updateView();
+                        });
+                        msg(getActivity(), "Running thread");
 
                     } catch (IOException | InterruptedException e) {
                         msg(getActivity(), e.getMessage());
@@ -116,20 +124,20 @@ public class OBD2Fragment extends Fragment {
     private void initBT() {
         //Gets list of paired devices
         if (BluetoothAdapter.getDefaultAdapter() == null) {
-            msg(getActivity(),"No Bluetooth device detected");
+            msg(getActivity(), "No Bluetooth device detected");
             return;
         }
 
         final ArrayList<BluetoothDevice> paired =
                 new ArrayList<>(BluetoothAdapter.getDefaultAdapter().getBondedDevices());
         if (paired.size() == 0) {
-            msg(getActivity(),"No paired devices found");
+            msg(getActivity(), "No paired devices found");
             return;
         }
         //Checks if device is named OBDII and connects
         for (BluetoothDevice device : paired) {
             if (device.getName().toUpperCase().equals("OBDII")) {
-                msg(getActivity(),"Bluetooth OBDII device found: " + device.getName());
+                msg(getActivity(), "Bluetooth OBDII device found: " + device.getName());
                 ACT.getPreferences(Context.MODE_PRIVATE).edit()
                         .putString("btaddress", device.getAddress()).apply();
                 connectBT(device.getAddress());
@@ -169,11 +177,11 @@ public class OBD2Fragment extends Fragment {
             socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
             socket.connect();
             Thread.sleep(5000);
-            msg(getActivity(),"Connected to ELM327 Bluetooth ODBII adapter");
+            msg(getActivity(), "Connected to ELM327 Bluetooth ODBII adapter");
 
             //getODBdata(socket);
         } catch (IOException | InterruptedException e) {
-            msg(getActivity(),"Couldn't connect to ELM327 Bluetooth ODBII adapter");
+            msg(getActivity(), "Couldn't connect to ELM327 Bluetooth ODBII adapter");
 //            ACT.runOnUiThread(() -> {
 //                txt_speed.setText(getString(R.string.speed, speed));
 //                txt_rpm.setText(e.getMessage());

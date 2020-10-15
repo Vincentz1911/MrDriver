@@ -3,6 +3,7 @@ package com.vincentz.driver.navigation;
 import com.google.android.gms.maps.model.LatLng;
 
 public class LocationModel {
+    int id;
     int driver;
     String name;
     String street;
@@ -11,7 +12,8 @@ public class LocationModel {
     float distance;
     int stored;
 
-    LocationModel(int driver, String name, String street, String city, LatLng latLng, float distance, int stored) {
+    LocationModel(int id, int driver, String name, String street, String city, LatLng latLng, float distance, int stored) {
+        this.id = id;
         this.driver = driver;
         this.name = name;
         this.street = street;

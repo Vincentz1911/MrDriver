@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -47,7 +48,7 @@ public class MainActivity extends FragmentActivity {
         LOC = new GPSLocationModel();
         RQ = Volley.newRequestQueue(this);
         theme();
-        setContentView(R.layout.activity_main);
+
         fullscreen(this);
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> fullscreen(this));
         checkPermissions();
@@ -89,6 +90,7 @@ public class MainActivity extends FragmentActivity {
             default:
                 setTheme(R.style.AppTheme_Day);
         }
+        setContentView(R.layout.activity_main);
     }
 
     //SETS THEME BASED ON SUNRISE AND SUNSET.
@@ -111,7 +113,6 @@ public class MainActivity extends FragmentActivity {
         FrameLayout fl_navigation = findViewById(R.id.fl_navigation);
         FrameLayout fl_spotify = findViewById(R.id.fl_spotify);
         FrameLayout fl_weather = findViewById(R.id.fl_weather);
-        //FrameLayout fl_camera = findViewById(R.id.fl_camera);
         FrameLayout fl_obd2 = findViewById(R.id.fl_obd2);
         FrameLayout fl_settings = findViewById(R.id.fl_settings);
 
@@ -122,7 +123,6 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.btn_camera).setOnClickListener(v -> {
             Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.ankai.cardvr");
             if (launchIntent != null) startActivity(launchIntent);
-            //showFrame(fl_camera);
         });
 
         findViewById(R.id.btn_settings).setOnClickListener(v -> showFrame(fl_settings));
@@ -135,7 +135,7 @@ public class MainActivity extends FragmentActivity {
         });
 
         frames = new FrameLayout[]{sidebar, fl_navigation, fl_spotify, fl_weather, fl_obd2, fl_settings};
-        showFrame(frames[0]);
+        showFrame(frames[1]);
     }
 
     private boolean showFrame(FrameLayout fl) {
@@ -160,12 +160,10 @@ public class MainActivity extends FragmentActivity {
         FragmentManager FM = getSupportFragmentManager();
         FM.beginTransaction().replace(R.id.fl_map_overlay, new MapFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_navigation, new NavigationFragment(), "").commit();
-        FM.beginTransaction().replace(R.id.fl_dateAndTime, new InfoFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_spotify, new SpotifyFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_weather, new WeatherFragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_obd2, new OBD2Fragment(), "").commit();
         FM.beginTransaction().replace(R.id.fl_settings, new SettingsFragment(), "").commit();
-        //FM.beginTransaction().replace(R.id.fl_camera, new CameraFragment(), "").commit();
     }
 
     //region PERMISSIONS
@@ -176,8 +174,6 @@ public class MainActivity extends FragmentActivity {
                 Manifest.permission.INTERNET,
                 Manifest.permission.BLUETOOTH,
                 Manifest.permission.BLUETOOTH_ADMIN,
-                //Manifest.permission.CAMERA,
-                //Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
         };
         PERMISSIONS = new boolean[REQUEST_PERMISSIONS.length];
@@ -221,10 +217,11 @@ public class MainActivity extends FragmentActivity {
         criteria.setBearingRequired(true);
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String provider = Objects.requireNonNull(lm).getBestProvider(criteria, true);
+        if (lm == null) return;
+        String provider = lm.getBestProvider(criteria, true);
         if (provider != null) msg(this, "Best Location Provider: " + provider);
         else {
-            msg(this, "No Location provider found");
+            msg(this, "No GPS found");
             return;
         }
         lm.requestLocationUpdates(provider, 0, 0, LocationListener);
@@ -242,18 +239,13 @@ public class MainActivity extends FragmentActivity {
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
 
         @Override
-        public void onProviderEnabled(String provider) {
-            msg(getParent(), "LOC enabled: " + provider);
-        }
+        public void onProviderEnabled(String provider) {}
 
         @Override
-        public void onProviderDisabled(String provider) {
-            msg(getParent(), "LOC disabled: " + provider);
-        }
+        public void onProviderDisabled(String provider) {}
     };
     //endregion
 }

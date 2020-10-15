@@ -119,7 +119,7 @@ public class Routing {
         msg(act, "Distance: " + arr[0] + " Time: " + arr[1]);
 
         TimerTask task = new TimerTask() {public void run() { MapFragment.isCamLock = true; }};
-        new Timer().schedule(task, 10000L);
+        new Timer().schedule(task, 3000L);
 
 
         //MapFragment.isCamLock = true;
@@ -210,6 +210,7 @@ public class Routing {
                         : prop.getString("region"));
 
                 list.add(new LocationModel(
+                        0,
                         1,
                         prop.getString("name"),
                         street,

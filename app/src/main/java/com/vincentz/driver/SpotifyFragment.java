@@ -295,6 +295,7 @@ public class SpotifyFragment extends Fragment {
     }
 
     private void logError(Throwable throwable) {
+        if (getContext() != null)
         Toast.makeText(getContext(), "R.string.err_generic_toast", Toast.LENGTH_SHORT).show();
         Log.e(TAG, "", throwable);
     }

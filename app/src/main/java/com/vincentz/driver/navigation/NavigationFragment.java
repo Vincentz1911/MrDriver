@@ -13,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.NetworkResponse;
@@ -42,9 +44,11 @@ import static com.vincentz.driver.Tools.*;
 public class NavigationFragment extends Fragment {
 
     ListView LocationsListView;
+    GridView LocationsGridView;
     EditText Searchbox;
     TextView txt_Destination;
     Routing routing;
+    RelativeLayout savedlocationslayout;
     //LocationModel destination;
     NavigationListAdapter arrayAdapter;
     Activity act;
@@ -53,7 +57,6 @@ public class NavigationFragment extends Fragment {
     public View onCreateView(LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
         View view = li.inflate(R.layout.fragment_navigation, vg, false);
         act = getActivity();
-        //if (getActivity() != null) act = act;
         routing = new Routing(act);
         init(view);
         return view;
@@ -65,15 +68,18 @@ public class NavigationFragment extends Fragment {
         ImageView routeButton = view.findViewById(R.id.route_to_destination);
         Searchbox = act.findViewById(R.id.searchbox);
         LocationsListView = view.findViewById(R.id.listview_navigation);
+        LocationsGridView = act.findViewById(R.id.listview_saved_locations);
         txt_Destination = act.findViewById(R.id.txt_destination);
-
+        savedlocationslayout = act.findViewById(R.id.lay_locations);
         //fillSearchListView(loadLocations());
         getLocationsFromAPI(1);
 
         savedLocButton.setOnClickListener(v -> {
             hideKeyboard(act);
             Searchbox.setVisibility(View.GONE);
-            fillSearchListView(loadLocations());
+            savedlocationslayout.setVisibility(View.VISIBLE);
+            getLocationsFromAPI(1);
+            //fillSearchListView(loadLocations());
         });
 
         savedLocButton.setOnLongClickListener(v -> {
@@ -84,6 +90,7 @@ public class NavigationFragment extends Fragment {
         });
 
         searchButton.setOnClickListener(v -> {
+            savedlocationslayout.setVisibility(View.GONE);
             if (Searchbox.getVisibility() == View.GONE) {
                 Searchbox.setVisibility(View.VISIBLE);
                 if (arrayAdapter != null) {
@@ -108,6 +115,7 @@ public class NavigationFragment extends Fragment {
         });
 
         routeButton.setOnClickListener(v -> {
+            savedlocationslayout.setVisibility(View.GONE);
             if (DEST != null) routing.routing(DEST.latLng);
         });
     }
@@ -115,7 +123,6 @@ public class NavigationFragment extends Fragment {
     private void onClickListViewItem(LocationModel location) {
         DEST = location;
         txt_Destination.setText(DEST.name);
-        Searchbox.setText(DEST.name);
         MapFragment.isCamLock = false;
         map.setPadding(0, 0, 0, 0);
         map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
@@ -134,6 +141,11 @@ public class NavigationFragment extends Fragment {
                 return false;
             });
 
+        }
+
+        else {
+            savedlocationslayout.setVisibility(View.GONE);
+            routing.routing(location.latLng);
         }
         hideKeyboard(act);
     }
@@ -175,9 +187,25 @@ public class NavigationFragment extends Fragment {
                     Type type = new TypeToken<ArrayList<LocationModel>>() {
                     }.getType();
                     ArrayList<LocationModel> LocationList = new Gson().fromJson(response.toString(), type);
-                    fillSearchListView(LocationList);
+                    fillLocationListView(LocationList);
                 },
                 error -> msg(act, "Volley Get Locations from Server Error")));
+    }
+
+    private void fillLocationListView(ArrayList<LocationModel> list) {
+        if (list == null || list.size() == 0) return;
+
+        arrayAdapter = new NavigationListAdapter(act, list);
+        LocationsGridView.setAdapter(arrayAdapter);
+        LocationsGridView.setOnItemClickListener((adapterView, view, i, l) -> onClickListViewItem(list.get(i)));
+        LocationsGridView.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            if (list.get(i).stored != 0) {
+                deleteLocation(list, i);
+                loadLocations();
+                arrayAdapter.notifyDataSetChanged();
+            } else saveLocation(list.get(i));
+            return true;
+        });
     }
 
     private void searchRequest(Editable editable) {
@@ -237,7 +265,7 @@ public class NavigationFragment extends Fragment {
         location.stored = 1;
         list.add(location);
         msg(act, "Saved Location: " + location.name);
-        IO.edit().putString("locations", new Gson().toJson(list)).apply();
+        //IO.edit().putString("locations", new Gson().toJson(list)).apply();
 
         uploadLocation(location);
     }
@@ -279,5 +307,7 @@ public class NavigationFragment extends Fragment {
         msg(act, "Deleted Location: " + list.get(i).name);
         list.remove(i);
         IO.edit().putString("locations", new Gson().toJson(list)).apply();
+
+
     }
 }

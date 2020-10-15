@@ -43,6 +43,7 @@ public class Tools {
     }
 
     public static void msg(Context ctx, final String text) {
+        if(ctx == null) return;
         ((Activity) ctx).runOnUiThread(() -> Toast.makeText(ctx, text, Toast.LENGTH_LONG).show());
     }
 

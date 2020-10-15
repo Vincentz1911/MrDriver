@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,11 +33,16 @@ import com.google.maps.android.PolyUtil;
 import com.google.maps.android.geojson.GeoJsonLayer;
 import com.vincentz.driver.R;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.vincentz.driver.Tools.*;
 
@@ -48,8 +54,9 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     public static GoogleMap map;
     public static boolean isCamLock = true;
     public static GeoJsonLayer route;
-    private Thread markerThread;
-    private Timer camTimer;
+    Marker marker;
+    ScheduledExecutorService scheduler;
+    ScheduledFuture<?> markertick, checkRouteTick;
 
     private int counter = 0, zoom = 18, tilt = 4;
     private boolean haveLocation, isTraffic, isHybrid;
@@ -57,29 +64,27 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private TextView txt_Speed, txt_Bearing, txt_Compass, txt_Zoom, txt_Tilt, txt_Steps, txt_Destination;
     private ImageView img_Compass;
     private NumberPicker np_Tilt, np_Zoom;
-    private View v_Tilt, v_Zoom, btn_Speed, btn_Compass;
+    private View v_Tilt, v_Zoom, btn_Speed, btn_Compass, btn_close;
+
+    TextView time, date, week;
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (markerThread != null) {
-            markerThread.interrupt();
-        }
-        if (camTimer != null){
-            camTimer.purge();
-            camTimer.cancel();
-        }
-
+        if (markertick != null)
+            markertick.cancel(true);
+        //scheduler.shutdown();
     }
+
+    SupportMapFragment smf;
+    FragmentManager fm;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
-        //region INIT UI
         if (getActivity() != null) act = getActivity();
 
+        //region INIT UI
         View view = li.inflate(R.layout.fragment_map, vg, false);
-        ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
         txt_Destination = view.findViewById(R.id.txt_destination);
         txt_Steps = view.findViewById(R.id.txt_step);
@@ -91,6 +96,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         txt_Speed = view.findViewById(R.id.txt_speed);
         btn_Speed = view.findViewById(R.id.btn_speed);
         img_Compass = view.findViewById(R.id.img_compass);
+        btn_close = view.findViewById(R.id.btn_close);
 
         v_Zoom = view.findViewById(R.id.v_zoom);
         v_Tilt = view.findViewById(R.id.v_tilt);
@@ -102,8 +108,20 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         np_Zoom.setMinValue(0);
         np_Zoom.setMaxValue(9);
         np_Zoom.setValue((zoom - 5) / 2);
+
+        time = view.findViewById(R.id.txt_time);
+        date = view.findViewById(R.id.txt_date);
+        week = view.findViewById(R.id.txt_week);
+        time.setOnClickListener(v -> say("The time is " + formatDate("HH:mm", new Date())));
+        date.setOnClickListener(v -> say("The date is " + formatDate("EEEE d. MMMM", new Date())));
         //endregion
+
+        fm = getFragmentManager();
+        if (fm != null) smf = (SupportMapFragment) fm.findFragmentById(R.id.map);
+        if (smf != null) smf.getMapAsync(this);
         LOC.addObserver(this);
+
+        scheduler = Executors.newScheduledThreadPool(10);
         return view;
     }
 
@@ -114,23 +132,20 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         if (!haveLocation && map != null && LOC.now() != null && LOC.last() != null) {
             haveLocation = true;
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LOC.latlng(), 10));
-            Marker marker = map.addMarker(new MarkerOptions()
+            marker = map.addMarker(new MarkerOptions()
                     .icon(SVG2Bitmap(R.drawable.mic_navigation_black_24dp))
                     .anchor(0.5f, 0.5f).rotation(LOC.bearing()).flat(true)
                     .position(LOC.latlng()));
-            markerThread = new Thread() {
-                public void run() {
-                    moveMarker(marker);
-                }
-            };
-            markerThread.start();
-            camTimer = new Timer();
-            camTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    updateCamera(400);
-                }
-            }, 0, 500);
+
+            markertick = scheduler.scheduleAtFixedRate(() -> {
+                moveMarker();
+                updateCamera();
+            }, 0, 500, TimeUnit.MILLISECONDS);
+
+//            checkRouteTick = scheduler.scheduleAtFixedRate(() -> {
+//                if (route != null) checkIfOnRoute();
+//            }, 0, 2000, TimeUnit.MILLISECONDS);
+
             initOnClick();
         }
     }
@@ -151,7 +166,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         map.getUiSettings().setCompassEnabled(false);
         int mapstyle;
 
-        switch (IO.getInt("Theme", 0)){
+        switch (IO.getInt("Theme", 0)) {
             case 0:
                 map.setMapStyle(MapStyleOptions.loadRawResourceStyle(act, R.raw.mapstyle_day));
                 break;
@@ -288,6 +303,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             return true;
         });
 
+        btn_close.setOnClickListener(v -> getView().findViewById(R.id.lay_locations).setVisibility(View.GONE));
         //''' GOOGLE MAP '''
         //CLICK = CAMLOCK FALSE AND REV.GEOLOC,
         //LONGCLICK ROUTING TO POINT CLICKED
@@ -298,57 +314,62 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         map.setOnMapLongClickListener(target -> new Routing(getActivity()).routing(target));
     }
 
-
-    String oldDirections;
     //TODO DELETE LOCATION
     //TODO interpolate() – Returns the latitude/longitude coordinates of a point that lies a given fraction of the distance between two given points. You can use this to animate a marker between two points, for example.
-    private void moveMarker(Marker marker) {
+    private void moveMarker() {
+        if (LOC.now() == null || LOC.last() == null) return;
 
-        while (!markerThread.isInterrupted()) {
-            if (LOC.now() == null || LOC.last() == null) continue;
+//        int timeBetween = (int) (LOC.now().getElapsedRealtimeNanos()
+//                - LOC.last().getElapsedRealtimeNanos()) / 1000000;
+//        if (LOC.now().hasBearing() && LOC.now().hasSpeed() && timeBetween > 100) {
+//
+//            LatLng markerLoc = new LatLng(
+//                    LOC.now().getLatitude() + (LOC.now().getLatitude()
+//                            - LOC.last().getLatitude()) * counter / 10,
+//                    LOC.now().getLongitude() + (LOC.now().getLongitude()
+//                            - LOC.last().getLongitude()) * counter / 10);
+        final Date dateNow = new Date();
+        act.runOnUiThread(() -> {
+            // marker.setPosition(markerLoc);
+            marker.setPosition(new LatLng(LOC.now().getLatitude(), LOC.now().getLongitude()));
+            marker.setRotation(LOC.bearing());
 
-            int timeBetween = (int) (LOC.now().getElapsedRealtimeNanos()
-                    - LOC.last().getElapsedRealtimeNanos()) / 1000000;
-            if (LOC.now().hasBearing() && LOC.now().hasSpeed() && timeBetween > 100) {
+            time.setText(formatDate("HH:mm:ss", dateNow));
+            date.setText(formatDate("EEE d. MMM", dateNow));
+            week.setText(getString(R.string.week, formatDate("w - yyyy", dateNow)));
 
-                if (route != null) checkIfOnRoute();
-
-                LatLng markerLoc = new LatLng(
-                        LOC.now().getLatitude() + (LOC.now().getLatitude()
-                                - LOC.last().getLatitude()) * counter / 10,
-                        LOC.now().getLongitude() + (LOC.now().getLongitude()
-                                - LOC.last().getLongitude()) * counter / 10);
-
-                act.runOnUiThread(() -> {
-                    marker.setPosition(markerLoc);
-                    marker.setRotation(LOC.bearing());
-                    if (DEST == null) txt_Destination.setText("No Destination");
-                    txt_Steps.setText(directions);
-                    if (!directions.equals(oldDirections)) say(directions);
-                    oldDirections = directions;
+//                    if (DEST == null) txt_Destination.setText("No Destination");
+//                    txt_Steps.setText(directions);
+//                    if (!directions.equals(oldDirections)) say(directions);
+//                    oldDirections = directions;
 //                    if (isOnRoute) txt_Steps.setText(NAV.stepsList.get(step).instruction);
 //                    else txt_Steps.setText("No Route");
 
-                });
-                try {
-                    Thread.sleep(timeBetween / 10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                counter++;
-            }
-        }
+        });
+
+        counter++;
+//        }
     }
 
     int step = 0;
-    //boolean isOnRoute = false;
+    boolean isOnRoute;
     Timer timer = new Timer("Timer");
     List<LatLng> stepCoords;
-    String directions ="No Route";
+    String directions = "N.A.";
+
+    String oldDirections;
 
     private void checkIfOnRoute() {
         stepCoords = NAV.latLngList.subList(
-                NAV.stepsList.get(step).way_points[0], NAV.stepsList.get(step).way_points[1]);
+                NAV.stepsList.get(step).way_points[0],
+                NAV.stepsList.get(step).way_points[1]);
+
+        //                   if (DEST == null) txt_Destination.setText("No Destination");
+        txt_Steps.setText(directions);
+        if (!directions.equals(oldDirections)) say(directions);
+        oldDirections = directions;
+        if (isOnRoute) txt_Steps.setText(NAV.stepsList.get(step).instruction);
+        else txt_Steps.setText("No Route");
 
         //IS LOCATION ON ROUTE THEN CANCEL TIMER
         if (PolyUtil.isLocationOnPath(LOC.latlng(), stepCoords, false, 10.0f)) {
@@ -390,7 +411,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
 
     //TODO make zoom and tilt compatible with native gmap zoom and tilt
-    private void updateCamera(int camTime) {
+    private void updateCamera() {
         act.runOnUiThread(() -> {
             zoom = np_Zoom.getValue() * 2 + 5;
             tilt = np_Tilt.getValue() * 10;
@@ -399,7 +420,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         .target(LOC.latlng()).bearing(LOC.bearing())
                         .zoom((zoom - LOC.speed() / 10 < 20) ? zoom - LOC.speed() / 10 : 20)
                         .tilt((tilt + LOC.speed() / 2 < 70) ? tilt + LOC.speed() / 2 : 70)
-                        .build()), camTime, null);
+                        .build()), 500, null);
                 map.setPadding(0, 350 - tilt, 0, 0);
             }
 

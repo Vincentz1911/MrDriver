@@ -105,7 +105,6 @@ public class WeatherFragment extends Fragment implements Observer {
         String url = "https://api.openweathermap.org/data/2.5/onecall?units=metric&exclude=minutely"
                 + "&lat=" + LOC.now().getLatitude() + "&lon=" + LOC.now().getLongitude()
                 + "&appid=366be396325d10cf0b15b97a1e8dde63";
-
         //SEND JSON OBJECT REQUEST TO QUEUE. IF RESPONSE, PARSE THEN UPDATE UI
         if (getActivity() != null) {
             RQ.add(new JsonObjectRequest(Request.Method.GET, url, null,

@@ -29,7 +29,7 @@ public class Tools {
     public static SharedPreferences IO;
     public static TextToSpeech TTS;
     public static GPSLocationModel LOC;
-    public static DriverModel DRV;
+    public static UserModel DRV;
     public static LocationModel DEST;
     public static NavigationModel NAV;
 

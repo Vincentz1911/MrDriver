@@ -41,6 +41,16 @@
         android:padding="@dimen/padding"
         android:visibility="gone" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_artist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:text="@string/artist"
+        android:textSize="@dimen/h4" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -63,15 +73,7 @@
     </RelativeLayout>
 
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_artist"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:maxLines="10"
-        android:scrollbars="vertical"
-        android:text="@string/artist"
-        android:textSize="@dimen/h4" />
+
 
     <!--    <TableLayout-->
     <!--        android:id="@+id/song_info"-->

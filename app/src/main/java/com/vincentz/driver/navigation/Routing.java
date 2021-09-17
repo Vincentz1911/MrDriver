@@ -18,9 +18,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.maps.android.geojson.GeoJsonFeature;
-import com.google.maps.android.geojson.GeoJsonLayer;
-import com.google.maps.android.geojson.GeoJsonLineStringStyle;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+
+import com.google.maps.android.data.geojson.GeoJsonLineStringStyle;
 import com.vincentz.driver.R;
 
 import org.json.JSONArray;

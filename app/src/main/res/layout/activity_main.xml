@@ -9,8 +9,8 @@
     <include layout="@layout/layout_iconbar" />
 
     <include
-        layout="@layout/layout_sidebars"
         android:id="@+id/sidebar"
+        layout="@layout/layout_sidebars"
         android:layout_width="@dimen/big_element"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/iconbar" />
@@ -28,4 +28,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/sidebar" />
+
+    <GridView
+        android:id="@+id/fl_big_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/sidebar"
+        android:numColumns="3"
+        android:visibility="gone"/>
 </RelativeLayout>

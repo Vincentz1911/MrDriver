@@ -30,7 +30,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.PolyUtil;
-import com.google.maps.android.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.vincentz.driver.R;
 
 import java.util.Date;
@@ -78,6 +78,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     SupportMapFragment smf;
     FragmentManager fm;
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater li, ViewGroup vg, Bundle savedInstanceState) {
@@ -420,7 +422,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         .target(LOC.latlng()).bearing(LOC.bearing())
                         .zoom((zoom - LOC.speed() / 10 < 20) ? zoom - LOC.speed() / 10 : 20)
                         .tilt((tilt + LOC.speed() / 2 < 70) ? tilt + LOC.speed() / 2 : 70)
-                        .build()), 500, null);
+                        .build()), 400, null);
                 map.setPadding(0, 350 - tilt, 0, 0);
             }
 

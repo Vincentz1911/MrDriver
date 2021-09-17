@@ -194,6 +194,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int rc, String[] permissions, @NonNull int[] results) {
+        super.onRequestPermissionsResult(rc, permissions, results);
         for (int p = 0; p < permissions.length; p++)
             if (results.length > 0 && results[p] == PackageManager.PERMISSION_GRANTED)
                 PERMISSIONS[p] = true;

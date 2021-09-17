@@ -34,8 +34,8 @@ public class SettingsFragment extends Fragment {
         EditText pin = view.findViewById(R.id.input_pin);
 
         if (DRV != null) {
-            driver.setText(DRV.driver);
-            pin.setText(DRV.pin);
+            driver.setText(DRV.username);
+            pin.setText(DRV.password);
         }
 
         language(view);

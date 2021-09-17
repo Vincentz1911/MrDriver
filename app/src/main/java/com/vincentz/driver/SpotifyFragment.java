@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -45,7 +47,7 @@ public class SpotifyFragment extends Fragment {
     private AppCompatImageView mCoverArtImageView;
     private final ErrorCallback mErrorCallback = this::logError;
 
-    private ListView playlistView;
+    private GridView playlistView;
     private AppCompatTextView txt_artist;
     private AppCompatImageView PlayButton, NextButton, PrevButton, ShuffleButton, RepeatButton, LikeButton;
     private AppCompatImageView AlbumButton, ArtistButton, PlaylistButton;
@@ -113,7 +115,8 @@ public class SpotifyFragment extends Fragment {
         PlaylistButton = view.findViewById(R.id.img_category);
         LikeButton = view.findViewById(R.id.btn_like);
 
-        playlistView = view.findViewById(R.id.playlistView);
+//        playlistView = view.findViewById(R.id.playlistView);
+//        playlistView = getActivity().findViewById(R.id.fl_big_overlay);
         mCoverArtImageView = view.findViewById(R.id.image);
         txt_artist = view.findViewById(R.id.txt_artist);
         mSeekBar = view.findViewById(R.id.seek_to);
@@ -162,8 +165,14 @@ public class SpotifyFragment extends Fragment {
         });
 
         PlaylistButton.setOnClickListener(view -> {
+
+            playlistView = getActivity().findViewById(R.id.fl_big_overlay);
+
             if (playlistView.getVisibility() == View.GONE)
+            {
+                getRecommendedContent();
                 playlistView.setVisibility(View.VISIBLE);
+            }
             else playlistView.setVisibility(View.GONE);
         });
 
@@ -197,10 +206,12 @@ public class SpotifyFragment extends Fragment {
                 // Invalidate play / pause
                 if (playerState.isPaused) {
                     PlayButton.setImageResource(R.drawable.sic_play_48dp);
-                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_pause_button, getActivity().getTheme()));
+//                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_pause_button, getActivity().getTheme()));
+                    mSeekBar.setThumb(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.sic_pause_button, getActivity().getTheme()));
                 } else {
                     PlayButton.setImageResource(R.drawable.sic_pause_48dp);
-                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_play_button, getActivity().getTheme()));
+                    mSeekBar.setThumb(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.sic_play_button, getActivity().getTheme()));
+//                    mSeekBar.setThumb(getResources().getDrawable(R.drawable.sic_play_button, getActivity().getTheme()));
                 }
 
                 //Sets ICON for shuffling
@@ -251,6 +262,11 @@ public class SpotifyFragment extends Fragment {
             }
         });
 
+
+    }
+
+    private void getRecommendedContent()
+    {
         //GET RECOMMENDED ITEMS. SHOW IN LISTVIEW WHEN BUTTON IS CLICKED
         mSpotifyAppRemote
                 .getContentApi()
@@ -266,10 +282,12 @@ public class SpotifyFragment extends Fragment {
             if (listItems.items[j].playable) {
                 combined.add(listItems.items[j]);
                 handleLatch(latch, combined);
-            } else {
+            }
+            else
+                {
                 mSpotifyAppRemote
                         .getContentApi()
-                        .getChildrenOfItem(listItems.items[j], 3, 0)
+                        .getChildrenOfItem(listItems.items[j], 10, 0)
                         .setResultCallback(
                                 childListItems -> {
                                     combined.addAll(Arrays.asList(childListItems.items));
